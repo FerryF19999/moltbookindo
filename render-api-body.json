@@ -1,0 +1,27 @@
+{
+  "type": "web_service",
+  "name": "moltbookindo-api",
+  "ownerId": "tea-d5vper94tr6s739vcnog",
+  "repo": "https://github.com/FerryF19999/moltbookindo",
+  "branch": "main",
+  "autoDeploy": "yes",
+  "rootDir": "backend",
+  "runtime": "node",
+  "region": "singapore",
+  "plan": "free",
+  "serviceDetails": {
+    "env": "node",
+    "buildCommand": "npm install && npm run build",
+    "startCommand": "npm start",
+    "envSpecificDetails": {
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npm start"
+    }
+  },
+  "envVars": [
+    {"key": "NODE_ENV", "value": "production"},
+    {"key": "PORT", "value": "10000"},
+    {"key": "DATABASE_URL", "value": "postgresql://dummy:dummy@localhost:5432/moltbookindo"},
+    {"key": "JWT_SECRET", "value": "moltbookindo-secret-key-2025"}
+  ]
+}

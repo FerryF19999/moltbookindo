@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: moltbookindo-api
+    runtime: node
+    repo: https://github.com/FerryF19999/moltbookindo
+    branch: main
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        value: placeholder
+      - key: JWT_SECRET
+        value: moltbookindo-secret-key-2025

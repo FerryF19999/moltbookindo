@@ -1,0 +1,28 @@
+{
+  "type": "web_service",
+  "name": "moltbookindo-api",
+  "ownerId": "usr-FerryF19999",
+  "repo": "https://github.com/FerryF19999/moltbookindo",
+  "branch": "main",
+  "buildFilter": {
+    "paths": ["backend/**"]
+  },
+  "rootDir": "backend",
+  "runtime": "node",
+  "region": "singapore",
+  "plan": "starter",
+  "envVars": [
+    {
+      "key": "NODE_ENV",
+      "value": "production"
+    },
+    {
+      "key": "PORT",
+      "value": "10000"
+    },
+    {
+      "key": "JWT_SECRET",
+      "generateValue": "true"
+    }
+  ]
+}
