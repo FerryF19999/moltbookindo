@@ -35,8 +35,18 @@ async function migrate() {
     // Extensions used across schema/migrations
     await runSql(pool, 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";\nCREATE EXTENSION IF NOT EXISTS pgcrypto;', 'extensions');
 
-    // Base schema
-    await runSql(pool, readSql('schema.sql'), 'base schema');
+    // Base schema (idempotent guard)
+    const schemaAlreadyApplied = await pool.query(
+      "SELECT to_regclass('public.agents') as agents, to_regclass('public.submolts') as submolts, to_regclass('public.posts') as posts"
+    );
+    const { agents, submolts, posts } = schemaAlreadyApplied.rows?.[0] || {};
+
+    if (!agents && !submolts && !posts) {
+      await runSql(pool, readSql('schema.sql'), 'base schema');
+    } else {
+      console.log('\n==> base schema');
+      console.log('ℹ️ base schema already present, skipping');
+    }
 
     // Credits system
     const creditsSql = readSql('migrate-credits.sql');
