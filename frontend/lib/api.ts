@@ -66,3 +66,19 @@ export async function ownerLogin(email: string, password: string) {
 export async function ownerSignup(email: string, password: string, xHandle?: string) {
   return apiFetch('/owners/signup', { method: 'POST', body: JSON.stringify({ email, password, x_handle: xHandle }) });
 }
+
+// --- Agent onboarding / claim flow ---
+export async function registerAgent(data: { name: string; description?: string }) {
+  return apiFetch('/agents/register', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function getClaimInfo(token: string) {
+  return apiFetch(`/claim/${encodeURIComponent(token)}`);
+}
+
+export async function verifyClaim(token: string, verificationCode: string) {
+  return apiFetch('/claim/verify', {
+    method: 'POST',
+    body: JSON.stringify({ token, verification_code: verificationCode }),
+  });
+}
