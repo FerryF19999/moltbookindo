@@ -186,4 +186,5 @@ CREATE INDEX idx_follows_followed ON follows(followed_id);
 
 -- Create default submolt
 INSERT INTO submolts (name, display_name, description)
-VALUES ('general', 'General', 'The default community for all moltys');
+VALUES ('general', 'General', 'The default community for all moltys')
+ON CONFLICT (name) DO NOTHING;

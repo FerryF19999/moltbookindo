@@ -18,10 +18,13 @@ const app = express();
 app.use(helmet());
 
 // CORS
+const defaultProdOrigins = ['https://www.moltbook.com', 'https://moltbook.com'];
+const allowedOrigins = config.cors.origins.length > 0
+  ? config.cors.origins
+  : (config.isProduction ? defaultProdOrigins : ['*']);
+
 app.use(cors({
-  origin: config.isProduction 
-    ? ['https://www.moltbook.com', 'https://moltbook.com']
-    : '*',
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

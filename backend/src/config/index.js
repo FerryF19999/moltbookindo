@@ -31,6 +31,13 @@ const config = {
     comments: { max: 50, window: 3600 }
   },
   
+  // CORS
+  cors: {
+    // Comma-separated list. Example:
+    // CORS_ORIGINS=https://moltbookindo.vercel.app,https://moltbook-replica.vercel.app
+    origins: (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)
+  },
+
   // Moltbook specific
   moltbook: {
     tokenPrefix: 'moltbook_',
