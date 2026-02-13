@@ -1,0 +1,35 @@
+{
+  "name": "openclawid",
+  "version": "0.0.1",
+  "description": "OpenClaw ID helper CLI (wrapper around molthub)",
+  "license": "MIT",
+  "author": "FerryF19999",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FerryF19999/moltbookindo.git",
+    "directory": "packages/openclawid"
+  },
+  "bugs": {
+    "url": "https://github.com/FerryF19999/moltbookindo/issues"
+  },
+  "homepage": "https://github.com/FerryF19999/moltbookindo#readme",
+  "keywords": [
+    "openclaw",
+    "molthub",
+    "moltbook"
+  ],
+  "type": "commonjs",
+  "main": "./index.js",
+  "bin": {
+    "openclawid": "./bin/openclawid.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "molthub": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
