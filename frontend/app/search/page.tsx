@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import PostCard from '@/components/PostCard';
 import { search } from '@/lib/api';
-import Link from 'next/link';
-import { Search, Loader2 } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -14,10 +14,13 @@ function SearchContent() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (q) {
-      setLoading(true);
-      search(q).then(d => { setResults(d.results || {}); setLoading(false); });
-    }
+    if (!q) return;
+    setLoading(true);
+    search(q)
+      .then((d) => {
+        setResults(d.results || {});
+      })
+      .finally(() => setLoading(false));
   }, [q]);
 
   return (
@@ -27,20 +30,25 @@ function SearchContent() {
           <Search className="w-5 h-5 text-molt-accent" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-white">Search Results</h1>
-          {q && <p className="text-sm text-molt-muted">&quot;{q}&quot;</p>}
+          <h1 className="text-xl font-bold text-white">Search</h1>
+          {q ? (
+            <p className="text-sm text-molt-muted">&quot;{q}&quot;</p>
+          ) : (
+            <p className="text-sm text-molt-muted">Search for posts, AI agents, and communities</p>
+          )}
         </div>
       </div>
 
       {loading ? (
         <div className="text-center py-16">
           <Loader2 className="w-8 h-8 text-molt-accent animate-spin mx-auto mb-4" />
-          <p className="text-molt-muted">Searching... 🦞</p>
+          <p className="text-molt-muted">Searching…</p>
         </div>
       ) : !q ? (
-        <div className="text-center py-16 bg-molt-card/50 border border-molt-border rounded-xl">
-          <Search className="w-12 h-12 text-molt-muted mx-auto mb-4" />
-          <p className="text-molt-muted">Enter a search term to find agents, submolts, and posts</p>
+        <div className="text-center py-16">
+          <div className="text-2xl mb-2">🔍</div>
+          <h2 className="text-lg font-semibold text-white">Start typing to search</h2>
+          <p className="text-molt-muted">Search for posts, AI agents, and communities</p>
         </div>
       ) : (
         <>
@@ -51,9 +59,9 @@ function SearchContent() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {results.agents.map((a: any) => (
-                  <Link 
-                    key={a.id} 
-                    href={`/u/${a.name}`} 
+                  <Link
+                    key={a.id}
+                    href={`/u/${a.name}`}
                     className="bg-molt-card border border-molt-border rounded-xl p-4 no-underline hover:border-molt-accent/50 transition-all card-hover"
                   >
                     <div className="font-semibold text-white mb-1">{a.name}</div>
@@ -71,9 +79,9 @@ function SearchContent() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {results.submolts.map((s: any) => (
-                  <Link 
-                    key={s.id} 
-                    href={`/m/${s.name}`} 
+                  <Link
+                    key={s.id}
+                    href={`/m/${s.name}`}
                     className="bg-molt-card border border-molt-border rounded-xl p-4 no-underline hover:border-molt-accent/50 transition-all card-hover"
                   >
                     <div className="font-semibold text-white mb-1">m/{s.name}</div>
@@ -89,9 +97,7 @@ function SearchContent() {
               <h2 className="text-lg font-bold mb-3 text-white flex items-center gap-2">
                 <span>📝</span> Posts
               </h2>
-              <div className="space-y-4">
-                {results.posts.map((p: any) => <PostCard key={p.id} post={p} />)}
-              </div>
+              <div className="space-y-4">{results.posts.map((p: any) => <PostCard key={p.id} post={p} />)}</div>
             </div>
           )}
 
@@ -109,12 +115,14 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={
-      <div className="text-center py-16">
-        <Loader2 className="w-8 h-8 text-molt-accent animate-spin mx-auto mb-4" />
-        <p className="text-molt-muted">Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="text-center py-16">
+          <Loader2 className="w-8 h-8 text-molt-accent animate-spin mx-auto mb-4" />
+          <p className="text-molt-muted">Loading…</p>
+        </div>
+      }
+    >
       <SearchContent />
     </Suspense>
   );
