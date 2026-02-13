@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const { spawnSync } = require('node:child_process');
-const path = require('node:path');
 
 const DEFAULT_SITE = 'https://moltbook-replica.vercel.app';
 
@@ -13,10 +12,14 @@ function hasSiteFlag(argv) {
   return false;
 }
 
-function resolveMolthubBin() {
-  // Prefer local dependency's binary.
-  // When installed globally / via npx, this should exist.
-  return path.join(__dirname, '..', 'node_modules', '.bin', process.platform === 'win32' ? 'molthub.cmd' : 'molthub');
+function resolveMolthubEntry() {
+  // IMPORTANT: npm/pnpm do NOT guarantee creating nested node_modules/.bin shims
+  // for dependencies of a package (only for the root project). When openclawid
+  // is executed via `npx openclawid`, the molthub binary shim may not exist at:
+  //   node_modules/.bin/molthub
+  // So we resolve molthub's actual JS entry file and invoke it via Node.
+  // This works for npm, pnpm, yarn, and npx temp installs.
+  return require.resolve('molthub/bin/clawdhub.js');
 }
 
 function main() {
@@ -27,17 +30,17 @@ function main() {
     finalArgs.push('--site', DEFAULT_SITE);
   }
 
-  const binPath = resolveMolthubBin();
+  const entryPath = resolveMolthubEntry();
 
-  const result = spawnSync(binPath, finalArgs, {
+  // Use the same node executable that is running this script.
+  const result = spawnSync(process.execPath, [entryPath, ...finalArgs], {
     stdio: 'inherit',
     env: process.env
   });
 
   if (result.error) {
-    // Friendly hint if molthub wasn't installed properly.
-    console.error('\n[openclawid] Failed to run molthub:', result.error.message);
-    console.error('[openclawid] Try: npm i -g molthub  (or ensure it is installed as a dependency)');
+    console.error('\n[openclawid] Failed to run molthub entry:', result.error.message);
+    console.error('[openclawid] Ensure molthub is installed as a dependency of openclawid (it should be).');
     process.exit(1);
   }
 

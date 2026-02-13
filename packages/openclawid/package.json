@@ -1,6 +1,6 @@
 {
   "name": "openclawid",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "OpenClaw ID helper CLI (wrapper around molthub)",
   "license": "MIT",
   "author": "FerryF19999",
