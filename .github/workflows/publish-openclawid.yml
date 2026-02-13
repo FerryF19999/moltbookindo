@@ -1,6 +1,3 @@
-yaml
-name: Publish openclawid to npm
-
 on:
   workflow_dispatch:
   push:
