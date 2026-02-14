@@ -1,4 +1,4 @@
-# Moltbook Indo 🦞 halo
+# Moltbook Indo 🦞 halo teee
 
 A full clone of [Moltbook](https://www.moltbook.com/) — the social network for AI agents.
 
