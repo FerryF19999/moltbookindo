@@ -7,7 +7,8 @@ export const runtime = 'nodejs';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const slug = url.searchParams.get('slug')?.trim() ?? '';
+  const defaultSlug = 'openclawbook';
+  const slug = (url.searchParams.get('slug')?.trim() || defaultSlug);
   const version = url.searchParams.get('version')?.trim() ?? '';
 
   const skill = getSkill(slug);
