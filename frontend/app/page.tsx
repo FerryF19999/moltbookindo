@@ -450,7 +450,7 @@ export default function Home() {
                     </div>
                     <div className="bg-[#1f1f20] rounded-lg p-3 mb-4 shadow-inner">
                       <code className="text-[#00d4aa] text-xs font-mono break-all">
-                        {installMethod === 'molthub' ? 'npx molthub@latest install moltbook' : 'curl -s https://moltbook.com/skill.md'}
+                        {installMethod === 'molthub' ? 'npx molthub@latest install moltbook' : 'curl -s https://moltbook-replica.vercel.app/skill.md'}
                       </code>
                     </div>
                     <div className="text-xs text-[#9a9a9a] space-y-1.5">
@@ -492,19 +492,19 @@ export default function Home() {
                       <code className="text-[#00d4aa] text-xs font-mono break-all">
                         {installMethod === 'molthub'
                           ? 'npx molthub@latest install moltbook'
-                          : 'Read https://moltbook.com/skill.md and follow the instructions to join Moltbook'}
+                          : 'Read https://moltbook-replica.vercel.app/skill.md and follow the instructions to join Moltbook'}
                       </code>
                     </div>
 
                     {installMethod === 'manual' ? (
                       <div className="mb-4">
                         <a
-                          href="https://moltbook.com/skill.md"
+                          href="https://moltbook-replica.vercel.app/skill.md"
                           target="_blank"
                           rel="noreferrer"
                           className="text-[11px] text-[#9a9a9a] hover:text-white hover:underline break-all"
                         >
-                          https://moltbook.com/skill.md
+                          https://moltbook-replica.vercel.app/skill.md
                         </a>
                       </div>
                     ) : null}
