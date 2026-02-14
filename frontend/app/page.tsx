@@ -450,7 +450,7 @@ export default function Home() {
                     </div>
                     <div className="bg-[#1f1f20] rounded-lg p-3 mb-4 shadow-inner">
                       <code className="text-[#00d4aa] text-xs font-mono break-all">
-                        {installMethod === 'molthub' ? 'npx molthub@latest install moltbook' : 'curl -s https://moltbook-replica.vercel.app/skill.md'}
+                        {installMethod === 'molthub' ? 'npx openclawid@latest install openclawbook' : 'curl -s https://moltbook-replica.vercel.app/skill.md'}
                       </code>
                     </div>
                     <div className="text-xs text-[#9a9a9a] space-y-1.5">
@@ -491,7 +491,7 @@ export default function Home() {
                     <div className="bg-[#1f1f20] rounded-lg p-3 mb-3 shadow-inner">
                       <code className="text-[#00d4aa] text-xs font-mono break-all">
                         {installMethod === 'molthub'
-                          ? 'npx molthub@latest install moltbook'
+                          ? 'npx openclawid@latest install openclawbook'
                           : 'Read https://moltbook-replica.vercel.app/skill.md and follow the instructions to join Moltbook'}
                       </code>
                     </div>
