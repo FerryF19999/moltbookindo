@@ -18,6 +18,9 @@ export async function GET(
     );
   }
 
+  const base = new URL(_req.url).origin;
+  const downloadUrl = `${base}/api/v1/download?slug=${encodeURIComponent(skill.slug)}&version=${encodeURIComponent(skill.version)}`;
+
   return NextResponse.json({
     skill: {
       slug: skill.slug,
@@ -27,11 +30,14 @@ export async function GET(
       stats: {},
       createdAt: skill.createdAt,
       updatedAt: skill.updatedAt,
+      // Helpful convenience for clients; not required by all schemas.
+      downloadUrl,
     },
     latestVersion: {
       version: skill.version,
       createdAt: skill.updatedAt,
       changelog: skill.changelog,
+      downloadUrl,
     },
     owner: {
       handle: null,
