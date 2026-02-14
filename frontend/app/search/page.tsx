@@ -1,129 +1,64 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import PostCard from '@/components/PostCard';
-import { search } from '@/lib/api';
-import { Loader2, Search } from 'lucide-react';
-
-function SearchContent() {
-  const searchParams = useSearchParams();
-  const q = searchParams.get('q') || '';
-  const [results, setResults] = useState<any>({});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!q) return;
-    setLoading(true);
-    search(q)
-      .then((d) => {
-        setResults(d.results || {});
-      })
-      .finally(() => setLoading(false));
-  }, [q]);
-
-  return (
-    <div>
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-molt-card border border-molt-border rounded-xl flex items-center justify-center">
-          <Search className="w-5 h-5 text-molt-accent" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-white">Search</h1>
-          {q ? (
-            <p className="text-sm text-molt-muted">&quot;{q}&quot;</p>
-          ) : (
-            <p className="text-sm text-molt-muted">Search for posts, AI agents, and communities</p>
-          )}
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-center py-16">
-          <Loader2 className="w-8 h-8 text-molt-accent animate-spin mx-auto mb-4" />
-          <p className="text-molt-muted">Searching…</p>
-        </div>
-      ) : !q ? (
-        <div className="text-center py-16">
-          <div className="text-2xl mb-2">🔍</div>
-          <h2 className="text-lg font-semibold text-white">Start typing to search</h2>
-          <p className="text-molt-muted">Search for posts, AI agents, and communities</p>
-        </div>
-      ) : (
-        <>
-          {results.agents?.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-lg font-bold mb-3 text-white flex items-center gap-2">
-                <span>🤖</span> Agents
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {results.agents.map((a: any) => (
-                  <Link
-                    key={a.id}
-                    href={`/u/${a.name}`}
-                    className="bg-molt-card border border-molt-border rounded-xl p-4 no-underline hover:border-molt-accent/50 transition-all card-hover"
-                  >
-                    <div className="font-semibold text-white mb-1">{a.name}</div>
-                    <div className="text-sm text-molt-muted line-clamp-2">{a.description?.slice(0, 80)}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {results.submolts?.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-lg font-bold mb-3 text-white flex items-center gap-2">
-                <span>📁</span> Submolts
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {results.submolts.map((s: any) => (
-                  <Link
-                    key={s.id}
-                    href={`/m/${s.name}`}
-                    className="bg-molt-card border border-molt-border rounded-xl p-4 no-underline hover:border-molt-accent/50 transition-all card-hover"
-                  >
-                    <div className="font-semibold text-white mb-1">m/{s.name}</div>
-                    <div className="text-sm text-molt-muted line-clamp-2">{s.description?.slice(0, 80)}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {results.posts?.length > 0 && (
-            <div>
-              <h2 className="text-lg font-bold mb-3 text-white flex items-center gap-2">
-                <span>📝</span> Posts
-              </h2>
-              <div className="space-y-4">{results.posts.map((p: any) => <PostCard key={p.id} post={p} />)}</div>
-            </div>
-          )}
-
-          {!results.agents?.length && !results.submolts?.length && !results.posts?.length && (
-            <div className="text-center py-16 bg-molt-card/50 border border-molt-border rounded-xl">
-              <span className="text-4xl mb-4 block">🦞</span>
-              <p className="text-molt-muted">No results found for &quot;{q}&quot;</p>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { useState } from 'react';
 
 export default function SearchPage() {
+  const [query, setQuery] = useState('');
+
   return (
-    <Suspense
-      fallback={
-        <div className="text-center py-16">
-          <Loader2 className="w-8 h-8 text-molt-accent animate-spin mx-auto mb-4" />
-          <p className="text-molt-muted">Loading…</p>
+    <>
+      <Header />
+      <div className="flex-1 bg-[#fafafa] min-h-screen">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <h1 className="text-2xl font-bold text-[#1a1a1b] mb-6">Search Moltbook</h1>
+
+          <div className="bg-white border border-[#e0e0e0] rounded-lg p-4 mb-6">
+            <div className="relative">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#888]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search posts, agents, and submolts..."
+                className="w-full pl-12 pr-4 py-3 border border-[#e0e0e0] rounded-lg focus:outline-none focus:border-[#00d4aa] transition-colors text-[#1a1a1b]"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 mb-6">
+            <button className="px-4 py-2 bg-[#e01b24] text-white font-medium text-sm rounded-lg">
+              All
+            </button>
+            <button className="px-4 py-2 bg-white border border-[#e0e0e0] text-[#1a1a1b] font-medium text-sm rounded-lg hover:border-[#00d4aa] transition-colors">
+              Posts
+            </button>
+            <button className="px-4 py-2 bg-white border border-[#e0e0e0] text-[#1a1a1b] font-medium text-sm rounded-lg hover:border-[#00d4aa] transition-colors">
+              Agents
+            </button>
+            <button className="px-4 py-2 bg-white border border-[#e0e0e0] text-[#1a1a1b] font-medium text-sm rounded-lg hover:border-[#00d4aa] transition-colors">
+              Submolts
+            </button>
+          </div>
+
+          <div className="text-center py-12">
+            <div className="text-4xl mb-4">🔍</div>
+            <h3 className="text-lg font-bold text-[#1a1a1b] mb-2">
+              {query ? `No results for "${query}"` : 'Start typing to search'}
+            </h3>
+            <p className="text-[#7c7c7c] text-sm">
+              {query 
+                ? 'Try different keywords or check your spelling' 
+                : 'Search for posts, AI agents, and communities'}
+            </p>
+          </div>
         </div>
-      }
-    >
-      <SearchContent />
-    </Suspense>
+      </div>
+      <Footer />
+    </>
   );
 }

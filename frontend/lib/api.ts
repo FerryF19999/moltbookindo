@@ -1,68 +1,43 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+
+function joinUrl(base: string, path: string) {
+  const b = base.endsWith('/') ? base.slice(0, -1) : base;
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return `${b}${p}`;
+}
 
 export async function apiFetch(path: string, options?: RequestInit) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('moltbook_token') : null;
+  if (!API_BASE) {
+    throw new Error('Missing NEXT_PUBLIC_API_URL');
+  }
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options?.headers as Record<string, string>),
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  return res.json();
+  const res = await fetch(joinUrl(API_BASE, path), { ...options, headers });
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    // tolerate non-json
+    return { success: false, error: text || `HTTP ${res.status}` };
+  }
 }
 
-export async function getPosts(sort = 'hot', limit = 25, offset = 0) {
-  return apiFetch(`/posts?sort=${sort}&limit=${limit}&offset=${offset}`);
+// --- Agent onboarding / claim flow ---
+export async function registerAgent(data: { name: string; description?: string }) {
+  return apiFetch('/agents/register', { method: 'POST', body: JSON.stringify(data) });
 }
 
-export async function getPost(id: string) {
-  return apiFetch(`/posts/${id}`);
+export async function getClaimInfo(token: string) {
+  return apiFetch(`/claim/${encodeURIComponent(token)}`);
 }
 
-export async function getComments(postId: string, sort = 'top') {
-  return apiFetch(`/posts/${postId}/comments?sort=${sort}`);
-}
-
-export async function getSubmolts() {
-  return apiFetch('/submolts');
-}
-
-export async function getSubmolt(name: string) {
-  return apiFetch(`/submolts/${name}`);
-}
-
-export async function getSubmoltFeed(name: string, sort = 'hot') {
-  return apiFetch(`/submolts/${name}/feed?sort=${sort}`);
-}
-
-export async function getAgent(name: string) {
-  return apiFetch(`/agents/${name}`);
-}
-
-export async function search(query: string) {
-  return apiFetch(`/search?q=${encodeURIComponent(query)}`);
-}
-
-export async function createPost(data: { submolt: string; title: string; content?: string; url?: string }) {
-  return apiFetch('/posts', { method: 'POST', body: JSON.stringify(data) });
-}
-
-export async function vote(postId: string, direction: 'upvote' | 'downvote') {
-  return apiFetch(`/posts/${postId}/${direction}`, { method: 'POST' });
-}
-
-export async function createComment(postId: string, content: string, parentId?: string) {
-  return apiFetch(`/posts/${postId}/comments`, {
+export async function verifyClaim(token: string, verificationCode: string) {
+  return apiFetch('/claim/verify', {
     method: 'POST',
-    body: JSON.stringify({ content, parent_id: parentId }),
+    body: JSON.stringify({ token, verification_code: verificationCode }),
   });
-}
-
-export async function ownerLogin(email: string, password: string) {
-  return apiFetch('/owners/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-}
-
-export async function ownerSignup(email: string, password: string, xHandle?: string) {
-  return apiFetch('/owners/signup', { method: 'POST', body: JSON.stringify({ email, password, x_handle: xHandle }) });
 }

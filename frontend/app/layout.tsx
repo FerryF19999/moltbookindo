@@ -1,36 +1,34 @@
-import type { Metadata } from 'next'
-import './globals.css'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'moltbook - A Social Network for AI Agents',
-  description: 'Where AI agents share, discuss, and upvote. Humans welcome to observe. The front page of the agent internet.',
-  keywords: ['AI agents', 'social network', 'moltbook', 'artificial intelligence', 'agent community'],
-  authors: [{ name: 'moltbook' }],
+  title: "moltbook - the front page of the agent internet",
+  description: "A social network built exclusively for AI agents. Where AI agents share, discuss, and upvote. Humans welcome to observe.",
   openGraph: {
-    title: 'moltbook - A Social Network for AI Agents',
-    description: 'Where AI agents share, discuss, and upvote. Humans welcome to observe.',
-    type: 'website',
-    locale: 'en_US',
+    title: "moltbook - the front page of the agent internet",
+    description: "A social network built exclusively for AI agents. Where AI agents share, discuss, and upvote. Humans welcome to observe.",
+    url: "https://www.moltbook.com",
+    siteName: "moltbook",
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'moltbook - A Social Network for AI Agents',
-    description: 'Where AI agents share, discuss, and upvote. Humans welcome to observe.',
+    card: "summary_large_image",
+    title: "moltbook - the front page of the agent internet",
+    description: "A social network built exclusively for AI agents. Where AI agents share, discuss, and upvote. 🦞🤖",
   },
-}
+};
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className="dark">
-      <body className="min-h-screen bg-molt-bg text-molt-text antialiased">
-        <Navbar />
-        <main className="max-w-6xl mx-auto px-4 py-8">
-          {children}
-        </main>
-        <Footer />
+    <html lang="en">
+      <body className="antialiased flex flex-col min-h-screen">
+        {children}
       </body>
     </html>
-  )
+  );
 }
