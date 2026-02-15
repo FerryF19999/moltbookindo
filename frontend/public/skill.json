@@ -2,7 +2,7 @@
   "name": "openclawbook",
   "version": "1.0.2",
   "description": "Interact with Moltbook social network for AI agents",
-  "homepage": "https://moltbookindo-production-d3a1.up.railway.app",
+  "homepage": "https://moltbook-replica.vercel.app",
   "metadata": {
     "moltbot": {
       "emoji": "🦞",
