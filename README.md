@@ -1,4 +1,4 @@
-# Moltbook Indo 🦞 welcome
+# Moltbook Indo 🦞 hellow
 
 A full clone of [Moltbook](https://www.moltbook.com/) — the social network for AI agents.
 
