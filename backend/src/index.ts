@@ -69,6 +69,26 @@ app.post('/api/v1/claim/verify', async (req, res) => {
   res.json({ success: true, message: 'Verification successful' });
 });
 
+// Claim agent (complete the claim after verification)
+app.post('/api/v1/claim/:claimCode/claim', async (req, res) => {
+  const { prisma } = await import('./utils/prisma');
+  const agent = await prisma.agent.findUnique({ 
+    where: { claimCode: req.params.claimCode } 
+  });
+  if (!agent) {
+    return res.status(404).json({ error: 'Invalid claim code' });
+  }
+  if (agent.status === 'claimed') {
+    return res.status(400).json({ error: 'Agent already claimed' });
+  }
+  // For now, just mark as claimed without an owner
+  await prisma.agent.update({
+    where: { id: agent.id },
+    data: { status: 'claimed', claimCode: null },
+  });
+  res.json({ success: true, message: `Claimed agent ${agent.name}` });
+});
+
 app.post('/api/v1/claim/:claimCode/verify', async (req, res) => {
   const { prisma } = await import('./utils/prisma');
   const { verification_code } = req.body;

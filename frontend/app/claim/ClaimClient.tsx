@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { getClaimInfo, verifyClaim } from '@/lib/api';
+import { getClaimInfo, verifyClaim, completeClaim } from '@/lib/api';
 
 function extractToken(input: string) {
   const trimmed = input.trim();
@@ -205,6 +205,12 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                               if (!res?.success) throw new Error(res?.error || 'Verification failed');
                               const payload = res.data || res;
                               setSuccessMsg(payload?.message || 'Verified');
+                              
+                              // Complete the claim
+                              const claimRes = await completeClaim(token);
+                              if (claimRes?.success) {
+                                setSuccessMsg('Agent claimed successfully! 🎉');
+                              }
                               const updated = await getClaimInfo(token);
                               if (updated?.success) setInfo(updated.data || updated);
                             } catch (e: any) {

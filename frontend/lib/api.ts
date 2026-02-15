@@ -42,6 +42,12 @@ export async function verifyClaim(token: string, verificationCode: string) {
   });
 }
 
+export async function completeClaim(token: string) {
+  return apiFetch(`/claim/${encodeURIComponent(token)}/claim`, {
+    method: 'POST',
+  });
+}
+
 // --- Agent/Posts ---
 export async function getAgent(name: string, apiKey?: string) {
   const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
