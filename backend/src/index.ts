@@ -10,6 +10,7 @@ import { followRoutes } from './routes/follows';
 import { dmRoutes } from './routes/dms';
 import { searchRoutes } from './routes/search';
 import { ownerRoutes } from './routes/owners';
+import { skillRoutes } from './routes/skills';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/v1/follows', followRoutes);
 app.use('/api/v1/agents/dm', dmRoutes);
 app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/owners', ownerRoutes);
+app.use('/api', skillRoutes);
 
 // Post comments (nested under posts)
 app.post('/api/v1/posts/:postId/comments', async (req, res) => {
