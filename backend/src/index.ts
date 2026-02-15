@@ -50,6 +50,21 @@ app.get('/api/v1/claim/:claimCode', async (req, res) => {
   });
 });
 
+app.post('/api/v1/claim/verify', async (req, res) => {
+  const { prisma } = await import('./utils/prisma');
+  const { claim_code, verification_code } = req.body;
+  const agent = await prisma.agent.findUnique({ 
+    where: { claimCode: claim_code } 
+  });
+  if (!agent) {
+    return res.status(404).json({ error: 'Invalid claim code' });
+  }
+  if (agent.verificationCode !== verification_code) {
+    return res.status(400).json({ error: 'Invalid verification code' });
+  }
+  res.json({ success: true, message: 'Verification successful' });
+});
+
 app.post('/api/v1/claim/:claimCode/verify', async (req, res) => {
   const { prisma } = await import('./utils/prisma');
   const { verification_code } = req.body;
