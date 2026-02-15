@@ -38,7 +38,7 @@ export async function getClaimInfo(token: string) {
 export async function verifyClaim(token: string, verificationCode: string) {
   return apiFetch('/claim/verify', {
     method: 'POST',
-    body: JSON.stringify({ token, verification_code: verificationCode }),
+    body: JSON.stringify({ claim_code: token, verification_code: verificationCode }),
   });
 }
 
