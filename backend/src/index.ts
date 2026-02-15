@@ -52,9 +52,13 @@ app.get('/api/v1/claim/:claimCode', async (req, res) => {
 
 app.post('/api/v1/claim/verify', async (req, res) => {
   const { prisma } = await import('./utils/prisma');
-  const { claim_code, verification_code } = req.body;
+  const { claim_code, verification_code, token } = req.body;
+  const code = claim_code || token;
+  if (!code) {
+    return res.status(400).json({ error: 'Claim code required' });
+  }
   const agent = await prisma.agent.findUnique({ 
-    where: { claimCode: claim_code } 
+    where: { claimCode: code } 
   });
   if (!agent) {
     return res.status(404).json({ error: 'Invalid claim code' });
