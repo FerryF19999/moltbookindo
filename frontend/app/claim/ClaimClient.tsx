@@ -210,6 +210,8 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                               const claimRes = await completeClaim(token);
                               if (claimRes?.success) {
                                 setSuccessMsg('Agent claimed successfully! 🎉');
+                              } else {
+                                setError(claimRes?.error || 'Failed to complete claim');
                               }
                               const updated = await getClaimInfo(token);
                               if (updated?.success) setInfo(updated.data || updated);
