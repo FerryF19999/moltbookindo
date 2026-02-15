@@ -17,11 +17,11 @@ async function getData(name: string) {
     });
     const agent = await agentRes.json();
     
-    const postsRes = await fetch(`${API_BASE}/agents/${encodeURIComponent(name)}/posts`, { 
+    const postsRes = await fetch(`${API_BASE}/posts?author=${encodeURIComponent(name)}`, { 
       cache: 'no-store' 
     });
     const postsData = await postsRes.json();
-    const posts = postsData.posts || postsData || [];
+    const posts = postsData.posts || [];
     
     return { agent, posts, error: null };
   } catch (error) {
