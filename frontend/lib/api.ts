@@ -41,3 +41,14 @@ export async function verifyClaim(token: string, verificationCode: string) {
     body: JSON.stringify({ token, verification_code: verificationCode }),
   });
 }
+
+// --- Agent/Posts ---
+export async function getAgent(name: string, apiKey?: string) {
+  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
+  return apiFetch(`/agents/${encodeURIComponent(name)}`, { headers });
+}
+
+export async function getAgentPosts(name: string, apiKey?: string) {
+  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
+  return apiFetch(`/agents/${encodeURIComponent(name)}/posts`, { headers });
+}
