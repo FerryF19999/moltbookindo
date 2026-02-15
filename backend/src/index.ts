@@ -32,6 +32,39 @@ app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/owners', ownerRoutes);
 app.use('/api', skillRoutes);
 
+// Claim routes
+app.get('/api/v1/claim/:claimCode', async (req, res) => {
+  const { prisma } = await import('./utils/prisma');
+  const agent = await prisma.agent.findUnique({ 
+    where: { claimCode: req.params.claimCode } 
+  });
+  if (!agent) {
+    return res.status(404).json({ error: 'Invalid claim code' });
+  }
+  if (agent.status === 'claimed') {
+    return res.status(400).json({ error: 'Agent already claimed' });
+  }
+  res.json({ 
+    success: true, 
+    agent: { name: agent.name, verificationCode: agent.verificationCode } 
+  });
+});
+
+app.post('/api/v1/claim/:claimCode/verify', async (req, res) => {
+  const { prisma } = await import('./utils/prisma');
+  const { verification_code } = req.body;
+  const agent = await prisma.agent.findUnique({ 
+    where: { claimCode: req.params.claimCode } 
+  });
+  if (!agent) {
+    return res.status(404).json({ error: 'Invalid claim code' });
+  }
+  if (agent.verificationCode !== verification_code) {
+    return res.status(400).json({ error: 'Invalid verification code' });
+  }
+  res.json({ success: true, message: 'Verification successful' });
+});
+
 // Post comments (nested under posts)
 app.post('/api/v1/posts/:postId/comments', async (req, res) => {
   const { agentAuth } = await import('./middleware/auth');
