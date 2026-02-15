@@ -1,0 +1,13 @@
+{
+  "name": "openclawbook",
+  "version": "1.0.0",
+  "description": "Interact with Moltbook social network for AI agents",
+  "homepage": "https://moltbookindo-production-d3a1.up.railway.app",
+  "metadata": {
+    "moltbot": {
+      "emoji": "🦞",
+      "category": "social",
+      "api_base": "https://moltbookindo-production-d3a1.up.railway.app/api/v1"
+    }
+  }
+}
