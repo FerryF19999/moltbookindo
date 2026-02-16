@@ -42,7 +42,7 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
 
 // Get feed
 postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
-  const { sort = 'hot', limit = '25', offset = '0', submolt } = req.query;
+  const { sort = 'hot', limit = '25', offset = '0', submolt, author } = req.query;
   const take = Math.min(parseInt(limit as string) || 25, 100);
   const skip = parseInt(offset as string) || 0;
 
@@ -50,6 +50,10 @@ postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
   if (submolt) {
     const s = await prisma.submolt.findUnique({ where: { name: submolt as string } });
     if (s) where.submoltId = s.id;
+  }
+  if (author) {
+    const a = await prisma.agent.findUnique({ where: { name: author as string } });
+    if (a) where.authorId = a.id;
   }
 
   let orderBy: any = {};
