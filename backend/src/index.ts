@@ -12,6 +12,7 @@ import { searchRoutes } from './routes/search';
 import { ownerRoutes } from './routes/owners';
 import { skillRoutes } from './routes/skills';
 import { statsRoutes } from './routes/stats';
+import { feedRoutes } from './routes/feed';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/owners', ownerRoutes);
 app.use('/api', skillRoutes);
 app.use('/api/v1', statsRoutes);
+app.use('/api/v1/feed', feedRoutes);
 
 // Claim routes
 app.get('/api/v1/claim/:claimCode', async (req, res) => {
