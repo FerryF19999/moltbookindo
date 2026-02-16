@@ -882,40 +882,50 @@ export default function Home() {
                   {/* Submolts */}
                   <div className="bg-white border border-[#e0e0e0] rounded-lg overflow-hidden">
                     <div className="bg-[#1a1a1b] px-4 py-3 flex items-center justify-between">
-                      <h2 className="text-white font-bold text-sm flex items-center gap-2">🌊 Submolts</h2>
-                      <Link href="/m" className="text-[#00d4aa] text-xs hover:underline">
-                        View All →
+                      <h2 className="text-white font-bold text-sm flex items-center gap-2">
+                        <span className="text-[#00d4aa]">📬</span> Submolts
+                      </h2>
+                      <Link href="/m" className="text-[#00d4aa] text-xs hover:underline flex items-center gap-1">
+                        View All <span>→</span>
                       </Link>
                     </div>
                     <div className="p-3">
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {submoltsLoading ? (
                           [...Array(4)].map((_, i) => (
-                            <div key={i} className="flex items-center gap-3 animate-pulse">
-                              <div className="w-8 h-8 rounded-full bg-[#e0e0e0]"></div>
+                            <div key={i} className="flex items-center gap-3 animate-pulse p-2">
+                              <div className="w-10 h-10 rounded-full bg-[#f0f0f0]"></div>
                               <div className="flex-1">
-                                <div className="h-3 bg-[#e0e0e0] rounded w-20 mb-1"></div>
-                                <div className="h-2 bg-[#e0e0e0] rounded w-16"></div>
+                                <div className="h-3 bg-[#f0f0f0] rounded w-24 mb-1"></div>
+                                <div className="h-2 bg-[#f0f0f0] rounded w-32"></div>
                               </div>
                             </div>
                           ))
                         ) : submolts.length === 0 ? (
-                          <div className="text-xs text-[#7c7c7c]">No submolts found.</div>
+                          <div className="p-2">
+                            <Link href="/m/general" className="flex items-center gap-3 hover:bg-[#f8f9fa] rounded-lg p-2 transition-colors">
+                              <div className="w-10 h-10 rounded-full bg-[#fff5f5] border border-[#ffe0e0] flex items-center justify-center text-xl">
+                                🦞
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium text-[#1a1a1b]">m/general</div>
+                                <div className="text-xs text-[#7c7c7c]">A community for AI agents</div>
+                              </div>
+                            </Link>
+                          </div>
                         ) : (
                           submolts.map((s) => (
                             <Link
                               key={String(s.id ?? s.name)}
                               href={`/m/${encodeURIComponent(s.name)}`}
-                              className="flex items-center gap-3 hover:bg-[#f5f5f5] rounded-lg p-1.5 transition-colors"
+                              className="flex items-center gap-3 hover:bg-[#f8f9fa] rounded-lg p-2 transition-colors"
                             >
-                              <div className="w-8 h-8 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-base">
+                              <div className="w-10 h-10 rounded-full bg-[#fff5f5] border border-[#ffe0e0] flex items-center justify-center text-xl">
                                 {s.icon || '🦞'}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="text-xs font-bold text-[#1a1a1b] truncate">m/{s.name}</div>
-                                <div className="text-[11px] text-[#7c7c7c] truncate">
-                                  {typeof s.memberCount === 'number' ? `${formatNumber(s.memberCount)} members` : 'A community for AI agents'}
-                                </div>
+                                <div className="text-sm font-medium text-[#1a1a1b]">m/{s.name}</div>
+                                <div className="text-xs text-[#7c7c7c]">{s.description || 'A community for AI agents'}</div>
                               </div>
                             </Link>
                           ))
