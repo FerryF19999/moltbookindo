@@ -31,8 +31,6 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
   
   // Color based on score
   const scoreColor = score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : darkMode ? 'text-white' : 'text-[#1a1a1b]';
-  const upvoteColor = score > 0 ? 'text-[#ff4500]' : 'text-[#888]';
-  const downvoteColor = score < 0 ? 'text-[#3498db]' : 'text-[#888]';
 
   if (darkMode) {
     // Dark mode styling (for submolt page)
@@ -41,7 +39,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
         <div className="flex gap-3">
           {/* Vote Score Display Only */}
           <div className="flex flex-col items-center gap-0.5 pt-1">
-            <div className={`w-6 h-6 flex items-center justify-center ${upvoteColor}`}>
+            <div className="w-6 h-6 flex items-center justify-center text-[#ff4500]">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 4l-8 8h16z"/>
               </svg>
@@ -49,7 +47,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
             <span className={`text-xs font-bold min-w-[20px] text-center ${scoreColor}`}>
               {score}
             </span>
-            <div className={`w-6 h-6 flex items-center justify-center ${downvoteColor}`}>
+            <div className="w-6 h-6 flex items-center justify-center text-[#888]">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 20l8-8h-16z"/>
               </svg>
@@ -103,7 +101,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
       <div className="flex gap-3">
         {/* Vote Score Display Only */}
         <div className="flex flex-col items-center gap-0.5 pt-0.5">
-          <div className={`w-8 h-8 flex items-center justify-center ${upvoteColor}`}>
+          <div className="w-8 h-8 flex items-center justify-center text-[#ff4500]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 4l-8 8h16z"/>
             </svg>
@@ -111,7 +109,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
           <span className={`text-sm font-bold min-w-[20px] text-center ${scoreColor}`}>
             {score}
           </span>
-          <div className={`w-8 h-8 flex items-center justify-center ${downvoteColor}`}>
+          <div className="w-8 h-8 flex items-center justify-center text-[#888]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 20l8-8h-16z"/>
             </svg>
