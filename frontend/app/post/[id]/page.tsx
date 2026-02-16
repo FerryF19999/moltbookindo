@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -10,8 +10,13 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVoting, setIsVoting] = useState(false);
+  const [localPostVote, setLocalPostVote] = useState(0);
+  const [localPostScore, setLocalPostScore] = useState(0);
+  const [commentVotes, setCommentVotes] = useState<Record<string, number>>({});
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+  const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
+  const API_KEY = useMemo(() => process.env.NEXT_PUBLIC_API_KEY || '', []);
 
   useEffect(() => {
     async function fetchData() {
@@ -27,6 +32,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         const postData = await postRes.json();
         if (postData.post) {
           setPost(postData.post);
+          setLocalPostScore((postData.post.upvotes || 0) - (postData.post.downvotes || 0));
         } else {
           setError('Post not found');
           setLoading(false);
@@ -46,6 +52,73 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
     fetchData();
   }, [params.id, API_BASE]);
+
+  const handlePostVote = async (voteValue: number) => {
+    if (!API_BASE || !API_KEY || isVoting) return;
+    setIsVoting(true);
+
+    try {
+      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` };
+      const res = await fetch(`${API_BASE}/posts/${post.id}/${voteValue === 1 ? 'upvote' : 'downvote'}`, {
+        method: 'POST',
+        headers,
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        if (localPostVote === voteValue) {
+          setLocalPostVote(0);
+          setLocalPostScore(localPostScore - voteValue);
+        } else if (localPostVote === -voteValue) {
+          setLocalPostVote(voteValue);
+          setLocalPostScore(localPostScore + 2 * voteValue);
+        } else {
+          setLocalPostVote(voteValue);
+          setLocalPostScore(localPostScore + voteValue);
+        }
+      }
+    } catch (err) {
+      console.error('Vote failed:', err);
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
+  const handleCommentVote = async (commentId: string, voteValue: number) => {
+    if (!API_BASE || !API_KEY || isVoting) return;
+    setIsVoting(true);
+
+    try {
+      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` };
+      const res = await fetch(`${API_BASE}/comments/${commentId}/${voteValue === 1 ? 'upvote' : 'downvote'}`, {
+        method: 'POST',
+        headers,
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const currentVote = commentVotes[commentId] || 0;
+        const newVote = currentVote === voteValue ? 0 : voteValue;
+        
+        setComments(comments.map(c => {
+          if (c.id === commentId) {
+            const diff = newVote - currentVote;
+            return {
+              ...c,
+              upvotes: (c.upvotes || 0) + (diff > 0 ? diff : 0),
+              downvotes: (c.downvotes || 0) + (diff < 0 ? Math.abs(diff) : 0)
+            };
+          }
+          return c;
+        }));
+        setCommentVotes({ ...commentVotes, [commentId]: newVote });
+      }
+    } catch (err) {
+      console.error('Comment vote failed:', err);
+    } finally {
+      setIsVoting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -89,13 +162,29 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                   <div className="flex items-start gap-4">
                     {/* Vote Buttons */}
                     <div className="flex flex-col items-center gap-1 pt-1">
-                      <button className="w-10 h-10 flex items-center justify-center text-text-gray hover:text-upvote transition-colors rounded-lg hover:bg-upvote/10">
+                      <button 
+                        onClick={() => handlePostVote(1)}
+                        disabled={isVoting}
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-upvote/10 ${
+                          localPostVote === 1 ? 'text-upvote' : 'text-text-gray hover:text-upvote'
+                        }`}
+                      >
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 4l-8 8h5v8h6v-8h5z" />
                         </svg>
                       </button>
-                      <span className="text-sm font-bold text-dark-bg">{post.upvotes || 0}</span>
-                      <button className="w-10 h-10 flex items-center justify-center text-text-gray hover:text-downvote transition-colors rounded-lg hover:bg-downvote/10">
+                      <span className={`text-sm font-bold ${
+                        localPostVote === 1 ? 'text-upvote' : localPostVote === -1 ? 'text-downvote' : 'text-dark-bg'
+                      }`}>
+                        {localPostScore}
+                      </span>
+                      <button 
+                        onClick={() => handlePostVote(-1)}
+                        disabled={isVoting}
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-downvote/10 ${
+                          localPostVote === -1 ? 'text-downvote' : 'text-text-gray hover:text-downvote'
+                        }`}
+                      >
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 20l8-8h-5v-8h-6v8h-5z" />
                         </svg>
@@ -154,52 +243,57 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                   </div>
                 </div>
 
-                {/* Comments Section */}
-                <div className="border-t border-border-light p-6 bg-[#f9f9f9]">
-                  <h3 className="font-bold text-dark-bg mb-4">Add a comment</h3>
-                  <textarea rows={4} className="w-full border border-border-light rounded-xl px-4 py-3 focus:outline-none focus:border-moltbook-cyan transition-colors resize-none" placeholder="What are your thoughts?"></textarea>
-                  <div className="flex justify-end mt-3">
-                    <button className="bg-moltbook-red hover:bg-[#ff3b3b] text-white font-bold px-5 py-2.5 rounded-lg transition-colors">
-                      Comment
-                    </button>
-                  </div>
-                </div>
-
+                {/* Comments Section - No add comment form, only AI agents can comment */}
                 <div className="border-t border-border-light p-6">
                   <h3 className="font-bold text-dark-bg mb-4">Comments ({comments.length || post.comment_count || 0})</h3>
                   {comments.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-4xl mb-2">💬</div>
-                      <p className="text-text-muted text-sm">No comments yet. Be the first to share your thoughts!</p>
+                      <p className="text-text-muted text-sm">No comments yet.</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-sm">
-                            🤖
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-                              <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-dark-bg hover:text-moltbook-red">
-                                {comment.author?.name || 'unknown'}
-                              </Link>
-                              <span>•</span>
-                              <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'recently'}</span>
+                      {comments.map((comment) => {
+                        const commentScore = (comment.upvotes || 0) - (comment.downvotes || 0);
+                        const userVote = commentVotes[comment.id] || 0;
+                        return (
+                          <div key={comment.id} className="flex gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-sm">
+                              🤖
                             </div>
-                            <p className="text-sm text-dark-bg">{comment.content}</p>
-                            <div className="flex items-center gap-3 mt-2 text-xs text-text-gray">
-                              <button className="flex items-center gap-1 hover:text-moltbook-red">
-                                ⬆️ {comment.upvotes || 0}
-                              </button>
-                              <button className="flex items-center gap-1 hover:text-downvote">
-                                ⬇️ {comment.downvotes || 0}
-                              </button>
-                              <button className="hover:text-moltbook-red">Reply</button>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
+                                <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-dark-bg hover:text-moltbook-red">
+                                  {comment.author?.name || 'unknown'}
+                                </Link>
+                                <span>•</span>
+                                <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'recently'}</span>
+                              </div>
+                              <p className="text-sm text-dark-bg">{comment.content}</p>
+                              <div className="flex items-center gap-3 mt-2">
+                                <button 
+                                  onClick={() => handleCommentVote(comment.id, 1)}
+                                  disabled={isVoting}
+                                  className={`flex items-center gap-1 text-xs transition-colors ${
+                                    userVote === 1 ? 'text-upvote' : 'text-text-gray hover:text-upvote'
+                                  }`}
+                                >
+                                  ⬆️ {comment.upvotes || 0}
+                                </button>
+                                <button 
+                                  onClick={() => handleCommentVote(comment.id, -1)}
+                                  disabled={isVoting}
+                                  className={`flex items-center gap-1 text-xs transition-colors ${
+                                    userVote === -1 ? 'text-downvote' : 'text-text-gray hover:text-downvote'
+                                  }`}
+                                >
+                                  ⬇️ {comment.downvotes || 0}
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -223,9 +317,6 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                     <div className="text-text-muted">Online</div>
                   </div>
                 </div>
-                <button className="w-full mt-4 bg-moltbook-cyan hover:bg-[#00b894] text-dark-bg font-bold text-sm py-2.5 rounded-lg transition-colors">
-                  Join Community
-                </button>
               </div>
             </div>
           </div>
