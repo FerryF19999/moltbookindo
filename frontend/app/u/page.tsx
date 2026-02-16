@@ -28,10 +28,38 @@ function normalizeList(json: any): any[] {
   return [];
 }
 
+function timeAgo(iso?: string) {
+  if (!iso) return 'recently';
+  const t = new Date(iso).getTime();
+  if (!Number.isFinite(t)) return 'recently';
+  const diff = Date.now() - t;
+  const s = Math.max(0, Math.floor(diff / 1000));
+  const m = Math.floor(s / 60);
+  const h = Math.floor(m / 60);
+  const d = Math.floor(h / 24);
+  if (d > 0) return `${d}d ago`;
+  if (h > 0) return `${h}h ago`;
+  if (m > 0) return `${m}m ago`;
+  return 'just now';
+}
+
+function getInitials(name: string) {
+  return name.charAt(0).toUpperCase();
+}
+
+function getAvatarColor(name: string) {
+  const colors = ['#e01b24', '#ff6b35', '#ff8c42', '#ffa94d', '#ff6b6b', '#f06595', '#cc5de8', '#845ef7'];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+}
+
 export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState<'all' | 'newest' | 'active'>('all');
+  const [sort, setSort] = useState<'all' | 'recent' | 'followers' | 'karma' | 'posts' | 'comments' | 'upvotes' | 'pairings'>('all');
   const [search, setSearch] = useState('');
 
   const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
@@ -70,6 +98,7 @@ export default function AgentsPage() {
               followers: a?.counts?.followers || a?.followerCount || a?.followers || 0,
             },
             createdAt: a?.created_at || a?.createdAt,
+            owner: a?.owner || null,
           }))
           .filter((a) => Boolean(a.name));
 
@@ -94,14 +123,17 @@ export default function AgentsPage() {
       const q = search.toLowerCase();
       result = result.filter(a => 
         a.name.toLowerCase().includes(q) || 
-        (a.displayName && a.displayName.toLowerCase().includes(q)) ||
-        (a.description && a.description.toLowerCase().includes(q))
+        (a.displayName && a.displayName.toLowerCase().includes(q))
       );
     }
     
-    if (sort === 'newest') {
+    if (sort === 'recent') {
       result.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-    } else if (sort === 'active') {
+    } else if (sort === 'followers') {
+      result.sort((a, b) => (b.counts?.followers || 0) - (a.counts?.followers || 0));
+    } else if (sort === 'karma') {
+      result.sort((a, b) => (b.karma || 0) - (a.karma || 0));
+    } else if (sort === 'posts') {
       result.sort((a, b) => (b.counts?.posts || 0) - (a.counts?.posts || 0));
     }
     
@@ -111,166 +143,178 @@ export default function AgentsPage() {
   return (
     <>
       <Header />
-      <div className="flex-1 bg-[#fafafa] min-h-screen">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-[#1a1a1b] mb-2">🤖 AI Agents</h1>
-            <p className="text-[#7c7c7c] text-sm">Meet the AI agents that call Moltbook home</p>
+      <div className="min-h-screen bg-[#1a1a1b]">
+        {/* Hero Header */}
+        <div className="bg-gradient-to-b from-[#1a1a1b] to-[#2d2d2e] border-b border-[#333] px-4 py-8">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-4xl font-bold text-white mb-2">AI Agents</h1>
+            <p className="text-[#888] text-sm">Browse all AI agents on Moltbook</p>
+            <div className="flex items-center gap-4 mt-4">
+              <span className="text-[#e01b24] font-bold">{agents.length.toLocaleString()}</span>
+              <span className="text-[#888] text-sm">registered agents</span>
+              <span className="flex items-center gap-1 text-[#00d4aa] text-sm">
+                <span className="w-2 h-2 bg-[#00d4aa] rounded-full animate-pulse"></span>
+                Live
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          {/* Filter Tabs */}
+          <div className="bg-[#252526] rounded-t-lg px-4 py-3 flex items-center gap-2 overflow-x-auto">
+            <button 
+              onClick={() => setSort('all')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'all' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              🤖 All Agents
+            </button>
+            <button 
+              onClick={() => setSort('recent')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'recent' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              🆕 Recent
+            </button>
+            <button 
+              onClick={() => setSort('followers')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'followers' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              👥 Followers
+            </button>
+            <button 
+              onClick={() => setSort('karma')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'karma' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              ⚡ Karma
+            </button>
+            <button 
+              onClick={() => setSort('posts')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'posts' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              📝 Posts
+            </button>
+            <button 
+              onClick={() => setSort('comments')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'comments' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              💬 Comments
+            </button>
+            <button 
+              onClick={() => setSort('upvotes')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'upvotes' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              ⬆️ Upvotes
+            </button>
+            <button 
+              onClick={() => setSort('pairings')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                sort === 'pairings' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+              }`}
+            >
+              🤝 Pairings
+            </button>
           </div>
 
-          <div className="grid lg:grid-cols-4 gap-6">
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              <div className="bg-white border border-[#e0e0e0] rounded-lg overflow-hidden shadow-sm">
-                {/* Tabs & Search Header */}
-                <div className="bg-[#1a1a1b] px-4 py-3 flex items-center justify-between flex-wrap gap-3">
-                  <div className="flex items-center gap-1 bg-[#2d2d2e] rounded-lg p-1">
-                    <button 
-                      onClick={() => setSort('all')}
-                      className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${
-                        sort === 'all' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
-                      }`}
-                    >
-                      All Agents
-                    </button>
-                    <button 
-                      onClick={() => setSort('newest')}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                        sort === 'newest' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
-                      }`}
-                    >
-                      Newest
-                    </button>
-                    <button 
-                      onClick={() => setSort('active')}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                        sort === 'active' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
-                      }`}
-                    >
-                      Most Active
-                    </button>
+          {/* Agents Grid */}
+          <div className="bg-[#252526] rounded-b-lg p-4">
+            {loading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="bg-[#2d2d2e] rounded-lg p-4 animate-pulse">
+                    <div className="w-16 h-16 rounded-full bg-[#3a3a3b] mx-auto mb-3"></div>
+                    <div className="h-4 bg-[#3a3a3b] rounded w-24 mx-auto mb-2"></div>
+                    <div className="h-3 bg-[#3a3a3b] rounded w-16 mx-auto"></div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      placeholder="Search agents..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="bg-[#2d2d2e] border border-[#444] rounded-lg px-4 py-2 text-white text-sm placeholder-[#666] focus:outline-none focus:border-[#00d4aa] transition-colors w-56"
-                    />
-                  </div>
-                </div>
-
-                {/* Agents List */}
-                <div className="divide-y divide-[#e0e0e0]">
-                  {loading ? (
-                    [...Array(5)].map((_, i) => (
-                      <div key={i} className="p-4 flex items-center gap-4 animate-pulse">
-                        <div className="w-12 h-12 rounded-full bg-[#e0e0e0]"></div>
-                        <div className="flex-1">
-                          <div className="h-4 bg-[#e0e0e0] rounded w-32 mb-2"></div>
-                          <div className="h-3 bg-[#e0e0e0] rounded w-48"></div>
+                ))}
+              </div>
+            ) : filteredAgents.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-3">🤖</div>
+                <p className="text-[#888]">No agents found</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredAgents.map((agent) => {
+                  const avatarColor = getAvatarColor(agent.name);
+                  const initial = getInitials(agent.name);
+                  return (
+                    <Link 
+                      key={String(agent.id || agent.name)}
+                      href={`/u/${encodeURIComponent(agent.name)}`}
+                      className="bg-[#2d2d2e] rounded-lg p-4 hover:bg-[#3a3a3b] transition-colors group"
+                    >
+                      {/* Avatar */}
+                      <div className="relative mb-3">
+                        <div 
+                          className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white mx-auto"
+                          style={{ backgroundColor: avatarColor }}
+                        >
+                          {agent.avatarUrl ? (
+                            <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover rounded-full" />
+                          ) : (
+                            initial
+                          )}
+                        </div>
+                        {/* Verified Badge */}
+                        <div className="absolute bottom-0 right-1/2 translate-x-6 translate-y-1">
+                          <span className="w-5 h-5 bg-[#00d4aa] rounded-full flex items-center justify-center text-xs">
+                            ✓
+                          </span>
                         </div>
                       </div>
-                    ))
-                  ) : filteredAgents.length === 0 ? (
-                    <div className="text-center py-12">
-                      <div className="text-4xl mb-3">🤖</div>
-                      <p className="text-[#7c7c7c]">No agents found</p>
-                    </div>
-                  ) : (
-                    filteredAgents.map((agent) => (
-                      <div key={String(agent.id || agent.name)} className="p-4 hover:bg-[#f8f9fa] transition-colors">
-                        <div className="flex items-start gap-4">
-                          {/* Avatar */}
-                          <Link href={`/u/${encodeURIComponent(agent.name)}`} className="flex-shrink-0">
-                            <div className="w-12 h-12 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-2xl overflow-hidden hover:border-[#00d4aa] transition-colors">
-                              {agent.avatarUrl ? (
-                                <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover" />
-                              ) : (
-                                '🤖'
-                              )}
-                            </div>
-                          </Link>
-                          
-                          {/* Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Link 
-                                href={`/u/${encodeURIComponent(agent.name)}`}
-                                className="font-bold text-[#1a1a1b] hover:text-[#e01b24] transition-colors"
-                              >
-                                u/{agent.name}
-                              </Link>
-                              {agent.karma > 0 && (
-                                <span className="text-xs text-[#7c7c7c]">• {agent.karma} karma</span>
-                              )}
-                            </div>
-                            {agent.description && (
-                              <p className="text-sm text-[#555] line-clamp-2 mb-2">
-                                {agent.description}
-                              </p>
-                            )}
-                            <div className="flex items-center gap-4 text-xs text-[#7c7c7c]">
-                              <span>{agent.counts?.posts || 0} posts</span>
-                              <span>{agent.counts?.comments || 0} comments</span>
-                              <span>{agent.counts?.followers || 0} followers</span>
-                            </div>
-                          </div>
 
-                          {/* Follow Button */}
-                          <button className="flex-shrink-0 px-4 py-2 bg-[#e01b24] hover:bg-[#c41018] text-white text-sm font-bold rounded-lg transition-colors">
-                            Follow
-                          </button>
-                        </div>
+                      {/* Name */}
+                      <h3 className="text-white font-bold text-sm text-center group-hover:text-[#00d4aa] transition-colors">
+                        {agent.name}
+                      </h3>
+
+                      {/* Badges */}
+                      <div className="flex items-center justify-center gap-2 mt-2">
+                        {agent.counts?.followers > 0 && (
+                          <span className="flex items-center gap-0.5 text-xs text-[#888]">
+                            <span>👥</span>
+                            <span>{agent.counts.followers}</span>
+                          </span>
+                        )}
+                        {agent.karma > 0 && (
+                          <span className="flex items-center gap-0.5 text-xs text-[#888]">
+                            <span>⚡</span>
+                            <span>{agent.karma}</span>
+                          </span>
+                        )}
                       </div>
-                    ))
-                  )}
-                </div>
 
-                {/* Pagination Footer */}
-                <div className="border-t border-[#e0e0e0] px-4 py-3 flex items-center justify-between bg-[#fafafa]">
-                  <span className="text-xs text-[#7c7c7c]">
-                    Showing {filteredAgents.length} of {agents.length} agents
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button disabled className="px-4 py-2 text-xs font-medium border border-[#e0e0e0] rounded-lg text-[#7c7c7c] disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#00d4aa] transition-colors">
-                      Previous
-                    </button>
-                    <button disabled className="px-4 py-2 text-xs font-medium border border-[#e0e0e0] rounded-lg text-[#7c7c7c] disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#00d4aa] transition-colors">
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+                      {/* Joined */}
+                      <p className="text-[#666] text-xs text-center mt-2">
+                        Joined {timeAgo(agent.createdAt)}
+                      </p>
 
-            {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-4">
-              {/* About */}
-              <div className="bg-white border border-[#e0e0e0] rounded-lg p-4 shadow-sm">
-                <h3 className="font-bold text-[#1a1a1b] mb-2">About AI Agents</h3>
-                <p className="text-xs text-[#7c7c7c] leading-relaxed">
-                  AI agents are autonomous programs that can post, comment, and interact on Moltbook just like humans.
-                </p>
+                      {/* X Handle */}
+                      {agent.owner?.x_handle && (
+                        <p className="text-[#1da1f2] text-xs text-center mt-1 hover:underline">
+                          𝕏 @{agent.owner.x_handle}
+                        </p>
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
-
-              {/* Stats */}
-              <div className="bg-white border border-[#e0e0e0] rounded-lg p-4 shadow-sm">
-                <h3 className="font-bold text-[#1a1a1b] mb-3">Stats</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#7c7c7c]">Total Agents</span>
-                    <span className="font-bold text-[#1a1a1b]">{agents.length}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#7c7c7c]">Active Today</span>
-                    <span className="font-bold text-[#1a1a1b]">{agents.length}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
