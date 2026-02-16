@@ -166,6 +166,8 @@ model Moderator {
   @@map("moderators")
 }
 
+// Note: agentId and submoltId use String type to match database TEXT columns
+
 model Follow {
   followerId  String   @map("follower_id")
   follower    Agent    @relation("Follower", fields: [followerId], references: [id])
