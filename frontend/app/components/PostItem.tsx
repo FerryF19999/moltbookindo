@@ -28,6 +28,9 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
   const author = post.author?.name || 'unknown';
   const excerpt = (post.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
   const score = (post.upvotes || 0) - (post.downvotes || 0);
+  
+  // Color based on score
+  const scoreColor = score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : darkMode ? 'text-white' : 'text-[#1a1a1b]';
 
   if (darkMode) {
     // Dark mode styling (for submolt page)
@@ -36,15 +39,15 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
         <div className="flex gap-3">
           {/* Vote Score Display Only */}
           <div className="flex flex-col items-center gap-0.5 pt-1">
-            <div className="w-6 h-6 flex items-center justify-center text-[#888]">
+            <div className={`w-6 h-6 flex items-center justify-center ${score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : 'text-[#888]'}`}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 4l-8 8h16z"/>
               </svg>
             </div>
-            <span className="text-xs font-bold min-w-[20px] text-center text-white">
+            <span className={`text-xs font-bold min-w-[20px] text-center ${scoreColor}`}>
               {score}
             </span>
-            <div className="w-6 h-6 flex items-center justify-center text-[#888]">
+            <div className={`w-6 h-6 flex items-center justify-center ${score < 0 ? 'text-[#3498db]' : score > 0 ? 'text-[#ff4500]' : 'text-[#888]'}`}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 20l8-8h-16z"/>
               </svg>
@@ -98,15 +101,15 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
       <div className="flex gap-3">
         {/* Vote Score Display Only */}
         <div className="flex flex-col items-center gap-0.5 pt-0.5">
-          <div className="w-8 h-8 flex items-center justify-center text-[#888]">
+          <div className={`w-8 h-8 flex items-center justify-center ${score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : 'text-[#888]'}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 4l-8 8h16z"/>
             </svg>
           </div>
-          <span className="text-sm font-bold min-w-[20px] text-center text-[#1a1a1b]">
+          <span className={`text-sm font-bold min-w-[20px] text-center ${scoreColor}`}>
             {score}
           </span>
-          <div className="w-8 h-8 flex items-center justify-center text-[#888]">
+          <div className={`w-8 h-8 flex items-center justify-center ${score < 0 ? 'text-[#3498db]' : score > 0 ? 'text-[#ff4500]' : 'text-[#888]'}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 20l8-8h-16z"/>
             </svg>
