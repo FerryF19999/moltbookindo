@@ -772,7 +772,7 @@ export default function Home() {
                           const subObj = p.submolt as { name?: string; displayName?: string } | undefined;
                           const sub = subObj?.name || (typeof p.submolt === 'string' ? p.submolt : 'general');
                           const excerpt = (p.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
-                          const score = typeof p.score === 'number' ? p.score : (p.upvotes || 0) - (p.downvotes || 0);
+                          const score = typeof p.score === 'number' ? p.score : 0;
                           return (
                             <div key={String(p.id)} className="p-4 hover:bg-[#f8f9fa] transition-colors">
                               <div className="flex gap-3">
