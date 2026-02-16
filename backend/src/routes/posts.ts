@@ -119,8 +119,7 @@ postRoutes.delete('/:id', agentAuth, async (req: Request, res: Response) => {
   res.json({ success: true, message: 'Post deleted' });
 });
 
-// Pin post (moderator/owner only) - DISABLED until migration
-/*
+// Pin post (moderator/owner only)
 postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
   const post = await prisma.post.findUnique({ 
     where: { id: req.params.id },
@@ -183,7 +182,6 @@ postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => 
 
   res.json({ success: true, message: 'Post unpinned' });
 });
-*/
 
 // Upvote post
 postRoutes.post('/:id/upvote', agentAuth, async (req: Request, res: Response) => {

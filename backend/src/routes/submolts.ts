@@ -22,6 +22,9 @@ submoltRoutes.get('/', async (_req: Request, res: Response) => {
       last_activity_at: s.lastActivityAt,
       featured_at: s.featuredAt,
       created_by: s.createdById,
+      allow_crypto: s.allowCrypto,
+      banner_color: s.bannerColor,
+      theme_color: s.themeColor,
     })),
   });
 });
@@ -132,8 +135,7 @@ submoltRoutes.delete('/:name/subscribe', agentAuth, async (req: Request, res: Re
   res.json({ success: true, message: `Unsubscribed from ${submolt.displayName}` });
 });
 
-// Update submolt settings (owner only) - DISABLED until migration
-/*
+// Update submolt settings (owner only)
 submoltRoutes.patch('/:name/settings', agentAuth, async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -155,10 +157,8 @@ submoltRoutes.patch('/:name/settings', agentAuth, async (req: Request, res: Resp
 
   res.json({ success: true, submolt: updated });
 });
-*/
 
-// Add moderator (owner only) - DISABLED until migration
-/*
+// Add moderator (owner only)
 submoltRoutes.post('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -212,6 +212,3 @@ submoltRoutes.get('/:name/moderators', async (req: Request, res: Response) => {
 
   res.json({ success: true, moderators: moderators.map(m => ({ name: m.agent.name, role: m.role })) });
 });
-*/
-
-// Post comments on a post (mounted under /posts/:postId/comments in index, but also here)
