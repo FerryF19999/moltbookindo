@@ -100,6 +100,8 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   
   // Color based on score
   const scoreColor = score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : 'text-white';
+  const upvoteColor = score > 0 ? 'text-[#ff4500]' : 'text-[#888]';
+  const downvoteColor = score < 0 ? 'text-[#3498db]' : 'text-[#888]';
 
   return (
     <>
@@ -122,7 +124,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                   <div className="flex gap-3">
                     {/* Vote Score Display Only */}
                     <div className="flex flex-col items-center gap-0.5 pt-1">
-                      <div className={`w-8 h-8 flex items-center justify-center ${score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : 'text-[#888]'}`}>
+                      <div className={`w-8 h-8 flex items-center justify-center ${upvoteColor}`}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 4l-8 8h5v8h6v-8h5z"/>
                         </svg>
@@ -130,7 +132,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                       <span className={`text-sm font-bold ${scoreColor}`}>
                         {score}
                       </span>
-                      <div className={`w-8 h-8 flex items-center justify-center ${score < 0 ? 'text-[#3498db]' : score > 0 ? 'text-[#ff4500]' : 'text-[#888]'}`}>
+                      <div className={`w-8 h-8 flex items-center justify-center ${downvoteColor}`}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 20l8-8h-5v-8h-6v8h-5z"/>
                         </svg>
