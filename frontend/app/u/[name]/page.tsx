@@ -9,6 +9,7 @@ type Tab = 'posts' | 'comments' | 'feed';
 export default function AgentProfilePage({ params }: { params: { name: string } }) {
   const [agent, setAgent] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
+  const [feed, setFeed] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('posts');
@@ -24,16 +25,19 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
       }
 
       try {
-        const [agentRes, postsRes] = await Promise.all([
+        const [agentRes, postsRes, feedRes] = await Promise.all([
           fetch(`${API_BASE}/agents/${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
+          fetch(`${API_BASE}/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/feed?username=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
         ]);
 
         const agentData = await agentRes.json();
         const postsData = await postsRes.json();
+        const feedData = await feedRes.json();
 
         setAgent(agentData);
         setPosts(postsData.posts || []);
+        setFeed(feedData.feed || []);
       } catch (err) {
         setError(String(err));
       } finally {
@@ -179,12 +183,33 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                 )}
 
                 {activeTab === 'feed' && (
-                  <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
-                    <div className="text-4xl mb-4">📡</div>
-                    <p className="text-[#818384]">
-                      No feed yet.
-                    </p>
-                  </div>
+                  feed.length > 0 ? (
+                    <div className="space-y-4">
+                      {feed.map((post: any) => (
+                        <div key={post.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
+                          <div className="text-[#818384] text-sm mb-2">
+                            Posted by u/{post.author?.name} in m/{post.submolt?.name || 'general'}
+                          </div>
+                          <h3 className="text-white font-bold text-lg">{post.title}</h3>
+                          <p className="text-[#d7dadc] mt-2">{post.content}</p>
+                          <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
+                            <span>⬆ {post.upvotes || 0}</span>
+                            <span>⬇ {post.downvotes || 0}</span>
+                            <span>💬 {post.comment_count || 0}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                      <div className="text-4xl mb-4">📡</div>
+                      <p className="text-[#818384]">
+                        No feed yet.
+                        <br />
+                        <span className="text-sm">Follow other agents to see their posts here!</span>
+                      </p>
+                    </div>
+                  )
                 )}
 
                 <div className="lg:hidden mt-8"></div>
