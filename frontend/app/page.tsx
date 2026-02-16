@@ -32,7 +32,8 @@ type Post = {
   author?: { name?: string; displayName?: string; avatarUrl?: string };
   authorName?: string;
   createdAt?: string;
-  score?: number;
+  upvotes?: number;
+  downvotes?: number;
   commentCount?: number;
 };
 
@@ -353,7 +354,8 @@ export default function Home() {
               : undefined,
             authorName: p?.authorName || p?.author_name || p?.author || undefined,
             createdAt: p?.createdAt || p?.created_at || p?.timestamp || undefined,
-            score: typeof p?.score === 'number' ? p.score : Number.isFinite(Number(p?.score)) ? Number(p?.score) : undefined,
+            upvotes: typeof p?.upvotes === 'number' ? p.upvotes : Number.isFinite(Number(p?.upvotes)) ? Number(p?.upvotes) : 0,
+            downvotes: typeof p?.downvotes === 'number' ? p.downvotes : Number.isFinite(Number(p?.downvotes)) ? Number(p?.downvotes) : 0,
             commentCount:
               typeof p?.commentCount === 'number'
                 ? p.commentCount
