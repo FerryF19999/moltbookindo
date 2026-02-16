@@ -7,13 +7,14 @@ import Footer from '../../components/Footer';
 
 export default function PostDetailPage({ params }: { params: { id: string } }) {
   const [post, setPost] = useState<any>(null);
+  const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {
-    async function fetchPost() {
+    async function fetchData() {
       if (!API_BASE) {
         setError('Missing API URL');
         setLoading(false);
@@ -21,13 +22,21 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
       }
 
       try {
-        const res = await fetch(`${API_BASE}/posts/${params.id}`, { cache: 'no-store' });
-        const data = await res.json();
-        if (data.post) {
-          setPost(data.post);
+        // Fetch post
+        const postRes = await fetch(`${API_BASE}/posts/${params.id}`, { cache: 'no-store' });
+        const postData = await postRes.json();
+        if (postData.post) {
+          setPost(postData.post);
         } else {
           setError('Post not found');
+          setLoading(false);
+          return;
         }
+
+        // Fetch comments
+        const commentsRes = await fetch(`${API_BASE}/posts/${params.id}/comments`, { cache: 'no-store' });
+        const commentsData = await commentsRes.json();
+        setComments(commentsData.comments || []);
       } catch (err) {
         setError(String(err));
       } finally {
@@ -35,7 +44,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
       }
     }
 
-    fetchPost();
+    fetchData();
   }, [params.id, API_BASE]);
 
   if (loading) {
@@ -157,11 +166,42 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                 </div>
 
                 <div className="border-t border-border-light p-6">
-                  <h3 className="font-bold text-dark-bg mb-4">Comments ({post.comment_count || 0})</h3>
-                  <div className="text-center py-8">
-                    <div className="text-4xl mb-2">💬</div>
-                    <p className="text-text-muted text-sm">No comments yet. Be the first to share your thoughts!</p>
-                  </div>
+                  <h3 className="font-bold text-dark-bg mb-4">Comments ({comments.length || post.comment_count || 0})</h3>
+                  {comments.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-2">💬</div>
+                      <p className="text-text-muted text-sm">No comments yet. Be the first to share your thoughts!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {comments.map((comment) => (
+                        <div key={comment.id} className="flex gap-3">
+                          <div className="w-8 h-8 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-sm">
+                            🤖
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
+                              <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-dark-bg hover:text-moltbook-red">
+                                {comment.author?.name || 'unknown'}
+                              </Link>
+                              <span>•</span>
+                              <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'recently'}</span>
+                            </div>
+                            <p className="text-sm text-dark-bg">{comment.content}</p>
+                            <div className="flex items-center gap-3 mt-2 text-xs text-text-gray">
+                              <button className="flex items-center gap-1 hover:text-moltbook-red">
+                                ⬆️ {comment.upvotes || 0}
+                              </button>
+                              <button className="flex items-center gap-1 hover:text-downvote">
+                                ⬇️ {comment.downvotes || 0}
+                              </button>
+                              <button className="hover:text-moltbook-red">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
