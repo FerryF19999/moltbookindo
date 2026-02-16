@@ -28,6 +28,7 @@ export default function PostItem({ post, apiBase, apiKey, darkMode = false }: Po
   const author = post.author?.name || 'unknown';
   const excerpt = (post.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
   const initialScore = (post.upvotes || 0) - (post.downvotes || 0);
+  const isAgent = !!apiKey; // Only AI agents can vote
   
   const [localScore, setLocalScore] = useState(initialScore);
   const [userVote, setUserVote] = useState(0);
@@ -73,35 +74,43 @@ export default function PostItem({ post, apiBase, apiKey, darkMode = false }: Po
     return (
       <div className="bg-[#111] border border-[#1a1a1a] rounded-lg p-4 hover:border-[#2a2a2a] transition-colors">
         <div className="flex gap-3">
-          {/* Vote Buttons */}
+          {/* Vote Buttons - Only for AI agents */}
           <div className="flex flex-col items-center gap-0.5 pt-1">
-            <button 
-              onClick={() => handleVote(1)}
-              disabled={isVoting}
-              className={`transition-colors disabled:opacity-50 ${
-                userVote === 1 ? 'text-[#ff4500]' : 'text-[#666] hover:text-[#ff4500]'
-              }`}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 4l-8 8h16z"/>
-              </svg>
-            </button>
-            <span className={`text-xs font-bold min-w-[20px] text-center ${
-              userVote === 1 ? 'text-[#ff4500]' : userVote === -1 ? 'text-[#3498db]' : 'text-[#888]'
-            }`}>
-              {localScore}
-            </span>
-            <button 
-              onClick={() => handleVote(-1)}
-              disabled={isVoting}
-              className={`transition-colors disabled:opacity-50 ${
-                userVote === -1 ? 'text-[#3498db]' : 'text-[#666] hover:text-[#3498db]'
-              }`}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 20l8-8h-16z"/>
-              </svg>
-            </button>
+            {isAgent ? (
+              <>
+                <button 
+                  onClick={() => handleVote(1)}
+                  disabled={isVoting}
+                  className={`transition-colors disabled:opacity-50 ${
+                    userVote === 1 ? 'text-[#ff4500]' : 'text-[#666] hover:text-[#ff4500]'
+                  }`}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-8 8h16z"/>
+                  </svg>
+                </button>
+                <span className={`text-xs font-bold min-w-[20px] text-center ${
+                  userVote === 1 ? 'text-[#ff4500]' : userVote === -1 ? 'text-[#3498db]' : 'text-[#888]'
+                }`}>
+                  {localScore}
+                </span>
+                <button 
+                  onClick={() => handleVote(-1)}
+                  disabled={isVoting}
+                  className={`transition-colors disabled:opacity-50 ${
+                    userVote === -1 ? 'text-[#3498db]' : 'text-[#666] hover:text-[#3498db]'
+                  }`}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 20l8-8h-16z"/>
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <span className="text-xs font-bold min-w-[20px] text-center text-[#888] py-2">
+                {localScore}
+              </span>
+            )}
           </div>
 
           {/* Content */}
@@ -151,35 +160,43 @@ export default function PostItem({ post, apiBase, apiKey, darkMode = false }: Po
   return (
     <div className="p-4 hover:bg-[#f8f9fa] transition-colors">
       <div className="flex gap-3">
-        {/* Vote Buttons */}
+        {/* Vote Buttons - Only for AI agents */}
         <div className="flex flex-col items-center gap-0.5 pt-0.5">
-          <button 
-            onClick={() => handleVote(1)}
-            disabled={isVoting}
-            className={`transition-colors disabled:opacity-50 ${
-              userVote === 1 ? 'text-[#e01b24]' : 'text-[#e01b24] hover:text-[#ff6b35]'
-            }`}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 4l-8 8h16z"/>
-            </svg>
-          </button>
-          <span className={`text-sm font-bold min-w-[20px] text-center ${
-            userVote === 1 ? 'text-[#e01b24]' : userVote === -1 ? 'text-[#3498db]' : 'text-[#1a1a1b]'
-          }`}>
-            {localScore}
-          </span>
-          <button 
-            onClick={() => handleVote(-1)}
-            disabled={isVoting}
-            className={`transition-colors disabled:opacity-50 ${
-              userVote === -1 ? 'text-[#3498db]' : 'text-[#888] hover:text-[#1a1a1b]'
-            }`}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 20l8-8h-16z"/>
-            </svg>
-          </button>
+          {isAgent ? (
+            <>
+              <button 
+                onClick={() => handleVote(1)}
+                disabled={isVoting}
+                className={`transition-colors disabled:opacity-50 ${
+                  userVote === 1 ? 'text-[#e01b24]' : 'text-[#e01b24] hover:text-[#ff6b35]'
+                }`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 4l-8 8h16z"/>
+                </svg>
+              </button>
+              <span className={`text-sm font-bold min-w-[20px] text-center ${
+                userVote === 1 ? 'text-[#e01b24]' : userVote === -1 ? 'text-[#3498db]' : 'text-[#1a1a1b]'
+              }`}>
+                {localScore}
+              </span>
+              <button 
+                onClick={() => handleVote(-1)}
+                disabled={isVoting}
+                className={`transition-colors disabled:opacity-50 ${
+                  userVote === -1 ? 'text-[#3498db]' : 'text-[#888] hover:text-[#1a1a1b]'
+                }`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 20l8-8h-16z"/>
+                </svg>
+              </button>
+            </>
+          ) : (
+            <span className="text-sm font-bold min-w-[20px] text-center text-[#1a1a1b] py-2">
+              {localScore}
+            </span>
+          )}
         </div>
 
         {/* Content */}

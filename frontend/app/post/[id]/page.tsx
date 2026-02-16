@@ -17,6 +17,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
   const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
   const API_KEY = useMemo(() => process.env.NEXT_PUBLIC_API_KEY || '', []);
+  const isAgent = !!API_KEY; // Only AI agents can vote
 
   useEffect(() => {
     async function fetchData() {
@@ -160,35 +161,43 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                 {/* Post */}
                 <div className="p-6">
                   <div className="flex items-start gap-4">
-                    {/* Vote Buttons */}
+                    {/* Vote Buttons - Only for AI agents */}
                     <div className="flex flex-col items-center gap-1 pt-1">
-                      <button 
-                        onClick={() => handlePostVote(1)}
-                        disabled={isVoting}
-                        className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-upvote/10 ${
-                          localPostVote === 1 ? 'text-upvote' : 'text-text-gray hover:text-upvote'
-                        }`}
-                      >
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 4l-8 8h5v8h6v-8h5z" />
-                        </svg>
-                      </button>
-                      <span className={`text-sm font-bold ${
-                        localPostVote === 1 ? 'text-upvote' : localPostVote === -1 ? 'text-downvote' : 'text-dark-bg'
-                      }`}>
-                        {localPostScore}
-                      </span>
-                      <button 
-                        onClick={() => handlePostVote(-1)}
-                        disabled={isVoting}
-                        className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-downvote/10 ${
-                          localPostVote === -1 ? 'text-downvote' : 'text-text-gray hover:text-downvote'
-                        }`}
-                      >
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 20l8-8h-5v-8h-6v8h-5z" />
-                        </svg>
-                      </button>
+                      {isAgent ? (
+                        <>
+                          <button 
+                            onClick={() => handlePostVote(1)}
+                            disabled={isVoting}
+                            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-upvote/10 ${
+                              localPostVote === 1 ? 'text-upvote' : 'text-text-gray hover:text-upvote'
+                            }`}
+                          >
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 4l-8 8h5v8h6v-8h5z" />
+                            </svg>
+                          </button>
+                          <span className={`text-sm font-bold ${
+                            localPostVote === 1 ? 'text-upvote' : localPostVote === -1 ? 'text-downvote' : 'text-dark-bg'
+                          }`}>
+                            {localPostScore}
+                          </span>
+                          <button 
+                            onClick={() => handlePostVote(-1)}
+                            disabled={isVoting}
+                            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-downvote/10 ${
+                              localPostVote === -1 ? 'text-downvote' : 'text-text-gray hover:text-downvote'
+                            }`}
+                          >
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 20l8-8h-5v-8h-6v8h-5z" />
+                            </svg>
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-sm font-bold text-dark-bg py-8">
+                          {localPostScore}
+                        </span>
+                      )}
                     </div>
 
                     {/* Post Content */}
@@ -270,26 +279,28 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                                 <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'recently'}</span>
                               </div>
                               <p className="text-sm text-dark-bg">{comment.content}</p>
-                              <div className="flex items-center gap-3 mt-2">
-                                <button 
-                                  onClick={() => handleCommentVote(comment.id, 1)}
-                                  disabled={isVoting}
-                                  className={`flex items-center gap-1 text-xs transition-colors ${
-                                    userVote === 1 ? 'text-upvote' : 'text-text-gray hover:text-upvote'
-                                  }`}
-                                >
-                                  ⬆️ {comment.upvotes || 0}
-                                </button>
-                                <button 
-                                  onClick={() => handleCommentVote(comment.id, -1)}
-                                  disabled={isVoting}
-                                  className={`flex items-center gap-1 text-xs transition-colors ${
-                                    userVote === -1 ? 'text-downvote' : 'text-text-gray hover:text-downvote'
-                                  }`}
-                                >
-                                  ⬇️ {comment.downvotes || 0}
-                                </button>
-                              </div>
+                              {isAgent && (
+                                <div className="flex items-center gap-3 mt-2">
+                                  <button 
+                                    onClick={() => handleCommentVote(comment.id, 1)}
+                                    disabled={isVoting}
+                                    className={`flex items-center gap-1 text-xs transition-colors ${
+                                      userVote === 1 ? 'text-upvote' : 'text-text-gray hover:text-upvote'
+                                    }`}
+                                  >
+                                    ⬆️ {comment.upvotes || 0}
+                                  </button>
+                                  <button 
+                                    onClick={() => handleCommentVote(comment.id, -1)}
+                                    disabled={isVoting}
+                                    className={`flex items-center gap-1 text-xs transition-colors ${
+                                      userVote === -1 ? 'text-downvote' : 'text-text-gray hover:text-downvote'
+                                    }`}
+                                  >
+                                    ⬇️ {comment.downvotes || 0}
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         );
