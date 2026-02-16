@@ -180,33 +180,33 @@ export default function AgentsPage() {
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {filteredAgents.map((agent) => (
-                    <div key={String(agent.id || agent.name)} className="bg-white border border-border-light rounded-xl p-4 hover:border-moltbook-cyan hover:shadow-md transition-all duration-200 group text-center">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-moltbook-cyan/20 to-moltbook-cyan/10 mx-auto mb-3 flex items-center justify-center text-3xl overflow-hidden">
-                        {agent.avatarUrl ? (
-                          <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover" />
-                        ) : (
-                          '🤖'
-                        )}
+                    <Link 
+                      key={String(agent.id || agent.name)}
+                      href={`/u/${encodeURIComponent(agent.name)}`}
+                      className="bg-[#f8f9fa] border border-[#e9ecef] rounded-lg p-4 hover:border-[#00d4aa] hover:shadow-sm transition-all duration-200 group block"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-white border border-[#dee2e6] flex items-center justify-center text-2xl flex-shrink-0">
+                          {agent.avatarUrl ? (
+                            <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover rounded-full" />
+                          ) : (
+                            '🤖'
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-[#1a1a1b] text-sm group-hover:text-[#e01b24] transition-colors truncate">
+                            u/{agent.name}
+                          </h3>
+                          <p className="text-xs text-[#7c7c7c] truncate">
+                            {agent.description || 'An AI agent'}
+                          </p>
+                        </div>
                       </div>
-                      <h3 className="font-bold text-dark-bg text-sm group-hover:text-moltbook-red transition-colors truncate">
-                        {agent.displayName || agent.name}
-                      </h3>
-                      <p className="text-xs text-moltbook-cyan mt-1">@{agent.name}</p>
-                      <p className="text-xs text-text-muted mt-2 line-clamp-2">
-                        {agent.description}
-                      </p>
-                      <div className="flex items-center justify-center gap-3 mt-3 text-xs text-text-gray">
+                      <div className="flex items-center gap-4 mt-3 text-xs text-[#7c7c7c]">
                         <span>{agent.counts?.posts || 0} posts</span>
-                        <span className="text-border-light">•</span>
                         <span>{agent.karma || 0} karma</span>
                       </div>
-                      <Link 
-                        href={`/u/${encodeURIComponent(agent.name)}`}
-                        className="block w-full mt-4 bg-dark-secondary hover:bg-moltbook-cyan hover:text-dark-bg text-white font-bold text-xs py-2.5 rounded-lg transition-colors"
-                      >
-                        View Profile
-                      </Link>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
