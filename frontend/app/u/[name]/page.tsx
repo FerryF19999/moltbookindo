@@ -1,37 +1,49 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { getAgent, getAgentPosts } from '@/lib/api';
 
-export const dynamic = 'force-dynamic';
+type Tab = 'posts' | 'comments' | 'feed';
 
-async function getData(name: string) {
+export default function AgentProfilePage({ params }: { params: { name: string } }) {
+  const [agent, setAgent] = useState<any>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('posts');
+
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
-  
-  if (!API_BASE) {
-    return { agent: null, posts: [], error: 'Missing API URL' };
-  }
 
-  try {
-    const agentRes = await fetch(`${API_BASE}/agents/${encodeURIComponent(name)}`, { 
-      cache: 'no-store' 
-    });
-    const agent = await agentRes.json();
-    
-    const postsRes = await fetch(`${API_BASE}/posts?author=${encodeURIComponent(name)}`, { 
-      cache: 'no-store' 
-    });
-    const postsData = await postsRes.json();
-    const posts = postsData.posts || [];
-    
-    return { agent, posts, error: null };
-  } catch (error) {
-    return { agent: null, posts: [], error: String(error) };
-  }
-}
+  useEffect(() => {
+    async function fetchData() {
+      if (!API_BASE) {
+        setError('Missing API URL');
+        setLoading(false);
+        return;
+      }
 
-export default async function AgentProfilePage({ params }: { params: { name: string } }) {
-  const { agent, posts, error } = await getData(params.name);
-  
+      try {
+        const [agentRes, postsRes] = await Promise.all([
+          fetch(`${API_BASE}/agents/${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
+        ]);
+
+        const agentData = await agentRes.json();
+        const postsData = await postsRes.json();
+
+        setAgent(agentData);
+        setPosts(postsData.posts || []);
+      } catch (err) {
+        setError(String(err));
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [params.name, API_BASE]);
+
   const display = params.name.toUpperCase();
   const karma = agent?.karma ?? 0;
   const followers = agent?.counts?.followers ?? 0;
@@ -39,6 +51,18 @@ export default async function AgentProfilePage({ params }: { params: { name: str
   const postCount = agent?.counts?.posts ?? posts.length;
   const description = agent?.description || 'AI agent on Moltbook';
   const createdAt = agent?.created_at ? new Date(agent.created_at).toLocaleDateString() : 'Unknown';
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="flex-1 min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -89,41 +113,76 @@ export default async function AgentProfilePage({ params }: { params: { name: str
             <div className="flex gap-6">
               <div className="flex-1 min-w-0">
                 <div className="flex gap-1 mb-6 bg-[#1a1a1b] border border-[#343536] rounded-lg p-1 w-fit">
-                  <button className="px-4 py-2 rounded-md text-sm font-medium transition-all bg-[#ff4500] text-white">
+                  <button 
+                    onClick={() => setActiveTab('posts')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      activeTab === 'posts' ? 'bg-[#ff4500] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                    }`}
+                  >
                     📝 Posts ({postCount})
                   </button>
-                  <button className="px-4 py-2 rounded-md text-sm font-medium transition-all text-[#818384] hover:text-white hover:bg-[#343536]">
+                  <button 
+                    onClick={() => setActiveTab('comments')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      activeTab === 'comments' ? 'bg-[#ff4500] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                    }`}
+                  >
                     💬 Comments (0)
                   </button>
-                  <button className="px-4 py-2 rounded-md text-sm font-medium transition-all text-[#818384] hover:text-white hover:bg-[#343536]">
+                  <button 
+                    onClick={() => setActiveTab('feed')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      activeTab === 'feed' ? 'bg-[#ff4500] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                    }`}
+                  >
                     📡 Feed
                   </button>
                 </div>
 
-                {posts.length > 0 ? (
-                  <div className="space-y-4">
-                    {posts.map((post: any) => (
-                      <div key={post.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
-                        <div className="text-[#818384] text-sm mb-2">
-                          Posted in m/{post.submolt?.name || 'general'}
+                {activeTab === 'posts' && (
+                  posts.length > 0 ? (
+                    <div className="space-y-4">
+                      {posts.map((post: any) => (
+                        <div key={post.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
+                          <div className="text-[#818384] text-sm mb-2">
+                            Posted in m/{post.submolt?.name || 'general'}
+                          </div>
+                          <h3 className="text-white font-bold text-lg">{post.title}</h3>
+                          <p className="text-[#d7dadc] mt-2">{post.content}</p>
+                          <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
+                            <span>⬆ {post.upvotes || 0}</span>
+                            <span>⬇ {post.downvotes || 0}</span>
+                            <span>💬 {post.comment_count || 0}</span>
+                          </div>
                         </div>
-                        <h3 className="text-white font-bold text-lg">{post.title}</h3>
-                        <p className="text-[#d7dadc] mt-2">{post.content}</p>
-                        <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
-                          <span>⬆ {post.upvotes || 0}</span>
-                          <span>⬇ {post.downvotes || 0}</span>
-                          <span>💬 {post.comment_count || 0}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                      <div className="text-4xl mb-4">🌊</div>
+                      <p className="text-[#818384]">
+                        {display} hasn&apos;t posted anything yet.
+                        <br />
+                        <span className="text-sm">Check back soon!</span>
+                      </p>
+                    </div>
+                  )
+                )}
+
+                {activeTab === 'comments' && (
                   <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
-                    <div className="text-4xl mb-4">🌊</div>
+                    <div className="text-4xl mb-4">💬</div>
                     <p className="text-[#818384]">
-                      {display} hasn&apos;t posted anything yet.
-                      <br />
-                      <span className="text-sm">Check back soon!</span>
+                      No comments yet.
+                    </p>
+                  </div>
+                )}
+
+                {activeTab === 'feed' && (
+                  <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                    <div className="text-4xl mb-4">📡</div>
+                    <p className="text-[#818384]">
+                      No feed yet.
                     </p>
                   </div>
                 )}
