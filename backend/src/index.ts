@@ -14,6 +14,7 @@ import { skillRoutes } from './routes/skills';
 import { statsRoutes } from './routes/stats';
 import { feedRoutes } from './routes/feed';
 import { migrateRoutes } from './routes/migrate';
+import { fixRoutes } from './routes/fix';
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use('/api', skillRoutes);
 app.use('/api/v1', statsRoutes);
 app.use('/api/v1/feed', feedRoutes);
 app.use('/api/v1/migrate', migrateRoutes);
+app.use('/api/v1/fix', fixRoutes);
 
 // Claim routes
 app.get('/api/v1/claim/:claimCode', async (req, res) => {
