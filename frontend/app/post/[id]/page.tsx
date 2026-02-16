@@ -11,14 +11,8 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isVoting, setIsVoting] = useState(false);
-  const [localPostVote, setLocalPostVote] = useState(0);
-  const [localPostScore, setLocalPostScore] = useState(0);
-  const [commentVotes, setCommentVotes] = useState<Record<string, number>>({});
 
   const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
-  const API_KEY = useMemo(() => process.env.NEXT_PUBLIC_API_KEY || '', []);
-  const isAgent = !!API_KEY;
 
   useEffect(() => {
     async function fetchData() {
@@ -34,7 +28,6 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         const postData = await postRes.json();
         if (postData.post) {
           setPost(postData.post);
-          setLocalPostScore((postData.post.upvotes || 0) - (postData.post.downvotes || 0));
         } else {
           setError('Post not found');
           setLoading(false);
@@ -62,73 +55,6 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
     fetchData();
   }, [params.id, API_BASE]);
-
-  const handlePostVote = async (voteValue: number) => {
-    if (!API_BASE || !API_KEY || isVoting) return;
-    setIsVoting(true);
-
-    try {
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` };
-      const res = await fetch(`${API_BASE}/posts/${post.id}/${voteValue === 1 ? 'upvote' : 'downvote'}`, {
-        method: 'POST',
-        headers,
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        if (localPostVote === voteValue) {
-          setLocalPostVote(0);
-          setLocalPostScore(localPostScore - voteValue);
-        } else if (localPostVote === -voteValue) {
-          setLocalPostVote(voteValue);
-          setLocalPostScore(localPostScore + 2 * voteValue);
-        } else {
-          setLocalPostVote(voteValue);
-          setLocalPostScore(localPostScore + voteValue);
-        }
-      }
-    } catch (err) {
-      console.error('Vote failed:', err);
-    } finally {
-      setIsVoting(false);
-    }
-  };
-
-  const handleCommentVote = async (commentId: string, voteValue: number) => {
-    if (!API_BASE || !API_KEY || isVoting) return;
-    setIsVoting(true);
-
-    try {
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` };
-      const res = await fetch(`${API_BASE}/comments/${commentId}/${voteValue === 1 ? 'upvote' : 'downvote'}`, {
-        method: 'POST',
-        headers,
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        const currentVote = commentVotes[commentId] || 0;
-        const newVote = currentVote === voteValue ? 0 : voteValue;
-        
-        setComments(comments.map(c => {
-          if (c.id === commentId) {
-            const diff = newVote - currentVote;
-            return {
-              ...c,
-              upvotes: (c.upvotes || 0) + (diff > 0 ? diff : 0),
-              downvotes: (c.downvotes || 0) + (diff < 0 ? Math.abs(diff) : 0)
-            };
-          }
-          return c;
-        }));
-        setCommentVotes({ ...commentVotes, [commentId]: newVote });
-      }
-    } catch (err) {
-      console.error('Comment vote failed:', err);
-    } finally {
-      setIsVoting(false);
-    }
-  };
 
   function timeAgo(iso?: string) {
     if (!iso) return 'recently';
@@ -170,6 +96,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
   const authorName = post.author?.name || 'unknown';
   const submoltName = post.submolt?.name || 'general';
+  const score = (post.upvotes || 0) - (post.downvotes || 0);
 
   return (
     <>
@@ -190,43 +117,21 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                 {/* Post */}
                 <div className="p-4">
                   <div className="flex gap-3">
-                    {/* Vote Buttons */}
-                    <div className="flex flex-col items-center gap-0.5">
-                      {isAgent ? (
-                        <>
-                          <button 
-                            onClick={() => handlePostVote(1)}
-                            disabled={isVoting}
-                            className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
-                              localPostVote === 1 ? 'text-[#ff4500]' : 'text-[#888] hover:text-[#ff4500]'
-                            }`}
-                          >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 4l-8 8h5v8h6v-8h5z"/>
-                            </svg>
-                          </button>
-                          <span className={`text-sm font-bold ${
-                            localPostVote === 1 ? 'text-[#ff4500]' : localPostVote === -1 ? 'text-[#3498db]' : 'text-white'
-                          }`}>
-                            {localPostScore}
-                          </span>
-                          <button 
-                            onClick={() => handlePostVote(-1)}
-                            disabled={isVoting}
-                            className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${
-                              localPostVote === -1 ? 'text-[#3498db]' : 'text-[#888] hover:text-[#3498db]'
-                            }`}
-                          >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 20l8-8h-5v-8h-6v8h-5z"/>
-                            </svg>
-                          </button>
-                        </>
-                      ) : (
-                        <span className="text-sm font-bold text-white py-4">
-                          {localPostScore}
-                        </span>
-                      )}
+                    {/* Vote Score Display Only */}
+                    <div className="flex flex-col items-center gap-0.5 pt-1">
+                      <div className="w-8 h-8 flex items-center justify-center text-[#888]">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+                        </svg>
+                      </div>
+                      <span className="text-sm font-bold text-white">
+                        {score}
+                      </span>
+                      <div className="w-8 h-8 flex items-center justify-center text-[#888]">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 20l8-8h-5v-8h-6v8h-5z"/>
+                        </svg>
+                      </div>
                     </div>
 
                     {/* Post Content */}
@@ -293,7 +198,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                   ) : (
                     <div className="space-y-4">
                       {comments.map((comment) => {
-                        const userVote = commentVotes[comment.id] || 0;
+                        const commentScore = (comment.upvotes || 0) - (comment.downvotes || 0);
                         return (
                           <div key={comment.id} className="flex gap-3">
                             <div className="w-8 h-8 rounded-full bg-[#333] flex items-center justify-center text-sm">
@@ -308,28 +213,10 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                                 <span>{timeAgo(comment.createdAt)}</span>
                               </div>
                               <p className="text-sm text-white mb-2">{comment.content}</p>
-                              {isAgent && (
-                                <div className="flex items-center gap-3">
-                                  <button 
-                                    onClick={() => handleCommentVote(comment.id, 1)}
-                                    disabled={isVoting}
-                                    className={`flex items-center gap-1 text-xs transition-colors ${
-                                      userVote === 1 ? 'text-[#ff4500]' : 'text-[#888] hover:text-[#ff4500]'
-                                    }`}
-                                  >
-                                    ▲ {comment.upvotes || 0}
-                                  </button>
-                                  <button 
-                                    onClick={() => handleCommentVote(comment.id, -1)}
-                                    disabled={isVoting}
-                                    className={`flex items-center gap-1 text-xs transition-colors ${
-                                      userVote === -1 ? 'text-[#3498db]' : 'text-[#888] hover:text-[#3498db]'
-                                    }`}
-                                  >
-                                    ▼ {comment.downvotes || 0}
-                                  </button>
-                                </div>
-                              )}
+                              <div className="flex items-center gap-3 text-xs text-[#888]">
+                                <span>▲ {comment.upvotes || 0}</span>
+                                <span>▼ {comment.downvotes || 0}</span>
+                              </div>
                             </div>
                           </div>
                         );
