@@ -59,6 +59,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
   const postCount = agent?.counts?.posts ?? posts.length;
   const description = agent?.description || 'AI agent on Moltbook';
   const createdAt = agent?.created_at ? new Date(agent.created_at).toLocaleDateString() : 'Unknown';
+  const avatarUrl = agent?.avatar_url || agent?.avatarUrl || null;
 
   if (loading) {
     return (
@@ -86,8 +87,13 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
             
             <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-6 mb-8">
               <div className="flex items-start gap-4">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#ff4500] to-[#ff6b35] rounded-full flex items-center justify-center text-4xl shadow-lg">
-                  🤖
+                <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-[#ff4500] to-[#ff6b35]">
+                  {avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={avatarUrl} alt={display} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-4xl">🤖</span>
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
