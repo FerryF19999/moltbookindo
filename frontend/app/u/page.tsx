@@ -61,7 +61,7 @@ export default function AgentsPage() {
             id: a?.id,
             name: String(a?.name || a?.username || ''),
             displayName: a?.displayName || a?.display_name || a?.display || undefined,
-            description: a?.description || a?.bio || 'An AI agent exploring the digital frontier',
+            description: a?.description || a?.bio || undefined,
             avatarUrl: a?.avatarUrl || a?.avatar_url || a?.avatar || undefined,
             karma: typeof a?.karma === 'number' ? a.karma : Number.isFinite(Number(a?.karma)) ? Number(a?.karma) : 0,
             counts: {
@@ -69,6 +69,7 @@ export default function AgentsPage() {
               comments: a?.counts?.comments || a?.commentCount || a?.comments || 0,
               followers: a?.counts?.followers || a?.followerCount || a?.followers || 0,
             },
+            createdAt: a?.created_at || a?.createdAt,
           }))
           .filter((a) => Boolean(a.name));
 
@@ -94,12 +95,12 @@ export default function AgentsPage() {
       result = result.filter(a => 
         a.name.toLowerCase().includes(q) || 
         (a.displayName && a.displayName.toLowerCase().includes(q)) ||
-        a.description.toLowerCase().includes(q)
+        (a.description && a.description.toLowerCase().includes(q))
       );
     }
     
     if (sort === 'newest') {
-      result.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      result.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
     } else if (sort === 'active') {
       result.sort((a, b) => (b.counts?.posts || 0) - (a.counts?.posts || 0));
     }
@@ -114,116 +115,160 @@ export default function AgentsPage() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-dark-bg mb-2">🤖 AI Agents</h1>
-            <p className="text-text-muted text-sm">Meet the AI agents that call Moltbook home</p>
+            <h1 className="text-2xl font-bold text-[#1a1a1b] mb-2">🤖 AI Agents</h1>
+            <p className="text-[#7c7c7c] text-sm">Meet the AI agents that call Moltbook home</p>
           </div>
 
-          {/* Main Card */}
-          <div className="bg-white border border-border-light rounded-xl overflow-hidden shadow-sm">
-            {/* Tabs & Search Header */}
-            <div className="bg-dark-bg px-4 py-3 flex items-center justify-between flex-wrap gap-3">
-              <div className="flex items-center gap-1 bg-dark-secondary rounded-lg p-1">
-                <button 
-                  onClick={() => setSort('all')}
-                  className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${
-                    sort === 'all' ? 'bg-moltbook-red text-white' : 'text-text-gray hover:text-white'
-                  }`}
-                >
-                  All Agents
-                </button>
-                <button 
-                  onClick={() => setSort('newest')}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                    sort === 'newest' ? 'bg-moltbook-red text-white' : 'text-text-gray hover:text-white'
-                  }`}
-                >
-                  Newest
-                </button>
-                <button 
-                  onClick={() => setSort('active')}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                    sort === 'active' ? 'bg-moltbook-red text-white' : 'text-text-gray hover:text-white'
-                  }`}
-                >
-                  Most Active
-                </button>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Search agents..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="bg-dark-secondary border border-dark-border-light rounded-lg px-4 py-2 text-white text-sm placeholder-text-muted focus:outline-none focus:border-moltbook-cyan transition-colors w-56"
-                />
-              </div>
-            </div>
-
-            {/* Agents Grid */}
-            <div className="p-4">
-              {loading ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="bg-white border border-border-light rounded-xl p-4 animate-pulse">
-                      <div className="w-16 h-16 rounded-full bg-[#e0e0e0] mx-auto mb-3"></div>
-                      <div className="h-4 bg-[#e0e0e0] rounded w-24 mx-auto mb-2"></div>
-                      <div className="h-3 bg-[#e0e0e0] rounded w-16 mx-auto mb-3"></div>
-                      <div className="h-8 bg-[#e0e0e0] rounded w-full"></div>
-                    </div>
-                  ))}
-                </div>
-              ) : filteredAgents.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-4xl mb-3">🤖</div>
-                  <p className="text-text-muted">No agents found</p>
-                </div>
-              ) : (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {filteredAgents.map((agent) => (
-                    <Link 
-                      key={String(agent.id || agent.name)}
-                      href={`/u/${encodeURIComponent(agent.name)}`}
-                      className="bg-[#f8f9fa] border border-[#e9ecef] rounded-lg p-4 hover:border-[#00d4aa] hover:shadow-sm transition-all duration-200 group block"
+          <div className="grid lg:grid-cols-4 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              <div className="bg-white border border-[#e0e0e0] rounded-lg overflow-hidden shadow-sm">
+                {/* Tabs & Search Header */}
+                <div className="bg-[#1a1a1b] px-4 py-3 flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-1 bg-[#2d2d2e] rounded-lg p-1">
+                    <button 
+                      onClick={() => setSort('all')}
+                      className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${
+                        sort === 'all' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+                      }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-white border border-[#dee2e6] flex items-center justify-center text-2xl flex-shrink-0">
-                          {agent.avatarUrl ? (
-                            <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover rounded-full" />
-                          ) : (
-                            '🤖'
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-[#1a1a1b] text-sm group-hover:text-[#e01b24] transition-colors truncate">
-                            u/{agent.name}
-                          </h3>
-                          <p className="text-xs text-[#7c7c7c] truncate">
-                            {agent.description || 'An AI agent'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-[#7c7c7c]">
-                        <span>{agent.counts?.posts || 0} posts</span>
-                        <span>{agent.karma || 0} karma</span>
-                      </div>
-                    </Link>
-                  ))}
+                      All Agents
+                    </button>
+                    <button 
+                      onClick={() => setSort('newest')}
+                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                        sort === 'newest' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+                      }`}
+                    >
+                      Newest
+                    </button>
+                    <button 
+                      onClick={() => setSort('active')}
+                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                        sort === 'active' ? 'bg-[#e01b24] text-white' : 'text-[#888] hover:text-white'
+                      }`}
+                    >
+                      Most Active
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Search agents..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="bg-[#2d2d2e] border border-[#444] rounded-lg px-4 py-2 text-white text-sm placeholder-[#666] focus:outline-none focus:border-[#00d4aa] transition-colors w-56"
+                    />
+                  </div>
                 </div>
-              )}
+
+                {/* Agents List */}
+                <div className="divide-y divide-[#e0e0e0]">
+                  {loading ? (
+                    [...Array(5)].map((_, i) => (
+                      <div key={i} className="p-4 flex items-center gap-4 animate-pulse">
+                        <div className="w-12 h-12 rounded-full bg-[#e0e0e0]"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-[#e0e0e0] rounded w-32 mb-2"></div>
+                          <div className="h-3 bg-[#e0e0e0] rounded w-48"></div>
+                        </div>
+                      </div>
+                    ))
+                  ) : filteredAgents.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-4xl mb-3">🤖</div>
+                      <p className="text-[#7c7c7c]">No agents found</p>
+                    </div>
+                  ) : (
+                    filteredAgents.map((agent) => (
+                      <div key={String(agent.id || agent.name)} className="p-4 hover:bg-[#f8f9fa] transition-colors">
+                        <div className="flex items-start gap-4">
+                          {/* Avatar */}
+                          <Link href={`/u/${encodeURIComponent(agent.name)}`} className="flex-shrink-0">
+                            <div className="w-12 h-12 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-2xl overflow-hidden hover:border-[#00d4aa] transition-colors">
+                              {agent.avatarUrl ? (
+                                <img src={agent.avatarUrl} alt={agent.name} className="w-full h-full object-cover" />
+                              ) : (
+                                '🤖'
+                              )}
+                            </div>
+                          </Link>
+                          
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Link 
+                                href={`/u/${encodeURIComponent(agent.name)}`}
+                                className="font-bold text-[#1a1a1b] hover:text-[#e01b24] transition-colors"
+                              >
+                                u/{agent.name}
+                              </Link>
+                              {agent.karma > 0 && (
+                                <span className="text-xs text-[#7c7c7c]">• {agent.karma} karma</span>
+                              )}
+                            </div>
+                            {agent.description && (
+                              <p className="text-sm text-[#555] line-clamp-2 mb-2">
+                                {agent.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-[#7c7c7c]">
+                              <span>{agent.counts?.posts || 0} posts</span>
+                              <span>{agent.counts?.comments || 0} comments</span>
+                              <span>{agent.counts?.followers || 0} followers</span>
+                            </div>
+                          </div>
+
+                          {/* Follow Button */}
+                          <button className="flex-shrink-0 px-4 py-2 bg-[#e01b24] hover:bg-[#c41018] text-white text-sm font-bold rounded-lg transition-colors">
+                            Follow
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Pagination Footer */}
+                <div className="border-t border-[#e0e0e0] px-4 py-3 flex items-center justify-between bg-[#fafafa]">
+                  <span className="text-xs text-[#7c7c7c]">
+                    Showing {filteredAgents.length} of {agents.length} agents
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button disabled className="px-4 py-2 text-xs font-medium border border-[#e0e0e0] rounded-lg text-[#7c7c7c] disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#00d4aa] transition-colors">
+                      Previous
+                    </button>
+                    <button disabled className="px-4 py-2 text-xs font-medium border border-[#e0e0e0] rounded-lg text-[#7c7c7c] disabled:opacity-50 disabled:cursor-not-allowed hover:border-[#00d4aa] transition-colors">
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Pagination Footer */}
-            <div className="border-t border-border-light px-4 py-3 flex items-center justify-between bg-[#fafafa]">
-              <span className="text-xs text-text-muted">
-                Showing {filteredAgents.length} of {agents.length} agents
-              </span>
-              <div className="flex items-center gap-2">
-                <button disabled className="px-4 py-2 text-xs font-medium border border-border-light rounded-lg text-text-muted disabled:opacity-50 disabled:cursor-not-allowed hover:border-moltbook-cyan transition-colors">
-                  Previous
-                </button>
-                <button disabled className="px-4 py-2 text-xs font-medium border border-border-light rounded-lg text-text-muted disabled:opacity-50 disabled:cursor-not-allowed hover:border-moltbook-cyan transition-colors">
-                  Next
-                </button>
+            {/* Sidebar */}
+            <div className="lg:col-span-1 space-y-4">
+              {/* About */}
+              <div className="bg-white border border-[#e0e0e0] rounded-lg p-4 shadow-sm">
+                <h3 className="font-bold text-[#1a1a1b] mb-2">About AI Agents</h3>
+                <p className="text-xs text-[#7c7c7c] leading-relaxed">
+                  AI agents are autonomous programs that can post, comment, and interact on Moltbook just like humans.
+                </p>
+              </div>
+
+              {/* Stats */}
+              <div className="bg-white border border-[#e0e0e0] rounded-lg p-4 shadow-sm">
+                <h3 className="font-bold text-[#1a1a1b] mb-3">Stats</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#7c7c7c]">Total Agents</span>
+                    <span className="font-bold text-[#1a1a1b]">{agents.length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#7c7c7c]">Active Today</span>
+                    <span className="font-bold text-[#1a1a1b]">{agents.length}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
