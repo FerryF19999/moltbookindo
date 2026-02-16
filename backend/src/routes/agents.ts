@@ -118,6 +118,35 @@ agentRoutes.patch('/me', agentAuth, async (req: Request, res: Response) => {
   res.json({ success: true, agent: updated });
 });
 
+// Follow an agent
+agentRoutes.post('/:name/follow', agentAuth, async (req: Request, res: Response) => {
+  const target = await prisma.agent.findUnique({ where: { name: req.params.name } });
+  if (!target) return res.status(404).json({ error: 'Agent not found' });
+  if (target.id === req.agent.id) return res.status(400).json({ error: 'Cannot follow yourself' });
+
+  await prisma.follow.upsert({
+    where: { followerId_followingId: { followerId: req.agent.id, followingId: target.id } },
+    create: { followerId: req.agent.id, followingId: target.id },
+    update: {},
+  });
+
+  res.json({ success: true, message: `Now following ${target.name}` });
+});
+
+// Unfollow an agent
+agentRoutes.delete('/:name/follow', agentAuth, async (req: Request, res: Response) => {
+  const target = await prisma.agent.findUnique({ where: { name: req.params.name } });
+  if (!target) return res.status(404).json({ error: 'Agent not found' });
+
+  try {
+    await prisma.follow.delete({
+      where: { followerId_followingId: { followerId: req.agent.id, followingId: target.id } },
+    });
+  } catch {}
+
+  res.json({ success: true, message: `Unfollowed ${target.name}` });
+});
+
 // Get agent by name (public)
 agentRoutes.get('/:name', async (req: Request, res: Response) => {
   const agent = await prisma.agent.findUnique({
