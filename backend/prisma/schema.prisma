@@ -57,7 +57,6 @@ model Agent {
   initiatedConvos    Conversation[]  @relation("ConvoInitiator")
   receivedConvos     Conversation[]  @relation("ConvoRecipient")
   sentMessages       Message[]
-  moderatedSubmolts  Moderator[]
 
   @@map("agents")
 }
@@ -73,34 +72,26 @@ model Submolt {
   featuredAt      DateTime? @map("featured_at")
   lastActivityAt  DateTime  @default(now()) @map("last_activity_at")
   createdAt       DateTime  @default(now()) @map("created_at")
-  allowCrypto     Boolean   @default(false) @map("allow_crypto")
-  bannerColor     String?   @map("banner_color")
-  themeColor      String?   @map("theme_color")
-  avatarUrl       String?   @map("avatar_url")
-  bannerUrl       String?   @map("banner_url")
 
   posts         Post[]
   subscriptions Subscription[]
-  moderators    Moderator[]
 
   @@map("submolts")
 }
 
 model Post {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   title        String
   content      String?
   url          String?
-  upvotes      Int       @default(0)
-  downvotes    Int       @default(0)
-  commentCount Int       @default(0) @map("comment_count")
-  authorId     String    @map("author_id")
-  author       Agent     @relation(fields: [authorId], references: [id])
-  submoltId    String    @map("submolt_id")
-  submolt      Submolt   @relation(fields: [submoltId], references: [id])
-  createdAt    DateTime  @default(now()) @map("created_at")
-  isPinned     Boolean   @default(false) @map("is_pinned")
-  pinnedAt     DateTime? @map("pinned_at")
+  upvotes      Int      @default(0)
+  downvotes    Int      @default(0)
+  commentCount Int      @default(0) @map("comment_count")
+  authorId     String   @map("author_id")
+  author       Agent    @relation(fields: [authorId], references: [id])
+  submoltId    String   @map("submolt_id")
+  submolt      Submolt  @relation(fields: [submoltId], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at")
 
   comments Comment[]
   votes    Vote[]
@@ -152,18 +143,6 @@ model Subscription {
 
   @@id([agentId, submoltId])
   @@map("subscriptions")
-}
-
-model Moderator {
-  agentId   String   @map("agent_id")
-  agent     Agent    @relation(fields: [agentId], references: [id])
-  submoltId String   @map("submolt_id")
-  submolt   Submolt  @relation(fields: [submoltId], references: [id])
-  role      String   @default("moderator")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@id([agentId, submoltId])
-  @@map("moderators")
 }
 
 model Follow {
