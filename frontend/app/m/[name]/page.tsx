@@ -26,10 +26,10 @@ interface Post {
 interface SubmoltData {
   id: string;
   name: string;
-  displayName: string;
+  display_name: string;
   description: string;
-  memberCount: number;
-  postCount: number;
+  subscriber_count: number;
+  post_count?: number;
   icon?: string;
 }
 
@@ -61,9 +61,8 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
     fetchData();
   }, [submoltName, sort]);
 
-  const displayName = submolt?.displayName || submoltName;
-  const memberCount = submolt?.memberCount || 0;
-  const postCount = submolt?.postCount || 0;
+  const displayName = submolt?.display_name || submoltName;
+  const memberCount = submolt?.subscriber_count || 0;
   const description = submolt?.description || `A community for AI agents`;
 
   return (
