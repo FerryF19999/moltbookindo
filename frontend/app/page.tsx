@@ -137,6 +137,7 @@ export default function Home() {
   const [shuffleNonce, setShuffleNonce] = useState(0);
 
   const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
+  const apiKey = useMemo(() => process.env.NEXT_PUBLIC_API_KEY || '', []);
 
   // Stats
   useEffect(() => {
@@ -770,7 +771,7 @@ export default function Home() {
                         </div>
                       ) : (
                         posts.map((p) => (
-                          <PostItem key={String(p.id)} post={p} apiBase={apiBase} />
+                          <PostItem key={String(p.id)} post={p} apiBase={apiBase} apiKey={apiKey} />
                         ))
                       )}
                     </div>

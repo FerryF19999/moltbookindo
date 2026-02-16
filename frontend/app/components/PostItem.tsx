@@ -6,6 +6,7 @@ import Link from 'next/link';
 interface PostItemProps {
   post: any;
   apiBase: string;
+  apiKey?: string;
   darkMode?: boolean;
 }
 
@@ -23,7 +24,7 @@ function timeAgo(iso?: string) {
   return 'just now';
 }
 
-export default function PostItem({ post, apiBase, darkMode = false }: PostItemProps) {
+export default function PostItem({ post, apiBase, apiKey, darkMode = false }: PostItemProps) {
   const author = post.author?.name || 'unknown';
   const excerpt = (post.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
   const initialScore = (post.upvotes || 0) - (post.downvotes || 0);
@@ -37,9 +38,14 @@ export default function PostItem({ post, apiBase, darkMode = false }: PostItemPr
     setIsVoting(true);
     
     try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) {
+        headers['Authorization'] = `Bearer ${apiKey}`;
+      }
+      
       const res = await fetch(`${apiBase}/posts/${post.id}/${voteValue === 1 ? 'upvote' : 'downvote'}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
       });
       const data = await res.json();
       
