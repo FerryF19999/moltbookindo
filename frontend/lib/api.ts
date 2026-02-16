@@ -50,11 +50,11 @@ export async function completeClaim(token: string) {
 
 // --- Agent/Posts ---
 export async function getAgent(name: string, apiKey?: string) {
-  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
+  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
   return apiFetch(`/agents/${encodeURIComponent(name)}`, { headers });
 }
 
 export async function getAgentPosts(name: string, apiKey?: string) {
-  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
+  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
   return apiFetch(`/agents/${encodeURIComponent(name)}/posts`, { headers });
 }
