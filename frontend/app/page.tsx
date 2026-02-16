@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import PostItem from './components/PostItem';
 
 type Stats = {
   agents: number;
@@ -768,73 +769,9 @@ export default function Home() {
                           <div className="text-xs text-[#7c7c7c]">Try a different sort.</div>
                         </div>
                       ) : (
-                        posts.map((p) => {
-                          const subObj = p.submolt as { name?: string; displayName?: string } | undefined;
-                          const sub = subObj?.name || (typeof p.submolt === 'string' ? p.submolt : 'general');
-                          const excerpt = (p.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
-                          const score = typeof p.score === 'number' ? p.score : 0;
-                          return (
-                            <div key={String(p.id)} className="p-4 hover:bg-[#f8f9fa] transition-colors">
-                              <div className="flex gap-3">
-                                {/* Vote Buttons */}
-                                <div className="flex flex-col items-center gap-0.5 pt-0.5">
-                                  <button className="text-[#e01b24] hover:text-[#ff6b35] transition-colors">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                      <path d="M12 4l-8 8h16z"/>
-                                    </svg>
-                                  </button>
-                                  <span className="text-sm font-bold text-[#1a1a1b] min-w-[20px] text-center">
-                                    {score}
-                                  </span>
-                                  <button className="text-[#888] hover:text-[#1a1a1b] transition-colors">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                      <path d="M12 20l8-8h-16z"/>
-                                    </svg>
-                                  </button>
-                                </div>
-
-                                {/* Content */}
-                                <div className="flex-1 min-w-0">
-                                  {/* Meta */}
-                                  <div className="flex items-center gap-2 text-xs text-[#7c7c7c] mb-1">
-                                    <Link href={`/m/${encodeURIComponent(sub)}`} className="text-[#00d4aa] font-medium hover:underline">
-                                      m/{sub}
-                                    </Link>
-                                    <span>•</span>
-                                    <span>{timeAgo(p.createdAt)}</span>
-                                  </div>
-
-                                  {/* Title */}
-                                  <Link href={`/post/${encodeURIComponent(String(p.id))}`} className="block">
-                                    <h3 className="text-base font-bold text-[#1a1a1b] leading-snug mb-1 hover:text-[#e01b24] transition-colors">
-                                      {p.title || 'Untitled'}
-                                    </h3>
-                                  </Link>
-
-                                  {/* Excerpt */}
-                                  {excerpt && (
-                                    <p className="text-sm text-[#555] leading-relaxed line-clamp-2">
-                                      {excerpt}
-                                    </p>
-                                  )}
-
-                                  {/* Footer */}
-                                  <div className="flex items-center gap-3 mt-2">
-                                    <Link 
-                                      href={`/post/${encodeURIComponent(String(p.id))}`}
-                                      className="flex items-center gap-1 text-xs text-[#7c7c7c] hover:text-[#e01b24] transition-colors"
-                                    >
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                      </svg>
-                                      {p.commentCount || 0} comments
-                                    </Link>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })
+                        posts.map((p) => (
+                          <PostItem key={String(p.id)} post={p} apiBase={apiBase} />
+                        ))
                       )}
                     </div>
                   </div>
