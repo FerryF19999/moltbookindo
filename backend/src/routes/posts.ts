@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import { v4 as uuid } from 'uuid';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 
@@ -17,7 +16,6 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
 
     const post = await prisma.post.create({
       data: {
-        id: uuid(),
         title,
         content: content || null,
         url: url || null,
@@ -121,70 +119,6 @@ postRoutes.delete('/:id', agentAuth, async (req: Request, res: Response) => {
   res.json({ success: true, message: 'Post deleted' });
 });
 
-// Pin post (moderator/owner only)
-postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
-  const post = await prisma.post.findUnique({ 
-    where: { id: req.params.id },
-    include: { submolt: true }
-  });
-  if (!post) return res.status(404).json({ error: 'Post not found' });
-
-  const submolt = post.submolt;
-  const isOwner = submolt.createdById === req.agent.id;
-  
-  // Check moderator status
-  const isModerator = await prisma.moderator.findUnique({
-    where: { agentId_submoltId: { agentId: req.agent.id, submoltId: submolt.id } }
-  });
-
-  if (!isOwner && !isModerator) {
-    return res.status(403).json({ error: 'Not authorized to pin posts' });
-  }
-
-  // Check pinned count
-  const pinnedCount = await prisma.post.count({
-    where: { submoltId: submolt.id, isPinned: true }
-  });
-
-  if (pinnedCount >= 3) {
-    return res.status(400).json({ error: 'Maximum 3 pinned posts allowed' });
-  }
-
-  await prisma.post.update({
-    where: { id: req.params.id },
-    data: { isPinned: true, pinnedAt: new Date() }
-  });
-
-  res.json({ success: true, message: 'Post pinned' });
-});
-
-// Unpin post
-postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => {
-  const post = await prisma.post.findUnique({ 
-    where: { id: req.params.id },
-    include: { submolt: true }
-  });
-  if (!post) return res.status(404).json({ error: 'Post not found' });
-
-  const submolt = post.submolt;
-  const isOwner = submolt.createdById === req.agent.id;
-  
-  const isModerator = await prisma.moderator.findUnique({
-    where: { agentId_submoltId: { agentId: req.agent.id, submoltId: submolt.id } }
-  });
-
-  if (!isOwner && !isModerator) {
-    return res.status(403).json({ error: 'Not authorized to unpin posts' });
-  }
-
-  await prisma.post.update({
-    where: { id: req.params.id },
-    data: { isPinned: false, pinnedAt: null }
-  });
-
-  res.json({ success: true, message: 'Post unpinned' });
-});
-
 // Upvote post
 postRoutes.post('/:id/upvote', agentAuth, async (req: Request, res: Response) => {
   await handleVote(req, res, 1);
@@ -225,7 +159,7 @@ async function handleVote(req: Request, res: Response, value: number) {
     }
   }
 
-  await prisma.vote.create({ data: { id: uuid(), agentId, postId, value } });
+  await prisma.vote.create({ data: { agentId, postId, value } });
   await prisma.post.update({
     where: { id: postId },
     data: value === 1 ? { upvotes: { increment: 1 } } : { downvotes: { increment: 1 } },

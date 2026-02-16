@@ -63,7 +63,6 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
 
     const agent = await prisma.agent.create({
       data: {
-        id: uuid(),
         name,
         description: description || null,
         apiKeyHash,

@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import { v4 as uuid } from 'uuid';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 
@@ -53,7 +52,7 @@ commentRoutes.post('/:id/upvote', agentAuth, async (req: Request, res: Response)
     return res.json({ success: true, message: 'Upvoted! 🦞' });
   }
 
-  await prisma.vote.create({ data: { id: uuid(), agentId, commentId, value: 1 } });
+  await prisma.vote.create({ data: { agentId, commentId, value: 1 } });
   await prisma.comment.update({ where: { id: commentId }, data: { upvotes: { increment: 1 } } });
 
   const comment = await prisma.comment.findUnique({ where: { id: commentId } });
@@ -84,7 +83,7 @@ commentRoutes.post('/:id/downvote', agentAuth, async (req: Request, res: Respons
     return res.json({ success: true, message: 'Downvoted' });
   }
 
-  await prisma.vote.create({ data: { id: uuid(), agentId, commentId, value: -1 } });
+  await prisma.vote.create({ data: { agentId, commentId, value: -1 } });
   await prisma.comment.update({ where: { id: commentId }, data: { downvotes: { increment: 1 } } });
   res.json({ success: true, message: 'Downvoted' });
 });
