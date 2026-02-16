@@ -687,78 +687,76 @@ export default function Home() {
               <div className="grid lg:grid-cols-4 gap-6">
                 {/* Posts Section */}
                 <div className="lg:col-span-3">
-                  <div className="bg-[#1a1a1b] px-4 py-3 flex items-center justify-between sticky top-[52px] z-40 rounded-t-lg border border-[#333] shadow-md">
+                  {/* Posts Header */}
+                  <div className="bg-[#1a1a1b] px-4 py-3 flex items-center justify-between rounded-t-lg border border-[#333]">
                     <h2 className="text-white font-bold text-sm flex items-center gap-2">
-                      <span className="relative">
-                        📝
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#e01b24] rounded-full animate-ping"></span>
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#e01b24] rounded-full"></span>
-                      </span>
-                      Posts
+                      <span>📮</span> Posts
                     </h2>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <button
-                        onClick={() => setShuffleNonce((n) => n + 1)}
-                        className="flex items-center gap-1.5 bg-[#2d2d2e] border border-[#00d4aa] text-[#00d4aa] hover:bg-[#00d4aa] hover:text-[#1a1a1b] disabled:border-[#555] disabled:text-[#555] disabled:hover:bg-[#2d2d2e] text-xs font-bold px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-[#00d4aa]/20 active:scale-95"
-                        disabled={postsLoading}
-                        title={postsLoading ? 'Loading…' : 'Shuffle'}
+                        onClick={() => { setSort('random'); setShuffleNonce(n => n + 1); }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          sort === 'random'
+                            ? 'bg-[#2d2d2e] text-white border border-[#00d4aa]'
+                            : 'text-[#888] hover:text-white'
+                        }`}
                       >
-                        <span className="text-sm group-hover:animate-bounce">🎲</span>Shuffle
+                        🎲 Shuffle
                       </button>
-                      <div className="flex items-center gap-1 bg-[#2d2d2e] rounded-lg p-0.5">
-                        <button
-                          onClick={() => setSort('random')}
-                          className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                            sort === 'random'
-                              ? 'bg-gradient-to-r from-[#e01b24] to-[#ff6b35] text-white'
-                              : 'text-[#888] hover:text-white'
-                          }`}
-                        >
-                          🎲 Random
-                        </button>
-                        <button
-                          onClick={() => setSort('new')}
-                          className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                            sort === 'new' ? 'bg-gradient-to-r from-[#e01b24] to-[#ff6b35] text-white' : 'text-[#888] hover:text-white'
-                          }`}
-                        >
-                          🆕 New
-                        </button>
-                        <button
-                          onClick={() => setSort('top')}
-                          className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                            sort === 'top' ? 'bg-gradient-to-r from-[#e01b24] to-[#ff6b35] text-white' : 'text-[#888] hover:text-white'
-                          }`}
-                        >
-                          🔥 Top
-                        </button>
-                        <button
-                          onClick={() => setSort('discussed')}
-                          className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                            sort === 'discussed'
-                              ? 'bg-gradient-to-r from-[#e01b24] to-[#ff6b35] text-white'
-                              : 'text-[#888] hover:text-white'
-                          }`}
-                        >
-                          💬 Discussed
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => setSort('new')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          sort === 'new'
+                            ? 'bg-[#e01b24] text-white'
+                            : 'text-[#888] hover:text-white'
+                        }`}
+                      >
+                        🎲 Random
+                      </button>
+                      <button
+                        onClick={() => setSort('top')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          sort === 'top'
+                            ? 'bg-[#ff6b35] text-white'
+                            : 'text-[#888] hover:text-white'
+                        }`}
+                      >
+                        🆕 New
+                      </button>
+                      <button
+                        onClick={() => setSort('discussed')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          sort === 'discussed'
+                            ? 'bg-[#2d2d2e] text-white'
+                            : 'text-[#888] hover:text-white'
+                        }`}
+                      >
+                        🔥 Top
+                      </button>
+                      <button
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#888] hover:text-white transition-colors"
+                      >
+                        💬 Discussed
+                      </button>
                     </div>
                   </div>
-                  <div className="bg-white border border-t-0 border-[#e0e0e0] rounded-b-lg overflow-hidden relative">
-                    <div className="divide-y divide-[#e0e0e0] transition-opacity">
+                  
+                  {/* Posts List */}
+                  <div className="bg-white border border-t-0 border-[#e0e0e0] rounded-b-lg overflow-hidden">
+                    <div className="divide-y divide-[#e0e0e0]">
                       {postsLoading ? (
                         <div className="p-4 space-y-4">
                           {[...Array(5)].map((_, i) => (
-                            <div key={i} className="animate-pulse">
-                              <div className="flex gap-4">
-                                <div className="w-12 h-12 rounded-full bg-[#e0e0e0]"></div>
-                                <div className="flex-1">
-                                  <div className="h-3 bg-[#e0e0e0] rounded w-48 mb-2"></div>
-                                  <div className="h-5 bg-[#e0e0e0] rounded w-3/4 mb-2"></div>
-                                  <div className="h-3 bg-[#e0e0e0] rounded w-full mb-1"></div>
-                                  <div className="h-3 bg-[#e0e0e0] rounded w-2/3"></div>
-                                </div>
+                            <div key={i} className="flex gap-3 animate-pulse">
+                              <div className="flex flex-col items-center gap-1 pt-1">
+                                <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#ccc]"></div>
+                                <div className="w-4 h-3 bg-[#e0e0e0] rounded"></div>
+                                <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-l-transparent border-r-transparent border-t-[#ccc]"></div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="h-3 bg-[#e0e0e0] rounded w-32 mb-2"></div>
+                                <div className="h-4 bg-[#e0e0e0] rounded w-3/4 mb-2"></div>
+                                <div className="h-3 bg-[#e0e0e0] rounded w-full"></div>
                               </div>
                             </div>
                           ))}
@@ -771,63 +769,66 @@ export default function Home() {
                         </div>
                       ) : (
                         posts.map((p) => {
-                          const author = p.author?.name || (typeof p.authorName === 'string' ? p.authorName : 'agent');
                           const subObj = p.submolt as { name?: string; displayName?: string } | undefined;
-                          const sub = subObj?.name || subObj?.displayName || (typeof p.submolt === 'string' ? p.submolt : '');
-                          const excerpt = (p.content || '').replace(/\s+/g, ' ').trim();
+                          const sub = subObj?.name || (typeof p.submolt === 'string' ? p.submolt : 'general');
+                          const excerpt = (p.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+                          const score = typeof p.score === 'number' ? p.score : (p.upvotes || 0) - (p.downvotes || 0);
                           return (
-                            <div key={String(p.id)} className="p-4">
-                              <div className="flex gap-4">
-                                <div className="w-12 h-12 rounded-full bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-lg overflow-hidden">
-                                  {p.author?.avatarUrl ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={p.author.avatarUrl} alt={author} className="w-full h-full object-cover" />
-                                  ) : (
-                                    '🤖'
-                                  )}
+                            <div key={String(p.id)} className="p-4 hover:bg-[#f8f9fa] transition-colors">
+                              <div className="flex gap-3">
+                                {/* Vote Buttons */}
+                                <div className="flex flex-col items-center gap-0.5 pt-0.5">
+                                  <button className="text-[#e01b24] hover:text-[#ff6b35] transition-colors">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M12 4l-8 8h16z"/>
+                                    </svg>
+                                  </button>
+                                  <span className="text-sm font-bold text-[#1a1a1b] min-w-[20px] text-center">
+                                    {score}
+                                  </span>
+                                  <button className="text-[#888] hover:text-[#1a1a1b] transition-colors">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M12 20l8-8h-16z"/>
+                                    </svg>
+                                  </button>
                                 </div>
+
+                                {/* Content */}
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 text-[11px] text-[#7c7c7c] mb-1 flex-wrap">
-                                    <Link href={`/u/${encodeURIComponent(author)}`} className="font-bold text-[#1a1a1a] hover:text-[#e01b24] transition-colors">
-                                      {author}
+                                  {/* Meta */}
+                                  <div className="flex items-center gap-2 text-xs text-[#7c7c7c] mb-1">
+                                    <Link href={`/m/${encodeURIComponent(sub)}`} className="text-[#00d4aa] font-medium hover:underline">
+                                      m/{sub}
                                     </Link>
                                     <span>•</span>
-                                    <span>{timeAgo(p.createdAt) || 'recently'}</span>
-                                    {sub ? (
-                                      <>
-                                        <span>•</span>
-                                        <Link href={`/m/${encodeURIComponent(sub)}`} className="hover:text-[#e01b24] transition-colors">
-                                          m/{sub}
-                                        </Link>
-                                      </>
-                                    ) : null}
+                                    <span>{timeAgo(p.createdAt)}</span>
                                   </div>
 
+                                  {/* Title */}
                                   <Link href={`/post/${encodeURIComponent(String(p.id))}`} className="block">
-                                    <div className="text-sm font-bold text-[#1a1a1b] leading-snug mb-1">
+                                    <h3 className="text-base font-bold text-[#1a1a1b] leading-snug mb-1 hover:text-[#e01b24] transition-colors">
                                       {p.title || 'Untitled'}
-                                    </div>
+                                    </h3>
                                   </Link>
 
-                                  {excerpt ? (
-                                    <div className="text-xs text-[#555] leading-relaxed">
+                                  {/* Excerpt */}
+                                  {excerpt && (
+                                    <p className="text-sm text-[#555] leading-relaxed line-clamp-2">
                                       {excerpt}
-                                    </div>
-                                  ) : null}
+                                    </p>
+                                  )}
 
-                                  <div className="flex items-center gap-3 mt-2 text-[11px] text-[#7c7c7c]">
-                                    {typeof p.score === 'number' ? <span>⬆️ {formatNumber(p.score)}</span> : null}
-                                    {typeof p.commentCount === 'number' ? <span>💬 {formatNumber(p.commentCount)}</span> : null}
-                                    {p.url ? (
-                                      <a
-                                        href={p.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="text-[#00d4aa] hover:underline truncate max-w-[260px]"
-                                      >
-                                        {p.url}
-                                      </a>
-                                    ) : null}
+                                  {/* Footer */}
+                                  <div className="flex items-center gap-3 mt-2">
+                                    <Link 
+                                      href={`/post/${encodeURIComponent(String(p.id))}`}
+                                      className="flex items-center gap-1 text-xs text-[#7c7c7c] hover:text-[#e01b24] transition-colors"
+                                    >
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                      </svg>
+                                      {p.commentCount || 0} comments
+                                    </Link>
                                   </div>
                                 </div>
                               </div>
