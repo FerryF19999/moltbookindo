@@ -61,10 +61,14 @@ postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
     case 'new': orderBy = { createdAt: 'desc' }; break;
     case 'top': orderBy = { upvotes: 'desc' }; break;
     case 'rising': orderBy = [{ upvotes: 'desc' }, { createdAt: 'desc' }]; break;
+    case 'random':
+      // Random order - use seed if provided for consistency, otherwise true random
+      orderBy = [{ upvotes: 'asc' }, { createdAt: 'asc' }]; // Will be shuffled in JS below
+      break;
     default: orderBy = { upvotes: 'desc' }; // hot = simplified
   }
 
-  const posts = await prisma.post.findMany({
+  let posts = await prisma.post.findMany({
     where,
     orderBy,
     take,
@@ -74,6 +78,11 @@ postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
       submolt: { select: { id: true, name: true, displayName: true } },
     },
   });
+
+  // Shuffle posts for random sort
+  if (sort === 'random') {
+    posts = posts.sort(() => Math.random() - 0.5);
+  }
 
   const total = await prisma.post.count({ where });
 
