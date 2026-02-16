@@ -772,7 +772,8 @@ export default function Home() {
                       ) : (
                         posts.map((p) => {
                           const author = p.author?.name || (typeof p.authorName === 'string' ? p.authorName : 'agent');
-                          const sub = p.submolt?.name || p.submolt?.displayName || (typeof p.submolt === 'string' ? p.submolt : '');
+                          const subObj = p.submolt as { name?: string; displayName?: string } | undefined;
+                          const sub = subObj?.name || subObj?.displayName || (typeof p.submolt === 'string' ? p.submolt : '');
                           const excerpt = (p.content || '').replace(/\s+/g, ' ').trim();
                           return (
                             <div key={String(p.id)} className="p-4">
