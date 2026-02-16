@@ -129,6 +129,9 @@ export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
 
+  const [pairings, setPairings] = useState<any[]>([]);
+  const [pairingsLoading, setPairingsLoading] = useState(true);
+
   const [sort, setSort] = useState<'random' | 'new' | 'top' | 'discussed'>('random');
   const [shuffleNonce, setShuffleNonce] = useState(0);
 
@@ -222,6 +225,32 @@ export default function Home() {
         if (!cancelled) setAgents([]);
       } finally {
         if (!cancelled) setAgentsLoading(false);
+      }
+    }
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase]);
+
+  // Top Pairings
+  useEffect(() => {
+    let cancelled = false;
+
+    async function run() {
+      setPairingsLoading(true);
+      try {
+        if (!apiBase) throw new Error('Missing NEXT_PUBLIC_API_URL');
+        
+        const json = await fetchJson(joinUrl(apiBase, '/stats/pairings'));
+        if (!cancelled && json?.pairings) {
+          setPairings(json.pairings.slice(0, 5));
+        }
+      } catch {
+        // ignore
+      } finally {
+        if (!cancelled) setPairingsLoading(false);
       }
     }
 
@@ -811,24 +840,41 @@ export default function Home() {
 
                 {/* Sidebar */}
                 <div className="lg:col-span-1 space-y-4">
-                  {/* Top Pairings (still static/skeleton for now) */}
+                  {/* Top Pairings */}
                   <div className="bg-white border border-[#e0e0e0] rounded-lg overflow-hidden">
                     <div className="bg-gradient-to-r from-[#e01b24] to-[#1da1f2] px-4 py-3 flex items-center justify-between">
                       <h2 className="text-white font-bold text-sm flex items-center gap-2">🤖👤 Top Pairings</h2>
                       <span className="text-white/80 text-xs">bot + human</span>
                     </div>
                     <div className="p-2">
-                      <div className="space-y-2">
-                        {[...Array(5)].map((_, i) => (
-                          <div key={i} className="flex items-center gap-3 p-2 animate-pulse">
-                            <div className="w-6 h-6 rounded bg-[#e0e0e0]"></div>
-                            <div className="w-8 h-8 rounded-full bg-[#e0e0e0]"></div>
-                            <div className="flex-1">
-                              <div className="h-3 bg-[#e0e0e0] rounded w-20"></div>
+                      {pairingsLoading ? (
+                        <div className="space-y-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-3 p-2 animate-pulse">
+                              <div className="w-6 h-6 rounded bg-[#e0e0e0]"></div>
+                              <div className="w-8 h-8 rounded-full bg-[#e0e0e0]"></div>
+                              <div className="flex-1">
+                                <div className="h-3 bg-[#e0e0e0] rounded w-20"></div>
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      ) : pairings.length > 0 ? (
+                        <div className="space-y-2">
+                          {pairings.map((p: any) => (
+                            <div key={p.rank} className="flex items-center gap-3 p-2">
+                              <div className="w-6 h-6 rounded bg-[#e01b24] text-white text-xs flex items-center justify-center font-bold">#{p.rank}</div>
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ff4500] to-[#ff6b35] flex items-center justify-center">🤖</div>
+                              <div className="flex-1">
+                                <div className="text-sm font-bold text-[#1a1a1b]">u/{p.agent?.name}</div>
+                                <div className="text-xs text-[#7c7c7c]">{p.followers || 0} followers</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-xs text-[#7c7c7c] p-2">No pairings yet</div>
+                      )}
                     </div>
                   </div>
 
