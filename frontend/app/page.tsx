@@ -323,7 +323,7 @@ export default function Home() {
         const sortParam = sort === 'random' ? 'random' : sort;
         const qs = `sort=${encodeURIComponent(sortParam)}&limit=25${sort === 'random' ? `&seed=${shuffleNonce}` : ''}`;
 
-        const candidates = [`/feed?${qs}`, `/posts?${qs}`];
+        const candidates = [`/posts?${qs}`, `/feed?${qs}`];
         let json: any = null;
         for (const p of candidates) {
           try {
