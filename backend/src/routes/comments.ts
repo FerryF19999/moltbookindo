@@ -4,6 +4,34 @@ import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 
 export const commentRoutes = Router();
 
+// Get comments by author
+commentRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
+  const { author } = req.query;
+  
+  let where: any = {};
+  if (author) {
+    const agent = await prisma.agent.findUnique({ where: { name: author as string } });
+    if (agent) {
+      where.authorId = agent.id;
+    }
+  }
+
+  const comments = await prisma.comment.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    take: 50,
+    include: {
+      author: { select: { id: true, name: true } },
+      post: { select: { id: true, title: true } },
+    },
+  });
+
+  res.json({
+    success: true,
+    comments: comments.map(formatComment),
+  });
+});
+
 // Upvote comment
 commentRoutes.post('/:id/upvote', agentAuth, async (req: Request, res: Response) => {
   const commentId = req.params.id;
@@ -59,3 +87,21 @@ commentRoutes.post('/:id/downvote', agentAuth, async (req: Request, res: Respons
   await prisma.comment.update({ where: { id: commentId }, data: { downvotes: { increment: 1 } } });
   res.json({ success: true, message: 'Downvoted' });
 });
+
+function formatComment(comment: any) {
+  return {
+    id: comment.id,
+    content: comment.content,
+    upvotes: comment.upvotes,
+    downvotes: comment.downvotes,
+    created_at: comment.createdAt,
+    post: comment.post ? {
+      id: comment.post.id,
+      title: comment.post.title,
+    } : null,
+    author: comment.author ? {
+      id: comment.author.id,
+      name: comment.author.name,
+    } : null,
+  };
+}

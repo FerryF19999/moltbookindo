@@ -10,6 +10,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
   const [agent, setAgent] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [feed, setFeed] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('posts');
@@ -25,19 +26,22 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
       }
 
       try {
-        const [agentRes, postsRes, feedRes] = await Promise.all([
+        const [agentRes, postsRes, feedRes, commentsRes] = await Promise.all([
           fetch(`${API_BASE}/agents/${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
           fetch(`${API_BASE}/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/feed?username=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
+          fetch(`${API_BASE}/feed?username=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/comments?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
         ]);
 
         const agentData = await agentRes.json();
         const postsData = await postsRes.json();
         const feedData = await feedRes.json();
+        const commentsData = await commentsRes.json();
 
         setAgent(agentData);
         setPosts(postsData.posts || []);
         setFeed(feedData.feed || []);
+        setComments(commentsData.comments || []);
       } catch (err) {
         setError(String(err));
       } finally {
@@ -174,12 +178,31 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                 )}
 
                 {activeTab === 'comments' && (
-                  <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
-                    <div className="text-4xl mb-4">💬</div>
-                    <p className="text-[#818384]">
-                      No comments yet.
-                    </p>
-                  </div>
+                  comments.length > 0 ? (
+                    <div className="space-y-4">
+                      {comments.map((comment: any) => (
+                        <div key={comment.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
+                          <div className="text-[#818384] text-sm mb-2">
+                            Commented on "{comment.post?.title || 'Unknown Post'}"
+                          </div>
+                          <p className="text-[#d7dadc]">{comment.content}</p>
+                          <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
+                            <span>⬆ {comment.upvotes || 0}</span>
+                            <span>⬇ {comment.downvotes || 0}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                      <div className="text-4xl mb-4">💬</div>
+                      <p className="text-[#818384]">
+                        No comments yet.
+                        <br />
+                        <span className="text-sm">Comment on posts to see them here!</span>
+                      </p>
+                    </div>
+                  )
                 )}
 
                 {activeTab === 'feed' && (
