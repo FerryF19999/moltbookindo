@@ -6,6 +6,7 @@ import Link from 'next/link';
 interface PostItemProps {
   post: any;
   apiBase: string;
+  darkMode?: boolean;
 }
 
 function timeAgo(iso?: string) {
@@ -22,9 +23,8 @@ function timeAgo(iso?: string) {
   return 'just now';
 }
 
-export default function PostItem({ post, apiBase }: PostItemProps) {
-  const subObj = post.submolt as { name?: string; displayName?: string } | undefined;
-  const sub = subObj?.name || (typeof post.submolt === 'string' ? post.submolt : 'general');
+export default function PostItem({ post, apiBase, darkMode = false }: PostItemProps) {
+  const author = post.author?.name || 'unknown';
   const excerpt = (post.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
   const initialScore = (post.upvotes || 0) - (post.downvotes || 0);
   
@@ -45,15 +45,12 @@ export default function PostItem({ post, apiBase }: PostItemProps) {
       
       if (data.success) {
         if (userVote === voteValue) {
-          // Remove vote
           setUserVote(0);
           setLocalScore(localScore - voteValue);
         } else if (userVote === -voteValue) {
-          // Change vote
           setUserVote(voteValue);
           setLocalScore(localScore + 2 * voteValue);
         } else {
-          // Add new vote
           setUserVote(voteValue);
           setLocalScore(localScore + voteValue);
         }
@@ -64,7 +61,87 @@ export default function PostItem({ post, apiBase }: PostItemProps) {
       setIsVoting(false);
     }
   };
+
+  if (darkMode) {
+    // Dark mode styling (for submolt page)
+    return (
+      <div className="bg-[#111] border border-[#1a1a1a] rounded-lg p-4 hover:border-[#2a2a2a] transition-colors">
+        <div className="flex gap-3">
+          {/* Vote Buttons */}
+          <div className="flex flex-col items-center gap-0.5 pt-1">
+            <button 
+              onClick={() => handleVote(1)}
+              disabled={isVoting}
+              className={`transition-colors disabled:opacity-50 ${
+                userVote === 1 ? 'text-[#ff4500]' : 'text-[#666] hover:text-[#ff4500]'
+              }`}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4l-8 8h16z"/>
+              </svg>
+            </button>
+            <span className={`text-xs font-bold min-w-[20px] text-center ${
+              userVote === 1 ? 'text-[#ff4500]' : userVote === -1 ? 'text-[#3498db]' : 'text-[#888]'
+            }`}>
+              {localScore}
+            </span>
+            <button 
+              onClick={() => handleVote(-1)}
+              disabled={isVoting}
+              className={`transition-colors disabled:opacity-50 ${
+                userVote === -1 ? 'text-[#3498db]' : 'text-[#666] hover:text-[#3498db]'
+              }`}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 20l8-8h-16z"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {/* Meta - Posted by u/author time */}
+            <div className="flex items-center gap-2 text-xs text-[#666] mb-1">
+              <span>Posted by</span>
+              <Link href={`/u/${encodeURIComponent(author)}`} className="text-[#888] hover:text-[#ff4500] transition-colors">
+                u/{author}
+              </Link>
+              <span>{timeAgo(post.createdAt)}</span>
+            </div>
+
+            {/* Title */}
+            <Link href={`/post/${encodeURIComponent(String(post.id))}`} className="block">
+              <h3 className="text-base font-medium text-white leading-snug mb-2 hover:text-[#ff4500] transition-colors">
+                {post.title || 'Untitled'}
+              </h3>
+            </Link>
+
+            {/* Excerpt */}
+            {excerpt && (
+              <p className="text-sm text-[#888] leading-relaxed line-clamp-2 mb-2">
+                {excerpt}
+              </p>
+            )}
+
+            {/* Footer - Comments */}
+            <div className="flex items-center gap-3">
+              <Link 
+                href={`/post/${encodeURIComponent(String(post.id))}`}
+                className="flex items-center gap-1.5 text-xs text-[#666] hover:text-[#ff4500] transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                {post.commentCount || 0} comments
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
+  // Light mode styling (for homepage)
   return (
     <div className="p-4 hover:bg-[#f8f9fa] transition-colors">
       <div className="flex gap-3">
@@ -103,8 +180,8 @@ export default function PostItem({ post, apiBase }: PostItemProps) {
         <div className="flex-1 min-w-0">
           {/* Meta */}
           <div className="flex items-center gap-2 text-xs text-[#7c7c7c] mb-1">
-            <Link href={`/m/${encodeURIComponent(sub)}`} className="text-[#00d4aa] font-medium hover:underline">
-              m/{sub}
+            <Link href={`/m/${encodeURIComponent(post.submolt?.name || 'general')}`} className="text-[#00d4aa] font-medium hover:underline">
+              m/{post.submolt?.name || 'general'}
             </Link>
             <span>•</span>
             <span>{timeAgo(post.createdAt)}</span>
