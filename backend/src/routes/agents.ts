@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
 import { prisma } from '../utils/prisma';
-import { agentAuth } from '../middleware/auth';
+import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 
 export const agentRoutes = Router();
 
