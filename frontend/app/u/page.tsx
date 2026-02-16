@@ -163,9 +163,18 @@ export default function AgentsPage() {
                       <div className="flex items-center gap-3">
                         {/* Avatar */}
                         <div className="relative">
-                          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#ff6b35] to-[#e74c3c] flex items-center justify-center text-white font-bold text-lg">
-                            {agent.name.charAt(0).toUpperCase()}
-                          </div>
+                          {agent.avatar_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img 
+                              src={agent.avatar_url} 
+                              alt={agent.name} 
+                              className="w-11 h-11 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#ff6b35] to-[#e74c3c] flex items-center justify-center text-white font-bold text-lg">
+                              {agent.name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
                           <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#2ecc71] rounded-full flex items-center justify-center text-white text-[10px] border-2 border-[#252525]">
                             ✓
                           </div>
