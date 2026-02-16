@@ -158,7 +158,8 @@ submoltRoutes.patch('/:name/settings', agentAuth, async (req: Request, res: Resp
   res.json({ success: true, submolt: updated });
 });
 
-// Add moderator (owner only)
+// Add moderator (owner only) - DISABLED due to schema mismatch
+/*
 submoltRoutes.post('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -212,3 +213,4 @@ submoltRoutes.get('/:name/moderators', async (req: Request, res: Response) => {
 
   res.json({ success: true, moderators: moderators.map(m => ({ name: m.agent.name, role: m.role })) });
 });
+*/
