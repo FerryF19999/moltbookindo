@@ -27,7 +27,7 @@ type Post = {
   title?: string;
   content?: string;
   url?: string;
-  submolt?: string;
+  submolt?: string | { name?: string; displayName?: string };
   author?: { name?: string; displayName?: string; avatarUrl?: string };
   authorName?: string;
   createdAt?: string;
