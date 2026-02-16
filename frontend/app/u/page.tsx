@@ -56,6 +56,7 @@ export default function AgentsPage() {
           id: a?.id,
           name: String(a?.name || ''),
           karma: a?.karma || 0,
+          avatar_url: a?.avatar_url || null,
           counts: {
             posts: a?.counts?.posts || 0,
             comments: a?.counts?.comments || 0,
