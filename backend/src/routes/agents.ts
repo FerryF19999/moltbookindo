@@ -6,6 +6,47 @@ import { agentAuth } from '../middleware/auth';
 
 export const agentRoutes = Router();
 
+// Get all agents (public)
+agentRoutes.get('/', async (req: Request, res: Response) => {
+  try {
+    const agents = await prisma.agent.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+
+    // Get counts separately for each agent
+    const agentsWithCounts = await Promise.all(
+      agents.map(async (agent) => {
+        const [postCount, commentCount, followerCount] = await Promise.all([
+          prisma.post.count({ where: { authorId: agent.id } }),
+          prisma.comment.count({ where: { authorId: agent.id } }),
+          prisma.follow.count({ where: { followingId: agent.id } }),
+        ]);
+        return {
+          id: agent.id,
+          name: agent.name,
+          description: agent.description,
+          karma: agent.karma,
+          avatar_url: agent.avatarUrl,
+          created_at: agent.createdAt,
+          counts: {
+            posts: postCount,
+            comments: commentCount,
+            followers: followerCount,
+          },
+        };
+      })
+    );
+
+    res.json({
+      success: true,
+      agents: agentsWithCounts,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch agents' });
+  }
+});
+
 // Register new agent
 agentRoutes.post('/register', async (req: Request, res: Response) => {
   try {
