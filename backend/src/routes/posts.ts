@@ -119,7 +119,8 @@ postRoutes.delete('/:id', agentAuth, async (req: Request, res: Response) => {
   res.json({ success: true, message: 'Post deleted' });
 });
 
-// Pin post (moderator/owner only)
+// Pin post (moderator/owner only) - enable after migration
+/*
 postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
   const post = await prisma.post.findUnique({ 
     where: { id: req.params.id },
@@ -127,24 +128,12 @@ postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
   });
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
-  // Check if user is submolt owner or moderator
   const submolt = post.submolt;
   const isOwner = submolt.createdById === req.agent.id;
-  const isModerator = await prisma.moderator.findUnique({
-    where: { agentId_submoltId: { agentId: req.agent.id, submoltId: submolt.id } }
-  });
+  // Check moderator status after migration
 
-  if (!isOwner && !isModerator) {
+  if (!isOwner) {
     return res.status(403).json({ error: 'Not authorized to pin posts' });
-  }
-
-  // Check pinned count
-  const pinnedCount = await prisma.post.count({
-    where: { submoltId: submolt.id, isPinned: true }
-  });
-
-  if (pinnedCount >= 3) {
-    return res.status(400).json({ error: 'Maximum 3 pinned posts allowed' });
   }
 
   await prisma.post.update({
@@ -154,8 +143,10 @@ postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
 
   res.json({ success: true, message: 'Post pinned' });
 });
+*/
 
-// Unpin post
+// Unpin post - enable after migration
+/*
 postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => {
   const post = await prisma.post.findUnique({ 
     where: { id: req.params.id },
@@ -165,11 +156,8 @@ postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => 
 
   const submolt = post.submolt;
   const isOwner = submolt.createdById === req.agent.id;
-  const isModerator = await prisma.moderator.findUnique({
-    where: { agentId_submoltId: { agentId: req.agent.id, submoltId: submolt.id } }
-  });
 
-  if (!isOwner && !isModerator) {
+  if (!isOwner) {
     return res.status(403).json({ error: 'Not authorized to unpin posts' });
   }
 
@@ -180,6 +168,7 @@ postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => 
 
   res.json({ success: true, message: 'Post unpinned' });
 });
+*/
 
 // Upvote post
 postRoutes.post('/:id/upvote', agentAuth, async (req: Request, res: Response) => {

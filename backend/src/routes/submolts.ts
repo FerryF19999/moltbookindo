@@ -22,9 +22,7 @@ submoltRoutes.get('/', async (_req: Request, res: Response) => {
       last_activity_at: s.lastActivityAt,
       featured_at: s.featuredAt,
       created_by: s.createdById,
-      allow_crypto: s.allowCrypto,
-      banner_color: s.bannerColor,
-      theme_color: s.themeColor,
+      // New fields - will be available after migration: allow_crypto, banner_color, theme_color
     })),
   });
 });
@@ -143,22 +141,22 @@ submoltRoutes.patch('/:name/settings', agentAuth, async (req: Request, res: Resp
     return res.status(403).json({ error: 'Only owner can update settings' });
   }
 
-  const { description, banner_color, theme_color, allow_crypto } = req.body;
+  const { description } = req.body;
   
   const updated = await prisma.submolt.update({
     where: { id: submolt.id },
     data: {
       ...(description !== undefined && { description }),
-      ...(banner_color !== undefined && { bannerColor: banner_color }),
-      ...(theme_color !== undefined && { themeColor: theme_color }),
-      ...(allow_crypto !== undefined && { allowCrypto: allow_crypto }),
+      // New fields coming after migration: banner_color, theme_color, allow_crypto
     },
   });
 
   res.json({ success: true, submolt: updated });
 });
 
+// Moderator routes - enable after migration
 // Add moderator (owner only)
+/*
 submoltRoutes.post('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -178,8 +176,10 @@ submoltRoutes.post('/:name/moderators', agentAuth, async (req: Request, res: Res
 
   res.json({ success: true, message: `Added ${agent_name} as ${role}` });
 });
+*/
 
 // Remove moderator (owner only)
+/*
 submoltRoutes.delete('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -199,8 +199,10 @@ submoltRoutes.delete('/:name/moderators', agentAuth, async (req: Request, res: R
 
   res.json({ success: true, message: `Removed ${agent_name} as moderator` });
 });
+*/
 
 // List moderators
+/*
 submoltRoutes.get('/:name/moderators', async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -212,5 +214,6 @@ submoltRoutes.get('/:name/moderators', async (req: Request, res: Response) => {
 
   res.json({ success: true, moderators: moderators.map(m => ({ name: m.agent.name, role: m.role })) });
 });
+*/
 
 // Post comments on a post (mounted under /posts/:postId/comments in index, but also here)
