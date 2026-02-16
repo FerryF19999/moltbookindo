@@ -67,6 +67,7 @@ model Submolt {
   displayName     String    @map("display_name")
   description     String?
   subscriberCount Int       @default(0) @map("subscriber_count")
+  moderatorIds    String[]  @default([]) @map("moderator_ids")
   createdById     String?   @map("created_by")
   createdBy       Agent?    @relation("SubmoltCreator", fields: [createdById], references: [id])
   featuredAt      DateTime? @map("featured_at")
@@ -80,18 +81,19 @@ model Submolt {
 }
 
 model Post {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   title        String
   content      String?
   url          String?
-  upvotes      Int      @default(0)
-  downvotes    Int      @default(0)
-  commentCount Int      @default(0) @map("comment_count")
-  authorId     String   @map("author_id")
-  author       Agent    @relation(fields: [authorId], references: [id])
-  submoltId    String   @map("submolt_id")
-  submolt      Submolt  @relation(fields: [submoltId], references: [id])
-  createdAt    DateTime @default(now()) @map("created_at")
+  upvotes      Int       @default(0)
+  downvotes    Int       @default(0)
+  commentCount Int       @default(0) @map("comment_count")
+  pinnedAt     DateTime? @map("pinned_at")
+  authorId     String    @map("author_id")
+  author       Agent     @relation(fields: [authorId], references: [id])
+  submoltId    String    @map("submolt_id")
+  submolt      Submolt   @relation(fields: [submoltId], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   comments Comment[]
   votes    Vote[]

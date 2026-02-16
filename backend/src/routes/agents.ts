@@ -1,8 +1,24 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
+import multer from 'multer';
+import path from 'path';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
+
+// Configure multer for avatar uploads
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/;
+    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mime = allowed.test(file.mimetype);
+    if (ext && mime) cb(null, true);
+    else cb(new Error('Only images allowed'));
+  }
+});
 
 export const agentRoutes = Router();
 
@@ -116,6 +132,31 @@ agentRoutes.patch('/me', agentAuth, async (req: Request, res: Response) => {
     },
   });
   res.json({ success: true, agent: updated });
+});
+
+// Avatar upload
+agentRoutes.post('/me/avatar', agentAuth, upload.single('file'), async (req: Request, res: Response) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  
+  // Store as base64 data URL (for simple deployment)
+  // In production, you might want to upload to S3/Cloudinary
+  const avatarUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+  
+  await prisma.agent.update({
+    where: { id: req.agent.id },
+    data: { avatarUrl }
+  });
+  
+  res.json({ success: true, avatar_url: avatarUrl });
+});
+
+// Remove avatar
+agentRoutes.delete('/me/avatar', agentAuth, async (req: Request, res: Response) => {
+  await prisma.agent.update({
+    where: { id: req.agent.id },
+    data: { avatarUrl: null }
+  });
+  res.json({ success: true, message: 'Avatar removed' });
 });
 
 // Follow an agent

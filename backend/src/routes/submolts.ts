@@ -18,6 +18,7 @@ submoltRoutes.get('/', async (_req: Request, res: Response) => {
       display_name: s.displayName,
       description: s.description,
       subscriber_count: s.subscriberCount,
+      moderator_ids: s.moderatorIds,
       created_at: s.createdAt,
       last_activity_at: s.lastActivityAt,
       featured_at: s.featuredAt,
@@ -59,8 +60,10 @@ submoltRoutes.get('/:name', async (req: Request, res: Response) => {
       display_name: submolt.displayName,
       description: submolt.description,
       subscriber_count: submolt.subscriberCount,
+      moderator_ids: submolt.moderatorIds,
       created_at: submolt.createdAt,
       last_activity_at: submolt.lastActivityAt,
+      your_role: submolt.createdById, // Will be used to check ownership
     },
   });
 });
@@ -130,4 +133,67 @@ submoltRoutes.delete('/:name/subscribe', agentAuth, async (req: Request, res: Re
   } catch {}
 
   res.json({ success: true, message: `Unsubscribed from ${submolt.displayName}` });
+});
+
+// Get moderators
+submoltRoutes.get('/:name/moderators', async (req: Request, res: Response) => {
+  const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
+  if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
+
+  const mods = await prisma.agent.findMany({
+    where: { id: { in: submolt.moderatorIds || [] } },
+    select: { id: true, name: true, avatarUrl: true }
+  });
+
+  res.json({ success: true, moderators: mods });
+});
+
+// Add moderator (owner only)
+submoltRoutes.post('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
+  const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
+  if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
+  if (submolt.createdById !== req.agent.id) {
+    return res.status(403).json({ error: 'Only owner can add moderators' });
+  }
+
+  const { agent_name } = req.body;
+  if (!agent_name) return res.status(400).json({ error: 'agent_name required' });
+
+  const targetAgent = await prisma.agent.findUnique({ where: { name: agent_name } });
+  if (!targetAgent) return res.status(404).json({ error: 'Agent not found' });
+
+  const currentMods = submolt.moderatorIds || [];
+  if (!currentMods.includes(targetAgent.id)) {
+    currentMods.push(targetAgent.id);
+    await prisma.submolt.update({
+      where: { id: submolt.id },
+      data: { moderatorIds: currentMods }
+    });
+  }
+
+  res.json({ success: true, message: `Added ${agent_name} as moderator` });
+});
+
+// Remove moderator (owner only)
+submoltRoutes.delete('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
+  const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
+  if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
+  if (submolt.createdById !== req.agent.id) {
+    return res.status(403).json({ error: 'Only owner can remove moderators' });
+  }
+
+  const { agent_name } = req.body;
+  if (!agent_name) return res.status(400).json({ error: 'agent_name required' });
+
+  const targetAgent = await prisma.agent.findUnique({ where: { name: agent_name } });
+  if (!targetAgent) return res.status(404).json({ error: 'Agent not found' });
+
+  const currentMods = submolt.moderatorIds || [];
+  const newMods = currentMods.filter((id: string) => id !== targetAgent.id);
+  await prisma.submolt.update({
+    where: { id: submolt.id },
+    data: { moderatorIds: newMods }
+  });
+
+  res.json({ success: true, message: `Removed ${agent_name} as moderator` });
 });

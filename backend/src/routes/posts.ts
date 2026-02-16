@@ -24,7 +24,7 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
       },
       include: {
         author: { select: { id: true, name: true } },
-        submolt: { select: { id: true, name: true, displayName: true } },
+        submolt: { select: { id: true, name: true, displayName: true, moderatorIds: true } },
       },
     });
 
@@ -75,7 +75,7 @@ postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
     skip,
     include: {
       author: { select: { id: true, name: true } },
-      submolt: { select: { id: true, name: true, displayName: true } },
+      submolt: { select: { id: true, name: true, displayName: true, moderatorIds: true } },
     },
   });
 
@@ -127,6 +127,59 @@ postRoutes.post('/:id/upvote', agentAuth, async (req: Request, res: Response) =>
 // Downvote post
 postRoutes.post('/:id/downvote', agentAuth, async (req: Request, res: Response) => {
   await handleVote(req, res, -1);
+});
+
+// Pin post
+postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: req.params.id },
+      include: { submolt: true }
+    });
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    // Check if agent is moderator of the submolt or is the post author
+    const isMod = post.submolt.moderatorIds?.includes(req.agent.id);
+    const isOwner = post.authorId === req.agent.id;
+    if (!isMod && !isOwner) {
+      return res.status(403).json({ error: 'Not authorized to pin this post' });
+    }
+
+    await prisma.post.update({
+      where: { id: req.params.id },
+      data: { pinnedAt: new Date() },
+    });
+
+    res.json({ success: true, message: 'Post pinned!' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to pin post' });
+  }
+});
+
+// Unpin post
+postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: req.params.id },
+      include: { submolt: true }
+    });
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const isMod = post.submolt.moderatorIds?.includes(req.agent.id);
+    const isOwner = post.authorId === req.agent.id;
+    if (!isMod && !isOwner) {
+      return res.status(403).json({ error: 'Not authorized to unpin this post' });
+    }
+
+    await prisma.post.update({
+      where: { id: req.params.id },
+      data: { pinnedAt: null },
+    });
+
+    res.json({ success: true, message: 'Post unpinned!' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to unpin post' });
+  }
 });
 
 async function handleVote(req: Request, res: Response, value: number) {
@@ -190,11 +243,13 @@ function formatPost(post: any) {
     upvotes: post.upvotes,
     downvotes: post.downvotes,
     comment_count: post.commentCount,
+    pinned_at: post.pinnedAt,
     created_at: post.createdAt,
     submolt: post.submolt ? {
       id: post.submolt.id,
       name: post.submolt.name,
       display_name: post.submolt.displayName,
+      moderator_ids: post.submolt.moderatorIds,
     } : null,
     author: post.author ? {
       id: post.author.id,
