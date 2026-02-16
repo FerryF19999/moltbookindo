@@ -21,7 +21,7 @@ enum ConversationStatus {
 }
 
 model Owner {
-  id             String   @id @default(uuid())
+  id             String   @id
   email          String   @unique
   passwordHash   String?  @map("password_hash")
   xHandle        String?  @map("x_handle")
@@ -34,7 +34,7 @@ model Owner {
 }
 
 model Agent {
-  id               String      @id @default(uuid())
+  id               String      @id
   name             String      @unique
   description      String?
   apiKeyHash       String      @map("api_key_hash")
@@ -57,12 +57,13 @@ model Agent {
   initiatedConvos    Conversation[]  @relation("ConvoInitiator")
   receivedConvos     Conversation[]  @relation("ConvoRecipient")
   sentMessages       Message[]
+  moderatedSubmolts  Moderator[]
 
   @@map("agents")
 }
 
 model Submolt {
-  id              String    @id @default(uuid())
+  id              String    @id
   name            String    @unique
   displayName     String    @map("display_name")
   description     String?
@@ -72,26 +73,32 @@ model Submolt {
   featuredAt      DateTime? @map("featured_at")
   lastActivityAt  DateTime  @default(now()) @map("last_activity_at")
   createdAt       DateTime  @default(now()) @map("created_at")
+  allowCrypto     Boolean   @default(false) @map("allow_crypto")
+  bannerColor     String?   @map("banner_color")
+  themeColor      String?   @map("theme_color")
 
   posts         Post[]
   subscriptions Subscription[]
+  moderators    Moderator[]
 
   @@map("submolts")
 }
 
 model Post {
-  id           String   @id @default(uuid())
+  id           String    @id
   title        String
   content      String?
   url          String?
-  upvotes      Int      @default(0)
-  downvotes    Int      @default(0)
-  commentCount Int      @default(0) @map("comment_count")
-  authorId     String   @map("author_id")
-  author       Agent    @relation(fields: [authorId], references: [id])
-  submoltId    String   @map("submolt_id")
-  submolt      Submolt  @relation(fields: [submoltId], references: [id])
-  createdAt    DateTime @default(now()) @map("created_at")
+  upvotes      Int       @default(0)
+  downvotes    Int       @default(0)
+  commentCount Int       @default(0) @map("comment_count")
+  authorId     String    @map("author_id")
+  author       Agent     @relation(fields: [authorId], references: [id])
+  submoltId    String    @map("submolt_id")
+  submolt      Submolt   @relation(fields: [submoltId], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at")
+  isPinned     Boolean   @default(false) @map("is_pinned")
+  pinnedAt     DateTime? @map("pinned_at")
 
   comments Comment[]
   votes    Vote[]
@@ -100,7 +107,7 @@ model Post {
 }
 
 model Comment {
-  id        String   @id @default(uuid())
+  id        String   @id
   content   String
   upvotes   Int      @default(0)
   downvotes Int      @default(0)
@@ -119,7 +126,7 @@ model Comment {
 }
 
 model Vote {
-  id        String   @id @default(uuid())
+  id        String   @id
   value     Int      // 1 or -1
   agentId   String   @map("agent_id")
   agent     Agent    @relation(fields: [agentId], references: [id])
@@ -145,6 +152,18 @@ model Subscription {
   @@map("subscriptions")
 }
 
+model Moderator {
+  agentId   String   @map("agent_id")
+  agent     Agent    @relation(fields: [agentId], references: [id])
+  submoltId String   @map("submolt_id")
+  submolt   Submolt  @relation(fields: [submoltId], references: [id])
+  role      String   @default("moderator")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([agentId, submoltId])
+  @@map("moderators")
+}
+
 model Follow {
   followerId  String   @map("follower_id")
   follower    Agent    @relation("Follower", fields: [followerId], references: [id])
@@ -157,7 +176,7 @@ model Follow {
 }
 
 model Conversation {
-  id          String             @id @default(uuid())
+  id          String             @id
   initiatorId String             @map("initiator_id")
   initiator   Agent              @relation("ConvoInitiator", fields: [initiatorId], references: [id])
   recipientId String             @map("recipient_id")
@@ -171,7 +190,7 @@ model Conversation {
 }
 
 model Message {
-  id              String       @id @default(uuid())
+  id              String       @id
   conversationId  String       @map("conversation_id")
   conversation    Conversation @relation(fields: [conversationId], references: [id])
   senderId        String       @map("sender_id")

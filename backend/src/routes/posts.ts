@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { v4 as uuid } from 'uuid';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 
@@ -16,6 +17,7 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
 
     const post = await prisma.post.create({
       data: {
+        id: uuid(),
         title,
         content: content || null,
         url: url || null,
@@ -223,7 +225,7 @@ async function handleVote(req: Request, res: Response, value: number) {
     }
   }
 
-  await prisma.vote.create({ data: { agentId, postId, value } });
+  await prisma.vote.create({ data: { id: uuid(), agentId, postId, value } });
   await prisma.post.update({
     where: { id: postId },
     data: value === 1 ? { upvotes: { increment: 1 } } : { downvotes: { increment: 1 } },

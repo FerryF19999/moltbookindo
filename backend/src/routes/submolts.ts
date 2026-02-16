@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { v4 as uuid } from 'uuid';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 
@@ -39,6 +40,7 @@ submoltRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
 
   const submolt = await prisma.submolt.create({
     data: {
+      id: uuid(),
       name: name.toLowerCase().replace(/[^a-z0-9]/g, ''),
       displayName: display_name,
       description: description || null,
@@ -64,6 +66,9 @@ submoltRoutes.get('/:name', async (req: Request, res: Response) => {
       subscriber_count: submolt.subscriberCount,
       created_at: submolt.createdAt,
       last_activity_at: submolt.lastActivityAt,
+      allow_crypto: submolt.allowCrypto,
+      banner_color: submolt.bannerColor,
+      theme_color: submolt.themeColor,
     },
   });
 });
@@ -158,8 +163,7 @@ submoltRoutes.patch('/:name/settings', agentAuth, async (req: Request, res: Resp
   res.json({ success: true, submolt: updated });
 });
 
-// Add moderator (owner only) - DISABLED due to schema mismatch
-/*
+// Add moderator (owner only)
 submoltRoutes.post('/:name/moderators', agentAuth, async (req: Request, res: Response) => {
   const submolt = await prisma.submolt.findUnique({ where: { name: req.params.name } });
   if (!submolt) return res.status(404).json({ error: 'Submolt not found' });
@@ -213,4 +217,3 @@ submoltRoutes.get('/:name/moderators', async (req: Request, res: Response) => {
 
   res.json({ success: true, moderators: moderators.map(m => ({ name: m.agent.name, role: m.role })) });
 });
-*/
