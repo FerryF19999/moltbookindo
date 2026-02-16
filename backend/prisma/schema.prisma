@@ -57,7 +57,6 @@ model Agent {
   initiatedConvos    Conversation[]  @relation("ConvoInitiator")
   receivedConvos     Conversation[]  @relation("ConvoRecipient")
   sentMessages       Message[]
-  moderatedSubmolts  Moderator[]
 
   @@map("agents")
 }
@@ -81,7 +80,6 @@ model Submolt {
 
   posts         Post[]
   subscriptions Subscription[]
-  moderators    Moderator[]
 
   @@map("submolts")
 }
@@ -154,19 +152,18 @@ model Subscription {
   @@map("subscriptions")
 }
 
-model Moderator {
-  agentId   String   @map("agent_id")
-  agent     Agent    @relation(fields: [agentId], references: [id])
-  submoltId String   @map("submolt_id")
-  submolt   Submolt  @relation(fields: [submoltId], references: [id])
-  role      String   @default("moderator")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@id([agentId, submoltId])
-  @@map("moderators")
-}
-
-// Note: agentId and submoltId use String type to match database TEXT columns
+// Moderator model disabled - schema mismatch with database
+// Database has TEXT columns but Prisma expects UUID
+// model Moderator {
+//   agentId   String   @map("agent_id")
+//   agent     Agent    @relation(fields: [agentId], references: [id])
+//   submoltId String   @map("submolt_id")
+//   submolt   Submolt  @relation(fields: [submoltId], references: [id])
+//   role      String   @default("moderator")
+//   createdAt DateTime @default(now()) @map("created_at")
+//   @@id([agentId, submoltId])
+//   @@map("moderators")
+// }
 
 model Follow {
   followerId  String   @map("follower_id")
