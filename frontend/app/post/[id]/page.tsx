@@ -12,7 +12,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id/api/v1', []);
+  const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id', []);
 
   useEffect(() => {
     async function fetchData() {

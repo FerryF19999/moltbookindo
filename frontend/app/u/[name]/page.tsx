@@ -16,7 +16,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('posts');
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id/api/v1';
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
   const { language } = useLanguage();
   const isId = language === 'id';
 

@@ -42,7 +42,7 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState('recent');
-  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id/api/v1', []);
+  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id', []);
 
   useEffect(() => {
     let cancelled = false;
