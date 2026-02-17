@@ -12,8 +12,8 @@ export default function Header() {
   const isId = language === 'id';
 
   return (
-    <header className="bg-[#121212] px-4 py-2 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex items-center gap-4">
+    <header className="bg-[#121212] border-b-2 border-[#e01b24] px-4 py-2 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto flex items-center gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5 group flex-shrink-0">
           <Image 
@@ -34,17 +34,17 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Search Bar */}
-        <div className="flex items-center">
+        {/* Search Bar - White like moltbook.com */}
+        <div className="flex items-center flex-1 max-w-md">
           <input
             type="text"
             placeholder={isId ? 'Cari...' : 'Search...'}
-            className="w-[160px] bg-[#333] rounded-l-lg text-white placeholder-[#888] text-sm h-8 px-3 border border-[#444] outline-none"
+            className="w-full bg-white rounded-l-lg text-[#222] placeholder-[#888] text-sm h-8 px-3 border border-[#ccc] outline-none"
           />
           <button
             type="button"
             disabled
-            className="bg-[#444] rounded-r-lg w-8 h-8 flex items-center justify-center transition-colors"
+            className="bg-[#333] rounded-r-lg w-8 h-8 flex items-center justify-center transition-colors"
             aria-label={isId ? 'Cari' : 'Search'}
           >
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,12 +54,12 @@ export default function Header() {
         </div>
 
         {/* Nav Links - Center */}
-        <nav className="flex items-center gap-3">
+        <nav className="flex items-center gap-4">
           <Link href="/m" className="text-[#ccc] hover:text-white text-sm transition-colors whitespace-nowrap">
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
           <Link href="/developers/apply" className="text-[#ccc] hover:text-white text-sm transition-colors flex items-center gap-1 whitespace-nowrap">
-            <span className="text-[#00d4aa]">✦</span>
+            <span className="text-[#00d4aa]">❇️</span>
             <span>{isId ? 'Developer' : 'Developers'}</span>
           </Link>
           <Link href="/help" className="text-[#ccc] hover:text-white text-sm transition-colors whitespace-nowrap">
@@ -67,8 +67,8 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Right Side - Login, Dashboard, Language */}
-        <div className="flex items-center gap-3 ml-auto">
+        {/* Right Side */}
+        <div className="flex items-center gap-4">
           <Link href="/login" className="text-[#ccc] hover:text-white text-sm transition-colors flex items-center gap-1 whitespace-nowrap">
             <span>🔑</span>
             <span>{isId ? 'Masuk' : 'Login'}</span>
@@ -80,7 +80,7 @@ export default function Header() {
           {/* Language Toggle */}
           <button
             onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
-            className="flex items-center gap-1 px-2 py-1 rounded hover:bg-[#222] transition-colors text-sm whitespace-nowrap"
+            className="flex items-center gap-1 px-2 py-1 rounded hover:bg-[#222] transition-colors text-sm"
             aria-label="Toggle language"
           >
             <span className={language === 'id' ? 'text-white' : 'text-[#666]'}>{language === 'id' ? 'ID' : 'ID'}</span>
@@ -88,39 +88,7 @@ export default function Header() {
             <span className={language === 'en' ? 'text-white' : 'text-[#666]'}>{language === 'en' ? 'EN' : 'EN'}</span>
           </button>
         </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-[#ccc] hover:text-white p-1"
-          aria-label="Menu"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
       </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-3 pt-3 border-t border-[#222] space-y-2">
-          <Link href="/m" className="block text-[#ccc] hover:text-white text-sm">
-            {isId ? 'Submolt' : 'Submolts'}
-          </Link>
-          <Link href="/developers/apply" className="block text-[#ccc] hover:text-white text-sm flex items-center gap-1">
-            ✦ {isId ? 'Developer' : 'Developers'}
-          </Link>
-          <Link href="/help" className="block text-[#ccc] hover:text-white text-sm">
-            {isId ? 'Bantuan' : 'Help'}
-          </Link>
-          <Link href="/login" className="block text-[#ccc] hover:text-white text-sm flex items-center gap-1">
-            🔑 {isId ? 'Masuk' : 'Login'}
-          </Link>
-          <Link href="/humans/dashboard" className="block text-[#ccc] hover:text-white text-sm">
-            Dashboard
-          </Link>
-        </div>
-      )}
     </header>
   );
 }
