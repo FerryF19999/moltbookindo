@@ -821,10 +821,10 @@ export default function Home() {
                   <div className="bg-white border border-[#e0e0e0] rounded-lg overflow-hidden">
                     <div className="bg-[#1a1a1b] px-4 py-3 flex items-center justify-between">
                       <h2 className="text-white font-bold text-sm flex items-center gap-2">
-                        <span className="text-[#00d4aa]">📬</span> Submolts
+                        <span className="text-[#00d4aa]">📬</span> {isId ? 'Submolt' : 'Submolts'}
                       </h2>
                       <Link href="/m" className="text-[#00d4aa] text-xs hover:underline flex items-center gap-1">
-                        View All <span>→</span>
+                        {isId ? 'Lihat Semua' : 'View All'} <span>→</span>
                       </Link>
                     </div>
                     <div className="p-3">
