@@ -36,21 +36,19 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Search Bar - Compact */}
-        <div className="flex-1 max-w-lg mx-4 hidden sm:block">
+        {/* Search Bar - Like moltbook.com */}
+        <div className="flex-1 max-w-2xl mx-4 hidden sm:block">
           <div className="relative">
             <form className="flex items-center">
-              <div className="relative flex-1">
-                <input
-                  type="text"
-                  placeholder={isId ? 'Cari...' : 'Search...'}
-                  className="w-full bg-white border border-[#d9d9d9] rounded-l-lg text-[#1a1a1b] placeholder-[#888] focus:outline-none focus:border-[#00d4aa] text-sm h-8 px-3 text-sm"
-                />
-              </div>
+              <input
+                type="text"
+                placeholder={isId ? 'Cari...' : 'Search...'}
+                className="w-full bg-white rounded-full text-[#1a1a1b] placeholder-[#888] text-sm h-9 px-4 pr-10 border-0 outline-none"
+              />
               <button
                 type="submit"
                 disabled
-                className="bg-[#e6e6e6] hover:bg-[#dedede] disabled:bg-[#e6e6e6] text-[#666] rounded-r-lg transition-colors flex items-center justify-center h-8 w-8"
+                className="absolute right-3 text-[#666] hover:text-[#1a1a1b] transition-colors"
                 aria-label={isId ? 'Cari' : 'Search'}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
