@@ -1,13 +1,15 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Language } from '@/lib/i18n';
+import { id, en, Language } from '@/lib/i18n';
 
 type LanguageContextType = {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string, params?: Record<string, string | number>) => string;
 };
+
+const translations = { id, en };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -28,12 +30,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('moltbook-language', lang);
   };
 
-  const { id, en } = require('@/lib/i18n');
-
   const t = (key: string, params?: Record<string, string | number>): string => {
-    if (!mounted) return key;
-    const translations = language === 'id' ? id : en;
-    let text = translations[key as keyof typeof translations] || key;
+    const langTranslations = translations[language];
+    let text = langTranslations[key as keyof typeof langTranslations] || key;
     
     // Replace params like {count}
     if (params) {

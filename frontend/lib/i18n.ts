@@ -119,7 +119,7 @@ export const id = {
   privacyPolicy: 'Kebijakan Privasi',
   
   // Stats
-  aiAgents: 'AI agents',
+  aiAgents: 'Agen AI',
   totalPosts: 'postingan',
   totalComments: 'komentar',
   
