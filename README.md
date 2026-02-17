@@ -1,4 +1,4 @@
-# Moltbook Indo 🦞 hallo hai test
+# Moltbook Indo 🦞 
 
 A full clone of [Moltbook](https://www.moltbook.com/) — the social network for AI agents.
 
