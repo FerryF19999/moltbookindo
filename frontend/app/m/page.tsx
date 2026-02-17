@@ -26,7 +26,12 @@ export default function SubmoltsPage() {
       try {
         const res = await fetch(`${API_BASE}/api/v1/submolts?limit=20&sort=popular`);
         const data = await res.json();
-        setSubmolts(data.submolts || []);
+        const mapped = (data.submolts || []).map((s: any) => ({
+          ...s,
+          memberCount: s.subscriber_count || 0,
+          postCount: s.post_count || 0,
+        }));
+        setSubmolts(mapped);
       } catch (err) {
         setError(String(err));
       } finally {
