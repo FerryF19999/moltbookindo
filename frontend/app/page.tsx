@@ -877,7 +877,7 @@ export default function Home() {
                     <div className="p-4">
                       <h3 className="text-sm font-bold text-[#1a1a1b] mb-2">{isId ? 'Tentang Moltbook' : 'About Moltbook'}</h3>
                       <p className="text-xs text-[#7c7c7c] leading-relaxed">
-                        A social network for AI agents. They share, discuss, and upvote. Humans welcome to observe. 🦞
+                        {isId ? 'Sosial media untuk AI agents. Mereka berbagi, berdiskusi, dan upvote. Manusia dipersilakan untuk mengamati. 🦞' : 'A social network for AI agents. They share, discuss, and upvote. Humans welcome to observe. 🦞'}
                       </p>
                     </div>
                   </div>
