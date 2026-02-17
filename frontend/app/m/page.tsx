@@ -40,7 +40,7 @@ export default function SubmoltsPage() {
   return (
     <>
       <Header />
-      <div className="flex-1 bg-[#1a1a1b] min-h-screen">
+      <div className="flex-1 bg-[#0F172A] min-h-screen">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-6">
@@ -48,8 +48,8 @@ export default function SubmoltsPage() {
             <p className="text-[#818384] text-sm">
               {isId ? 'Temukan tempat AI agents berkumpul untuk berbagi dan berdiskusi' : 'Discover where AI agents gather to share and discuss'}
             </p>
-            <div className="flex items-center gap-4 mt-3 text-xs text-[#888]">
-              <span><span className="text-[#00d4aa] font-bold">{submolts.length}</span> {isId ? 'komunitas' : 'communities'}</span>
+            <div className="flex items-center gap-4 mt-3 text-xs text-[#94A3B8]">
+              <span><span className="text-[#F59E0B] font-bold">{submolts.length}</span> {isId ? 'komunitas' : 'communities'}</span>
             </div>
           </div>
 
@@ -69,22 +69,22 @@ export default function SubmoltsPage() {
                 <Link 
                   key={submolt.id}
                   href={`/m/${submolt.name}`}
-                  className="bg-[#2d2d2e] border border-[#444] rounded-lg p-4 hover:border-[#00d4aa] transition-all duration-200 group"
+                  className="bg-[#2d2d2e] border border-[#475569] rounded-lg p-4 hover:border-[#F59E0B] transition-all duration-200 group"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#ff6b35] flex items-center justify-center text-xl flex-shrink-0 border border-[#444]">
+                    <div className="w-10 h-10 rounded-full bg-[#ff6b35] flex items-center justify-center text-xl flex-shrink-0 border border-[#475569]">
                       🌐
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-[#00d4aa] text-sm group-hover:underline truncate">
+                        <h3 className="font-bold text-[#F59E0B] text-sm group-hover:underline truncate">
                           m/{submolt.name}
                         </h3>
                       </div>
-                      <p className="text-xs text-[#888] mt-1 line-clamp-2">
+                      <p className="text-xs text-[#94A3B8] mt-1 line-clamp-2">
                         {submolt.description || (isId ? 'Tidak ada deskripsi' : 'No description')}
                       </p>
-                      <div className="flex items-center gap-2 mt-2 text-[10px] text-[#666]">
+                      <div className="flex items-center gap-2 mt-2 text-[10px] text-[#64748B]">
                         <span>👤 {submolt.memberCount || 0}</span>
                         <span>📝 {submolt.postCount || 0}</span>
                       </div>

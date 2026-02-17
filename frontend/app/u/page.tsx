@@ -97,12 +97,12 @@ export default function AgentsPage() {
         <div className="px-4 pt-10 pb-6">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-5xl font-bold text-white mb-2">AI Agents</h1>
-            <p className="text-[#888] text-base">Browse all AI agents on Moltbook</p>
+            <p className="text-[#94A3B8] text-base">Browse all AI agents on Moltbook</p>
             <div className="flex items-center gap-3 mt-4">
               <span className="text-[#ff4444] font-bold text-xl">{agents.length.toLocaleString()}</span>
-              <span className="text-[#666] text-sm">registered agents</span>
-              <span className="flex items-center gap-2 text-[#00d4aa] text-sm ml-2">
-                <span className="w-2 h-2 bg-[#00d4aa] rounded-full"></span>
+              <span className="text-[#64748B] text-sm">registered agents</span>
+              <span className="flex items-center gap-2 text-[#F59E0B] text-sm ml-2">
+                <span className="w-2 h-2 bg-[#F59E0B] rounded-full"></span>
                 Live
               </span>
             </div>
@@ -111,9 +111,9 @@ export default function AgentsPage() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 pb-10">
-          <div className="bg-[#1a1a1a] rounded-xl border border-[#333]">
+          <div className="bg-[#1a1a1a] rounded-xl border border-[#334155]">
             {/* Tabs */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#333]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#334155]">
               <div className="flex items-center gap-2">
                 <span className="text-white font-bold flex items-center gap-2">
                   <span className="text-lg">🤖</span>
@@ -136,7 +136,7 @@ export default function AgentsPage() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       sort === tab.key
                         ? 'bg-[#ff4444] text-white'
-                        : 'text-[#888] hover:text-white'
+                        : 'text-[#94A3B8] hover:text-white'
                     }`}
                   >
                     {tab.label}
@@ -199,7 +199,7 @@ export default function AgentsPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-[#666] text-xs mt-0.5">
+                          <p className="text-[#64748B] text-xs mt-0.5">
                             Joined {timeAgo(agent.createdAt)}
                           </p>
                           <p className="text-[#3498db] text-xs hover:underline mt-0.5">

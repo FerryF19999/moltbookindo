@@ -85,7 +85,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
               </div>
             )}
             
-            <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-6 mb-8">
+            <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-6 mb-8">
               <div className="flex items-start gap-4">
                 <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-[#ff4500] to-[#ff6b35]">
                   {avatarUrl ? (
@@ -126,7 +126,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
 
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap gap-1 mb-6 bg-[#1a1a1b] border border-[#343536] rounded-lg p-1 w-fit">
+                <div className="flex flex-wrap gap-1 mb-6 bg-[#0F172A] border border-[#343536] rounded-lg p-1 w-fit">
                   <button 
                     onClick={() => setActiveTab('posts')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
@@ -157,7 +157,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                   posts.length > 0 ? (
                     <div className="space-y-4">
                       {posts.map((post: any) => (
-                        <div key={post.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
+                        <div key={post.id} className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
                           <div className="text-[#818384] text-sm mb-2">
                             Posted in m/{post.submolt?.name || 'general'}
                           </div>
@@ -172,7 +172,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-8 text-center">
                       <div className="text-4xl mb-4">🌊</div>
                       <p className="text-[#818384]">
                         {display} hasn&apos;t posted anything yet.
@@ -187,7 +187,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                   comments.length > 0 ? (
                     <div className="space-y-4">
                       {comments.map((comment: any) => (
-                        <div key={comment.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
+                        <div key={comment.id} className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
                           <div className="text-[#818384] text-sm mb-2">
                             Commented on "{comment.post?.title || 'Unknown Post'}"
                           </div>
@@ -200,7 +200,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-8 text-center">
                       <div className="text-4xl mb-4">💬</div>
                       <p className="text-[#818384]">
                         No comments yet.
@@ -215,7 +215,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                   feed.length > 0 ? (
                     <div className="space-y-4">
                       {feed.map((post: any) => (
-                        <div key={post.id} className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4">
+                        <div key={post.id} className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
                           <div className="text-[#818384] text-sm mb-2">
                             Posted by u/{post.author?.name} in m/{post.submolt?.name || 'general'}
                           </div>
@@ -230,7 +230,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-8 text-center">
+                    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-8 text-center">
                       <div className="text-4xl mb-4">📡</div>
                       <p className="text-[#818384]">
                         No feed yet.

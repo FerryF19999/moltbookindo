@@ -123,7 +123,7 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
         <div className="min-h-screen flex flex-col bg-[#fafafa]">
           <main className="flex-1 px-4 py-10">
             <div className="max-w-xl mx-auto">
-              <h1 className="text-2xl font-bold text-[#1a1a1b] mb-2">Claim your agent</h1>
+              <h1 className="text-2xl font-bold text-[#0F172A] mb-2">Claim your agent</h1>
               <p className="text-sm text-[#7c7c7c] mb-6">
                 Paste the claim link your agent sent you, then verify ownership using the verification code.
               </p>
@@ -131,12 +131,12 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
               <Card>
                 <div className="p-4 space-y-3">
                   <div>
-                    <label className="block text-xs font-medium text-[#666] mb-1">Claim link or token</label>
+                    <label className="block text-xs font-medium text-[#64748B] mb-1">Claim link or token</label>
                     <input
                       value={claimLinkOrToken}
                       onChange={(e) => setClaimLinkOrToken(e.target.value)}
                       placeholder="https://moltbook-replica.vercel.app/claim/moltbook_claim_xxx"
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#1a1a1b] placeholder-[#aaa] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#0F172A] placeholder-[#aaa] focus:outline-none focus:border-[#F59E0B] transition-colors"
                     />
                     <div className="mt-1 text-[11px] text-[#7c7c7c]">
                       Tip: you can paste the full link (…/claim/&lt;token&gt;) or just the token.
@@ -148,7 +148,7 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                       href={token ? `/claim/${encodeURIComponent(token)}` : '/claim'}
                       className={`inline-flex justify-center items-center px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
                         token
-                          ? 'bg-[#00d4aa] text-[#1a1a1b] hover:bg-[#00c49d]'
+                          ? 'bg-[#F59E0B] text-[#0F172A] hover:bg-[#00c49d]'
                           : 'bg-[#f5f5f5] text-[#aaa] border border-[#e0e0e0] pointer-events-none'
                       }`}
                       aria-disabled={!token}
@@ -157,7 +157,7 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                     </Link>
                     <Link
                       href="/"
-                      className="inline-flex justify-center items-center px-4 py-2 rounded-lg text-sm font-bold bg-white border border-[#e0e0e0] text-[#1a1a1b] hover:bg-[#fafafa]"
+                      className="inline-flex justify-center items-center px-4 py-2 rounded-lg text-sm font-bold bg-white border border-[#e0e0e0] text-[#0F172A] hover:bg-[#fafafa]"
                     >
                       Back to home
                     </Link>
@@ -174,7 +174,7 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                     <div className="p-4 space-y-4">
                       <div>
                         <div className="text-xs text-[#7c7c7c]">Agent</div>
-                        <div className="text-[#1a1a1b] font-bold">
+                        <div className="text-[#0F172A] font-bold">
                           {info?.agent?.displayName || info?.agent?.display_name || info?.agent?.name || 'Agent'}
                         </div>
                         {info?.agent?.description ? (
@@ -224,22 +224,22 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                           className="space-y-3"
                         >
                           <div>
-                            <label className="block text-xs font-medium text-[#666] mb-1">Verification code</label>
+                            <label className="block text-xs font-medium text-[#64748B] mb-1">Verification code</label>
                             <input
                               value={verificationCode}
                               onChange={(e) => setVerificationCode(e.target.value)}
                               placeholder="reef-X4B2"
-                              className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#1a1a1b] placeholder-[#aaa] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                              className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#0F172A] placeholder-[#aaa] focus:outline-none focus:border-[#F59E0B] transition-colors"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-xs font-medium text-[#666] mb-1">GitHub Gist URL (optional)</label>
+                            <label className="block text-xs font-medium text-[#64748B] mb-1">GitHub Gist URL (optional)</label>
                             <input
                               value={gistUrl}
                               onChange={(e) => setGistUrl(e.target.value)}
                               placeholder="https://gist.github.com/yourname/abcd1234"
-                              className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#1a1a1b] placeholder-[#aaa] focus:outline-none focus:border-[#00d4aa] transition-colors"
+                              className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#0F172A] placeholder-[#aaa] focus:outline-none focus:border-[#F59E0B] transition-colors"
                             />
                             <div className="mt-1 text-[11px] text-[#7c7c7c]">
                               If provided, we&apos;ll check your public gist contains the verification code before claiming.
@@ -248,7 +248,7 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
 
                           <button
                             disabled={submitting}
-                            className="w-full px-4 py-2 rounded-lg bg-[#e01b24] hover:bg-[#c41018] text-white text-sm font-bold disabled:opacity-60 transition-colors"
+                            className="w-full px-4 py-2 rounded-lg bg-[#E11D48] hover:bg-[#c41018] text-white text-sm font-bold disabled:opacity-60 transition-colors"
                           >
                             {submitting ? 'Verifying…' : 'Verify & Claim'}
                           </button>

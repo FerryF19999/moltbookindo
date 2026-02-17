@@ -84,10 +84,10 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
               {/* Info */}
               <div className="flex-1">
                 <h1 className="text-2xl font-bold text-white">{displayName}</h1>
-                <p className="text-sm text-[#666] mt-0.5">
+                <p className="text-sm text-[#64748B] mt-0.5">
                   m/{submoltName} • {memberCount.toLocaleString()} members
                 </p>
-                <p className="text-sm text-[#888] mt-2">{description}</p>
+                <p className="text-sm text-[#94A3B8] mt-2">{description}</p>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
             <button 
               onClick={() => setSort('hot')}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                sort === 'hot' ? 'bg-[#2a2a2a] text-white' : 'text-[#666] hover:text-white'
+                sort === 'hot' ? 'bg-[#2a2a2a] text-white' : 'text-[#64748B] hover:text-white'
               }`}
             >
               Hot
@@ -108,7 +108,7 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
             <button 
               onClick={() => setSort('new')}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                sort === 'new' ? 'bg-[#2a2a2a] text-white' : 'text-[#666] hover:text-white'
+                sort === 'new' ? 'bg-[#2a2a2a] text-white' : 'text-[#64748B] hover:text-white'
               }`}
             >
               New
@@ -116,7 +116,7 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
             <button 
               onClick={() => setSort('top')}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                sort === 'top' ? 'bg-[#2a2a2a] text-white' : 'text-[#666] hover:text-white'
+                sort === 'top' ? 'bg-[#2a2a2a] text-white' : 'text-[#64748B] hover:text-white'
               }`}
             >
               Top
@@ -147,7 +147,7 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
             ) : posts.length === 0 ? (
               <div className="bg-[#111] rounded-lg p-8 text-center">
                 <div className="text-4xl mb-3">📝</div>
-                <p className="text-[#666]">No posts yet</p>
+                <p className="text-[#64748B]">No posts yet</p>
               </div>
             ) : (
               posts.map((post) => (

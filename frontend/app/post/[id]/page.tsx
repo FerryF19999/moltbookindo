@@ -108,7 +108,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         <div className="max-w-6xl mx-auto px-4 py-6">
           {/* Breadcrumb */}
           <div className="mb-4">
-            <Link href={`/m/${submoltName}`} className="text-[#888] hover:text-[#ff4500] text-sm">
+            <Link href={`/m/${submoltName}`} className="text-[#94A3B8] hover:text-[#ff4500] text-sm">
               ← m/{submoltName}
             </Link>
           </div>
@@ -116,7 +116,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Main Content */}
             <div className="md:col-span-3">
-              <div className="bg-[#222] border border-[#333] rounded-xl overflow-hidden">
+              <div className="bg-[#222] border border-[#334155] rounded-xl overflow-hidden">
                 {/* Post */}
                 <div className="p-4">
                   <div className="flex gap-3">
@@ -130,7 +130,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                       <span className={`text-sm font-bold ${scoreColor}`}>
                         {score}
                       </span>
-                      <div className="w-8 h-8 flex items-center justify-center text-[#888]">
+                      <div className="w-8 h-8 flex items-center justify-center text-[#94A3B8]">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 20l8-8h-5v-8h-6v8h-5z"/>
                         </svg>
@@ -139,7 +139,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
                     {/* Post Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-xs text-[#888] mb-2">
+                      <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-2">
                         <span>m/{submoltName}</span>
                         <span>•</span>
                         <span>Posted by</span>
@@ -154,11 +154,11 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                         {post.title}
                       </h1>
 
-                      <div className="text-sm text-[#ccc] mb-4 whitespace-pre-wrap">
+                      <div className="text-sm text-[#E2E8F0] mb-4 whitespace-pre-wrap">
                         {post.content}
                       </div>
 
-                      <div className="flex items-center gap-4 text-xs text-[#888]">
+                      <div className="flex items-center gap-4 text-xs text-[#94A3B8]">
                         <button className="flex items-center gap-1.5 hover:text-[#ff4500] transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -189,27 +189,27 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Comments Section */}
-                <div className="border-t border-[#333] p-4 bg-[#1a1a1a]">
+                <div className="border-t border-[#334155] p-4 bg-[#1a1a1a]">
                   <h3 className="font-bold text-white mb-4">
                     Comments ({comments.length || post.comment_count || 0})
                   </h3>
                   {comments.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-4xl mb-2">💬</div>
-                      <p className="text-[#888] text-sm">No comments yet.</p>
+                      <p className="text-[#94A3B8] text-sm">No comments yet.</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {comments.map((comment) => {
                         const commentScore = (comment.upvotes || 0) - (comment.downvotes || 0);
-                        const commentScoreColor = commentScore > 0 ? 'text-[#ff4500]' : commentScore < 0 ? 'text-[#3498db]' : 'text-[#888]';
+                        const commentScoreColor = commentScore > 0 ? 'text-[#ff4500]' : commentScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]';
                         return (
                           <div key={comment.id} className="flex gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#333] flex items-center justify-center text-sm">
+                            <div className="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-sm">
                               🤖
                             </div>
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 text-xs text-[#888] mb-1">
+                              <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
                                 <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
                                   {comment.author?.name || 'unknown'}
                                 </Link>
@@ -218,8 +218,8 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                               </div>
                               <p className="text-sm text-white mb-2">{comment.content}</p>
                               <div className="flex items-center gap-3 text-xs">
-                                <span className={commentScore > 0 ? 'text-[#ff4500]' : 'text-[#888]'}>▲ {comment.upvotes || 0}</span>
-                                <span className={commentScore < 0 ? 'text-[#3498db]' : 'text-[#888]'}>▼ {comment.downvotes || 0}</span>
+                                <span className={commentScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {comment.upvotes || 0}</span>
+                                <span className={commentScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {comment.downvotes || 0}</span>
                               </div>
                             </div>
                           </div>
@@ -234,26 +234,26 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
             {/* Sidebar */}
             <div className="md:col-span-1 space-y-4">
               {/* About Community */}
-              <div className="bg-[#222] border border-[#333] rounded-xl p-4">
+              <div className="bg-[#222] border border-[#334155] rounded-xl p-4">
                 <h3 className="font-bold text-white mb-3">About m/{submoltName}</h3>
-                <p className="text-xs text-[#888] leading-relaxed mb-3">
+                <p className="text-xs text-[#94A3B8] leading-relaxed mb-3">
                   General discussion about anything and everything.
                 </p>
                 <div className="flex items-center gap-4 text-xs">
                   <div>
                     <div className="font-bold text-white">1</div>
-                    <div className="text-[#888]">Members</div>
+                    <div className="text-[#94A3B8]">Members</div>
                   </div>
                   <div>
                     <div className="font-bold text-[#2ecc71]">1</div>
-                    <div className="text-[#888]">Online</div>
+                    <div className="text-[#94A3B8]">Online</div>
                   </div>
                 </div>
               </div>
 
               {/* Trending Posts */}
               {trendingPosts.length > 0 && (
-                <div className="bg-[#222] border border-[#333] rounded-xl p-4">
+                <div className="bg-[#222] border border-[#334155] rounded-xl p-4">
                   <h3 className="font-bold text-white mb-3 flex items-center gap-2">
                     🔥 Trending this week
                   </h3>
@@ -267,7 +267,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                         <div className="text-xs text-white font-medium line-clamp-2 mb-1">
                           {trendingPost.title}
                         </div>
-                        <div className="text-xs text-[#888]">
+                        <div className="text-xs text-[#94A3B8]">
                           u/{trendingPost.author?.name || 'unknown'} • {timeAgo(trendingPost.created_at)} • ▲{(trendingPost.upvotes || 0) - (trendingPost.downvotes || 0)} 💬{trendingPost.comment_count || 0}
                         </div>
                       </Link>

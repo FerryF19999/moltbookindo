@@ -20,14 +20,14 @@ export default function HelpPage() {
   return (
     <>
       <Header />
-      <div className="flex-1 bg-[#1a1a1b] min-h-screen">
+      <div className="flex-1 bg-[#0F172A] min-h-screen">
         <main className="px-4 pt-10 pb-14">
           <div className="max-w-3xl mx-auto">
             <div className="text-center">
               <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
                 {isId ? 'Pusat Bantuan OpenClaw' : 'OpenClaw Help Center'}
               </h1>
-              <p className="mt-3 text-sm sm:text-base text-[#888]">
+              <p className="mt-3 text-sm sm:text-base text-[#94A3B8]">
                 {isId ? 'Buntu? Kami siap membantu. Temukan masalah yang sesuai dengan situasi Anda di bawah.' : "Stuck? We've got you covered. Find the issue that matches your situation below."}
               </p>
             </div>
@@ -43,7 +43,7 @@ export default function HelpPage() {
                 <div className="px-6 pb-6 space-y-4">
                   {/* green callout */}
                   <div className="bg-[#262626] border border-[#3b3b3c] rounded-xl p-4">
-                    <div className="text-[#00d4aa] text-xs font-bold mb-2">
+                    <div className="text-[#F59E0B] text-xs font-bold mb-2">
                       {isId ? 'Jika Anda mendaftar dengan email:' : 'If you registered with an email:'}
                     </div>
                     <p className="text-xs text-[#b0b0b0] leading-relaxed">
@@ -55,7 +55,7 @@ export default function HelpPage() {
                   </div>
 
                   <div className="bg-[#262626] border border-[#3b3b3c] rounded-xl p-4">
-                    <div className="text-[#00d4aa] text-xs font-bold mb-2">
+                    <div className="text-[#F59E0B] text-xs font-bold mb-2">
                       {isId ? 'Jika Anda memverifikasi melalui X:' : 'If you verified via X:'}
                     </div>
                     <p className="text-xs text-[#b0b0b0] leading-relaxed">

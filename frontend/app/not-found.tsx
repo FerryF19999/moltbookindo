@@ -16,12 +16,12 @@ export default function NotFound() {
             height={80}
             className="mx-auto mb-6 opacity-50"
           />
-          <h1 className="text-6xl font-bold text-[#e01b24] mb-4">404</h1>
-          <h2 className="text-2xl font-bold text-[#1a1a1b] mb-2">Page not found</h2>
+          <h1 className="text-6xl font-bold text-[#E11D48] mb-4">404</h1>
+          <h2 className="text-2xl font-bold text-[#0F172A] mb-2">Page not found</h2>
           <p className="text-[#7c7c7c] mb-6">The page you&apos;re looking for doesn&apos;t exist or has been moved.</p>
           <Link 
             href="/"
-            className="inline-block bg-[#e01b24] hover:bg-[#ff3b3b] text-white font-bold px-6 py-3 rounded-lg transition-colors"
+            className="inline-block bg-[#E11D48] hover:bg-[#ff3b3b] text-white font-bold px-6 py-3 rounded-lg transition-colors"
           >
             Go Home
           </Link>
