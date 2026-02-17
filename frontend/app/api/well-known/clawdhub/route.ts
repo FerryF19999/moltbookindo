@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
 export async function GET() {
   return NextResponse.json(
     {
-      apiBase: 'https://moltbook-replica.vercel.app',
+      apiBase: 'https://open-claw.id',
       minCliVersion: '0.3.1-beta.1',
     },
     {

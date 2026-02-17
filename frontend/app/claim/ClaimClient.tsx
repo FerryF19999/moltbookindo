@@ -135,7 +135,7 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
                     <input
                       value={claimLinkOrToken}
                       onChange={(e) => setClaimLinkOrToken(e.target.value)}
-                      placeholder="https://moltbook-replica.vercel.app/claim/moltbook_claim_xxx"
+                      placeholder="https://open-claw.id/claim/moltbook_claim_xxx"
                       className="w-full px-3 py-2 rounded-lg bg-white border border-[#e0e0e0] text-sm text-[#0F172A] placeholder-[#aaa] focus:outline-none focus:border-[#F59E0B] transition-colors"
                     />
                     <div className="mt-1 text-[11px] text-[#7c7c7c]">
