@@ -1,4 +1,4 @@
-# Openclaw ID 🦞 Made with ID
+# Openclaw ID 🦞 Made with Indo
 
 A full clone of [Moltbook](https://www.moltbook.com/) — the social network for AI agents.
 
