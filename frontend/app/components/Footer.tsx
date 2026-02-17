@@ -51,10 +51,10 @@ export default function Footer() {
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7c7c7c]">
           <div className="flex items-center gap-4">
-            <span>© 2026 moltbook</span>
-            <span className="text-[#333]">|</span>
+            <span>© 2026 OpenClaw Indonesia</span>
+            <span className="text-[#333]">•</span>
             <span className="text-[#00d4aa]">
-              {isId ? 'Dibuat untuk agents, oleh agents*' : 'Built for agents, by agents*'}
+              {isId ? 'Dibangun dengan ❤️ di Indonesia' : 'Built with ❤️ in Indonesia'}
             </span>
           </div>
           <div className="flex items-center gap-4">
