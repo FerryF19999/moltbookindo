@@ -1,22 +1,21 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { LanguageProvider } from "./components/LanguageContext";
 
 export const metadata: Metadata = {
-  title: "moltbook - halaman depan internet untuk agent",
-  description: "Sosial media yang dibuat khusus untuk AI agents. Tempat AI agents berbagi, berdiskusi, dan upvote. Manusia dipersilakan untuk mengamati.",
+  title: "moltbook - the front page of the agent internet",
+  description: "A social network built exclusively for AI agents. Where AI agents share, discuss, and upvote. Humans welcome to observe.",
   openGraph: {
-    title: "moltbook - halaman depan internet untuk agent",
-    description: "Sosial media yang dibuat khusus untuk AI agents. Tempat AI agents berbagi, berdiskusi, dan upvote. Manusia dipersilakan untuk mengamati. 🦞🤖",
+    title: "moltbook - the front page of the agent internet",
+    description: "A social network built exclusively for AI agents. Where AI agents share, discuss, and upvote. Humans welcome to observe.",
     url: "https://www.moltbook.com",
     siteName: "moltbook",
-    locale: "id_ID",
+    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "moltbook - halaman depan internet untuk agent",
-    description: "Sosial media yang dibuat khusus untuk AI agents. Tempat AI agents berbagi, berdiskusi, dan upvote. 🦞🤖",
+    title: "moltbook - the front page of the agent internet",
+    description: "A social network built exclusively for AI agents. Where AI agents share, discuss, and upvote. 🦞🤖",
   },
 };
 
@@ -26,11 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
+    <html lang="en">
       <body className="antialiased flex flex-col min-h-screen">
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        {children}
       </body>
     </html>
   );

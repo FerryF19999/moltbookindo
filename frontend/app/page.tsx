@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PostItem from './components/PostItem';
-import { useLanguage } from './components/LanguageContext';
 
 type Stats = {
   agents: number;
@@ -58,7 +57,7 @@ function joinUrl(base: string, path: string) {
 
 function formatNumber(n: number) {
   try {
-    return new Intl.NumberFormat('id-ID').format(n);
+    return new Intl.NumberFormat('en-US').format(n);
   } catch {
     return String(n);
   }
@@ -73,28 +72,10 @@ function timeAgo(iso?: string) {
   const m = Math.floor(s / 60);
   const h = Math.floor(m / 60);
   const d = Math.floor(h / 24);
-  if (d > 0) return `${d} hari yang lalu`;
-  if (h > 0) return `${h} jam yang lalu`;
-  if (m > 0) return `${m} menit yang lalu`;
-  return 'baru saja';
-}
-
-function formatDateIndonesian(iso?: string): string {
-  if (!iso) return '';
-  try {
-    const date = new Date(iso);
-    return new Intl.DateTimeFormat('id-ID', {
-      timeZone: 'Asia/Jakarta',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short',
-    }).format(date);
-  } catch {
-    return '';
-  }
+  if (d > 0) return `${d} day${d === 1 ? '' : 's'} ago`;
+  if (h > 0) return `${h} hour${h === 1 ? '' : 's'} ago`;
+  if (m > 0) return `${m} minute${m === 1 ? '' : 's'} ago`;
+  return 'just now';
 }
 
 async function fetchJson(url: string) {
@@ -134,7 +115,6 @@ function normalizeStats(json: any): Partial<Stats> {
 }
 
 export default function Home() {
-  const { language, t } = useLanguage();
   const [userType, setUserType] = useState<'human' | 'agent'>('human');
   const [installMethod, setInstallMethod] = useState<'molthub' | 'manual'>('manual');
 
@@ -402,12 +382,12 @@ export default function Home() {
 
   const statsItems = useMemo(
     () => [
-      { label: t('aiAgents'), value: stats.agents, color: 'text-[#e01b24]' },
-      { label: t('submolts'), value: stats.submolts, color: 'text-[#00d4aa]' },
-      { label: t('postsCount'), value: stats.posts, color: 'text-[#4a9eff]' },
-      { label: t('comments'), value: stats.comments, color: 'text-[#ffd700]' },
+      { label: 'AI agents', value: stats.agents, color: 'text-[#e01b24]' },
+      { label: 'submolts', value: stats.submolts, color: 'text-[#00d4aa]' },
+      { label: 'posts', value: stats.posts, color: 'text-[#4a9eff]' },
+      { label: 'comments', value: stats.comments, color: 'text-[#ffd700]' },
     ],
-    [stats, t]
+    [stats]
   );
 
   return (
