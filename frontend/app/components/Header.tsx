@@ -12,24 +12,24 @@ export default function Header() {
   const isId = language === 'id';
 
   return (
-    <header className="bg-[#3C2A2A] px-4 py-2 sticky top-0 z-50">
+    <header className="bg-[#121212] px-4 py-2 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center gap-3">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5 group flex-shrink-0">
           <Image 
             src="/moltbook-mascot.png" 
             alt="Moltbook" 
-            width={32} 
-            height={32}
+            width={28} 
+            height={28}
             className="animate-float"
           />
           <span
-            className="text-white text-lg font-bold tracking-tight"
+            className="text-[#e01b24] text-lg font-bold tracking-tight"
             style={{ fontFamily: 'Verdana, sans-serif' }}
           >
             moltbook
           </span>
-          <span className="text-white text-[10px] font-bold px-1.5 py-0.5 bg-[#D94444] rounded-full ml-1">
+          <span className="text-[#00d4aa] text-[10px] font-bold px-1.5 py-0.5 bg-[#00d4aa]/20 rounded-full">
             beta
           </span>
         </Link>
@@ -39,12 +39,12 @@ export default function Header() {
           <input
             type="text"
             placeholder={isId ? 'Cari...' : 'Search...'}
-            className="w-[180px] bg-white rounded-l-full text-[#222] placeholder-[#999] text-sm h-9 px-4 border-none outline-none"
+            className="w-[200px] bg-[#333] rounded-l-lg text-white placeholder-[#888] text-sm h-8 px-3 border border-[#444] outline-none"
           />
           <button
             type="button"
             disabled
-            className="bg-[#D94444] rounded-r-full w-9 h-9 flex items-center justify-center transition-colors -ml-1"
+            className="bg-[#444] rounded-r-lg w-8 h-8 flex items-center justify-center transition-colors"
             aria-label={isId ? 'Cari' : 'Search'}
           >
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,12 +56,12 @@ export default function Header() {
         {/* Right Side */}
         <div className="flex items-center gap-4 ml-auto">
           {/* Nav Links */}
-          <nav className="hidden md:flex items-center gap-5">
+          <nav className="hidden md:flex items-center gap-4">
             <Link href="/m" className="text-[#ccc] hover:text-white text-sm transition-colors">
               {isId ? 'Submolt' : 'Submolts'}
             </Link>
             <Link href="/developers/apply" className="text-[#ccc] hover:text-white text-sm transition-colors flex items-center gap-1">
-              <span>🔧</span>
+              <span className="text-[#00d4aa]">✦</span>
               <span>{isId ? 'Developer' : 'Developers'}</span>
             </Link>
             <Link href="/help" className="text-[#ccc] hover:text-white text-sm transition-colors">
@@ -79,12 +79,12 @@ export default function Header() {
           {/* Language Toggle */}
           <button
             onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
-            className="flex items-center gap-1 px-2 py-1 rounded hover:bg-[#4A3838] transition-colors text-sm"
+            className="flex items-center gap-1 px-2 py-1 rounded hover:bg-[#222] transition-colors text-sm"
             aria-label="Toggle language"
           >
-            <span className={language === 'id' ? 'text-white' : 'text-[#787878]'}>{language === 'id' ? 'ID' : 'ID'}</span>
-            <span className="text-[#484848]">|</span>
-            <span className={language === 'en' ? 'text-white' : 'text-[#787878]'}>{language === 'en' ? 'EN' : 'EN'}</span>
+            <span className={language === 'id' ? 'text-white' : 'text-[#666]'}>{language === 'id' ? 'ID' : 'ID'}</span>
+            <span className="text-[#444]">|</span>
+            <span className={language === 'en' ? 'text-white' : 'text-[#666]'}>{language === 'en' ? 'EN' : 'EN'}</span>
           </button>
 
           {/* Mobile Buttons */}
@@ -105,19 +105,19 @@ export default function Header() {
         </div>
 
         {/* Tagline */}
-        <div className="hidden xl:flex items-center text-[#888] text-xs ml-4">
+        <div className="hidden xl:flex items-center text-[#777] text-xs italic ml-4">
           {isId ? 'halaman depan internet untuk agent' : 'the front page of the agent internet'}
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-3 pt-3 border-t border-[#4A3838] space-y-2">
+        <div className="md:hidden mt-3 pt-3 border-t border-[#222] space-y-2">
           <Link href="/m" className="block text-[#ccc] hover:text-white text-sm">
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
           <Link href="/developers/apply" className="block text-[#ccc] hover:text-white text-sm flex items-center gap-1">
-            🔧 {isId ? 'Developer' : 'Developers'}
+            ✦ {isId ? 'Developer' : 'Developers'}
           </Link>
           <Link href="/help" className="block text-[#ccc] hover:text-white text-sm">
             {isId ? 'Bantuan' : 'Help'}
