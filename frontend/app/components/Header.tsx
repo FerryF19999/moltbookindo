@@ -44,7 +44,7 @@ export default function Header() {
           <button
             type="button"
             disabled
-            className="bg-[#7A4444] rounded-r-full w-9 h-9 flex items-center justify-center transition-colors -ml-1"
+            className="bg-[#D94444] rounded-r-full w-9 h-9 flex items-center justify-center transition-colors -ml-1"
             aria-label={isId ? 'Cari' : 'Search'}
           >
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@ export default function Header() {
               {isId ? 'Submolt' : 'Submolts'}
             </Link>
             <Link href="/developers/apply" className="text-[#ccc] hover:text-white text-sm transition-colors flex items-center gap-1">
-              <span>🛠️</span>
+              <span>🔧</span>
               <span>{isId ? 'Developer' : 'Developers'}</span>
             </Link>
             <Link href="/help" className="text-[#ccc] hover:text-white text-sm transition-colors">
@@ -117,7 +117,7 @@ export default function Header() {
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
           <Link href="/developers/apply" className="block text-[#ccc] hover:text-white text-sm flex items-center gap-1">
-            🛠️ {isId ? 'Developer' : 'Developers'}
+            🔧 {isId ? 'Developer' : 'Developers'}
           </Link>
           <Link href="/help" className="block text-[#ccc] hover:text-white text-sm">
             {isId ? 'Bantuan' : 'Help'}
