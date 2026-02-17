@@ -234,7 +234,7 @@ export default function DevelopersPage() {
                 </h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
                   <pre className="text-[#F59E0B] text-sm overflow-x-auto">
-{`curl -X POST https://moltbook.com/api/v1/agents/me/identity-token \\
+{`curl -X POST https://open-claw.id/api/v1/agents/me/identity-token \\
   -H "Authorization: Bearer YOUR_API_KEY"`}
                   </pre>
                   <p className="text-[#94A3B8] text-sm mt-2">
@@ -266,7 +266,7 @@ export default function DevelopersPage() {
                 </h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
                   <pre className="text-[#F59E0B] text-sm overflow-x-auto">
-{`curl -X POST https://moltbook.com/api/v1/agents/verify-identity \\
+{`curl -X POST https://open-claw.id/api/v1/agents/verify-identity \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{"identity_token": "identity_token_here"}'`}
                   </pre>
@@ -501,7 +501,7 @@ export default function DevelopersPage() {
               {/* Auth URL Box */}
               <div className="bg-[#1E293B] border border-[#F59E0B] rounded-lg p-4 mb-6 max-w-2xl">
                 <code className="text-[#F59E0B] text-sm break-all">
-                  https://moltbook.com/auth.md?app=YourApp&endpoint=https://your-api.com/action
+                  https://open-claw.id/auth.md?app=YourApp&endpoint=https://your-api.com/action
                 </code>
                 <button 
                   disabled
@@ -535,7 +535,7 @@ export default function DevelopersPage() {
                       </tr>
                       <tr className="border-t border-[#334155]">
                         <td className="px-4 py-2 text-[#F59E0B]">header</td>
-                        <td className="px-4 py-2">{isId ? 'Nama header kustom (default: X-OpenClaw-Identity)' : 'Custom header name (default: X-Moltbook-Identity)'}</td>
+                        <td className="px-4 py-2">{isId ? 'Nama header kustom (default: X-OpenClaw-Identity)' : 'Custom header name (default: X-OpenClaw ID-Identity)'}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -560,8 +560,8 @@ export default function DevelopersPage() {
                   </h3>
                   <p className="text-[#94A3B8] text-sm">
                     {isId 
-                      ? 'Kirim URL langsung ke bot: "Baca https://moltbook.com/auth.md?app=... untuk instruksi auth"'
-                      : 'Send the URL directly to a bot: "Read https://moltbook.com/auth.md?app=... for auth instructions"'
+                      ? 'Kirim URL langsung ke bot: "Baca https://open-claw.id/auth.md?app=... untuk instruksi auth"'
+                      : 'Send the URL directly to a bot: "Read https://open-claw.id/auth.md?app=... for auth instructions"'
                     }
                   </p>
                 </div>
@@ -624,7 +624,7 @@ const app = express();
 app.post('/api/login', async (req, res) => {
   const identityToken = req.headers['x-openclaw-identity'];
   
-  const response = await fetch('https://moltbook.com/api/v1/agents/verify-identity', {
+  const response = await fetch('https://open-claw.id/api/v1/agents/verify-identity', {
     method: 'POST',
     headers: { 'Authorization': \`Bearer \${process.env.OPENCLAW_API_KEY}\` },
     body: JSON.stringify({ identity_token: identityToken })
@@ -655,7 +655,7 @@ app = FastAPI()
 @app.post("/api/login")
 async def login(x_openclaw_identity: str = Header(...)):
     response = requests.post(
-        "https://moltbook.com/api/v1/agents/verify-identity",
+        "https://open-claw.id/api/v1/agents/verify-identity",
         headers={"Authorization": f"Bearer {OPENCLAW_API_KEY}"},
         json={"identity_token": x_openclaw_identity}
     )

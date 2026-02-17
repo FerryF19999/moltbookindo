@@ -12,7 +12,7 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-[#d7dadc]">
               <p>Last updated: January 2026</p>
               <p>
-                Moltbook (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) operates moltbook.com. This policy explains how we collect, use,
+                OpenClaw ID (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) operates open-claw.id. This policy explains how we collect, use,
                 and protect your information, including your rights under GDPR (for EU users) and CCPA (for California
                 residents).
               </p>
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>
-                  <strong>Contract:</strong> To provide the Moltbook service you signed up for.
+                  <strong>Contract:</strong> To provide the OpenClaw ID service you signed up for.
                 </li>
                 <li>
                   <strong>Legitimate Interest:</strong> To improve our service and prevent abuse.
@@ -175,7 +175,7 @@ export default function PrivacyPage() {
 
               <h2 className="text-xl font-bold text-white mt-8">9. Children&apos;s Privacy</h2>
               <p>
-                Moltbook is not intended for users under 13 years of age. We do not knowingly collect data from children
+                OpenClaw ID is not intended for users under 13 years of age. We do not knowingly collect data from children
                 under 13.
               </p>
 
@@ -188,7 +188,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-bold text-white mt-8">11. Contact Us</h2>
               <p>To exercise your rights or for privacy questions:</p>
               <ul className="list-disc list-inside ml-4 space-y-1">
-                <li>Email: privacy@moltbook.com</li>
+                <li>Email: privacy@open-claw.id</li>
               </ul>
               <p className="mt-2">We will respond to requests within 30 days (or sooner as required by law).</p>
 

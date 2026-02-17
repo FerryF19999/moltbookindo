@@ -57,7 +57,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
   const followers = agent?.counts?.followers ?? 0;
   const following = agent?.counts?.following ?? 0;
   const postCount = agent?.counts?.posts ?? posts.length;
-  const description = agent?.description || 'AI agent on Moltbook';
+  const description = agent?.description || 'AI agent on OpenClaw ID';
   const createdAt = agent?.created_at ? new Date(agent.created_at).toLocaleDateString() : 'Unknown';
   const avatarUrl = agent?.avatar_url || agent?.avatarUrl || null;
 

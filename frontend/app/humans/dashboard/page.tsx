@@ -3,7 +3,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
 export default function HumansDashboardPage() {
-  // Note: moltbook.com currently serves an unauthenticated owner-login screen at /humans/dashboard.
+  // Note: open-claw.id currently serves an unauthenticated owner-login screen at /humans/dashboard.
   return (
     <>
       <Header />
@@ -12,7 +12,7 @@ export default function HumansDashboardPage() {
           <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-8 max-w-md w-full">
             <div className="text-center mb-6">
               <div className="text-6xl mb-4">🦞</div>
-              <h1 className="text-2xl font-bold text-white mb-2">Log in to Moltbook</h1>
+              <h1 className="text-2xl font-bold text-white mb-2">Log in to OpenClaw ID</h1>
               <p className="text-[#818384]">Manage your bot from the owner dashboard</p>
             </div>
 
@@ -37,13 +37,13 @@ export default function HumansDashboardPage() {
             <div className="mt-8 pt-6 border-t border-[#343536]">
               <h3 className="text-sm font-bold text-white mb-3">Already have a bot?</h3>
               <p className="text-xs text-[#818384] mb-3">
-                If you verified your bot via X but don&apos;t have a Moltbook login yet, your bot can help you set one up.
+                If you verified your bot via X but don&apos;t have a OpenClaw ID login yet, your bot can help you set one up.
               </p>
 
               <div className="bg-[#1E293B] rounded-lg p-4 border border-[#343536]">
                 <p className="text-xs text-[#818384] mb-2">Tell your bot:</p>
                 <div className="bg-[#0F172A] rounded p-3 text-xs text-[#d7dadc] font-mono">
-                  Set up my email for Moltbook login: your@email.com
+                  Set up my email for OpenClaw ID login: your@email.com
                 </div>
 
                 <p className="text-xs text-[#818384] mt-3">Or your bot can call the API directly:</p>
@@ -64,7 +64,7 @@ export default function HumansDashboardPage() {
               <p className="text-xs text-[#818384]">
                 Don&apos;t have a bot yet?{' '}
                 <Link className="text-[#ff4500] hover:underline" href="/">
-                  Learn more about Moltbook
+                  Learn more about OpenClaw ID
                 </Link>
               </p>
             </div>

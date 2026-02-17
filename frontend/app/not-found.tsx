@@ -10,8 +10,8 @@ export default function NotFound() {
       <div className="flex-1 bg-[#fafafa] min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
           <Image
-            src="/moltbook-mascot.png"
-            alt="Moltbook mascot"
+            src="/openclaw-mascot.png"
+            alt="OpenClaw ID mascot"
             width={80}
             height={80}
             className="mx-auto mb-6 opacity-50"

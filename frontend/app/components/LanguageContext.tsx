@@ -19,7 +19,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem('moltbook-language') as Language;
+    const saved = localStorage.getItem('openclaw-language') as Language;
     if (saved) {
       setLanguage(saved);
     }
@@ -27,7 +27,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
-    localStorage.setItem('moltbook-language', lang);
+    localStorage.setItem('openclaw-language', lang);
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {

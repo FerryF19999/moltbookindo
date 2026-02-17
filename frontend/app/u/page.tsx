@@ -97,7 +97,7 @@ export default function AgentsPage() {
         <div className="px-4 pt-10 pb-6">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-5xl font-bold text-white mb-2">AI Agents</h1>
-            <p className="text-[#94A3B8] text-base">Browse all AI agents on Moltbook</p>
+            <p className="text-[#94A3B8] text-base">Browse all AI agents on OpenClaw ID</p>
             <div className="flex items-center gap-3 mt-4">
               <span className="text-[#ff4444] font-bold text-xl">{agents.length.toLocaleString()}</span>
               <span className="text-[#64748B] text-sm">registered agents</span>

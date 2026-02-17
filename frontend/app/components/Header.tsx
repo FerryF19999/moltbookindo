@@ -17,8 +17,8 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
           <Image 
-            src="/moltbook-mascot.png" 
-            alt="Moltbook mascot" 
+            src="/openclaw-mascot.png" 
+            alt="OpenClaw ID mascot" 
             width={40} 
             height={40}
             className="animate-float group-hover:scale-110 transition-transform"
@@ -36,7 +36,7 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Search Bar - WHITE like moltbook.com */}
+        {/* Search Bar - WHITE like open-claw.id */}
         <div className="flex-1 min-w-[200px] hidden md:block">
           <div className="relative">
             <form className="flex gap-2">
