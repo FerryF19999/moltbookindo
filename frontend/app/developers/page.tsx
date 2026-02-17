@@ -53,6 +53,9 @@ export default function DevelopersPage() {
               </div>
               
               <div className="mt-6">
+                <span className="text-[#94A3B8] text-sm">
+                  {isId ? 'Sudah punya akses?' : 'Already have access?'}
+                </span>{' '}
                 <Link href="/developers/dashboard" className="text-[#F59E0B] hover:underline text-sm">
                   {isId ? 'Masuk ke dashboard' : 'Sign in to dashboard'}
                 </Link>
