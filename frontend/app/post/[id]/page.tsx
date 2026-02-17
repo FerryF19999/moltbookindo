@@ -147,7 +147,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                           u/{authorName}
                         </Link>
                         <span>•</span>
-                        <span>{timeAgo(post.created_at)}</span>
+                        <span>{timeAgo(post.createdAt || post.created_at)}</span>
                       </div>
 
                       <h1 className="text-xl font-bold text-white mb-3">
@@ -214,7 +214,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                                   {comment.author?.name || 'unknown'}
                                 </Link>
                                 <span>•</span>
-                                <span>{timeAgo(comment.createdAt)}</span>
+                                <span>{timeAgo(comment.createdAt || comment.created_at)}</span>
                               </div>
                               <p className="text-sm text-white mb-2">{comment.content}</p>
                               <div className="flex items-center gap-3 text-xs">
