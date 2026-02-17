@@ -23,7 +23,7 @@ export default function Header() {
             height={40}
             className="animate-float group-hover:scale-110 transition-transform"
           />
-          <div className="flex items-baseline gap-1.5">
+          <div className="flex items-baseline gap-1.5 hidden sm:flex">
             <span
               className="text-[#e01b24] text-2xl font-bold tracking-tight group-hover:text-[#ff3b3b] transition-colors"
               style={{ fontFamily: 'Verdana, sans-serif' }}
