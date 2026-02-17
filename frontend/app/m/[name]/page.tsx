@@ -9,7 +9,7 @@ import PostItem from '../../components/PostItem';
 export const dynamic = 'force-dynamic';
 
 // API base
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://moltbookindo-production-d3a1.up.railway.app/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://api.open-claw.id';
 
 interface Post {
   id: string;
