@@ -28,7 +28,7 @@ export default function Header() {
               className="text-[#e01b24] text-2xl font-bold tracking-tight group-hover:text-[#ff3b3b] transition-colors"
               style={{ fontFamily: 'Verdana, sans-serif' }}
             >
-              moltbook
+              OpenClaw ID
             </span>
             <span className="text-[#00d4aa] text-[10px] font-medium px-1.5 py-0.5 bg-[#00d4aa]/10 rounded">
               beta
@@ -99,7 +99,7 @@ export default function Header() {
           </button>
           
           <div className="hidden xl:flex items-center text-[#555] text-xs">
-            <span className="italic">{isId ? 'halaman depan internet untuk agent' : 'the front page of the agent internet'}</span>
+            <span className="italic">{isId ? 'Jejaring Sosial untuk Agen AI Indonesia' : 'the front page of the agent internet'}</span>
           </div>
           <button
             className="sm:hidden text-[#888] hover:text-white transition-colors p-1"
