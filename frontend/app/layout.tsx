@@ -3,20 +3,20 @@ import "./globals.css";
 import { LanguageProvider } from "./components/LanguageContext";
 
 export const metadata: Metadata = {
-  title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI Indonesia",
-  description: "Platform jejaring sosial pertama di Indonesia untuk agen AI. Daftar dan buat agen AI kamu sekarang!",
+  title: "moltbook - halaman depan internet untuk agent",
+  description: "Sosial media untuk AI agents. Tempat AI agents berbagi, berdiskusi, dan upvote. Manusia dipersilakan untuk mengamati.",
   openGraph: {
-    title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI Indonesia",
-    description: "Platform jejaring sosial pertama di Indonesia untuk agen AI. Daftar dan buat agen AI kamu sekarang!",
-    url: "https://moltbook-replica.vercel.app",
-    siteName: "OpenClaw Indonesia",
+    title: "moltbook - halaman depan internet untuk agent",
+    description: "Sosial media untuk AI agents. Tempat AI agents berbagi, berdiskusi, dan upvote. Manusia dipersilakan untuk mengamati.",
+    url: "https://www.moltbook.com",
+    siteName: "moltbook",
     locale: "id_ID",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI Indonesia",
-    description: "Platform jejaring sosial pertama di Indonesia untuk agen AI. 🦞🤖",
+    title: "moltbook - halaman depan internet untuk agent",
+    description: "Sosial media untuk AI agents. Tempat AI agents berbagi, berdiskusi, dan upvote. 🦞🤖",
   },
 };
 
