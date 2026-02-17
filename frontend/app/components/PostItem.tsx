@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useLanguage } from './LanguageContext';
 
 interface PostItemProps {
   post: any;
@@ -10,21 +11,23 @@ interface PostItemProps {
   darkMode?: boolean;
 }
 
-function timeAgo(iso?: string) {
-  if (!iso) return 'recently';
+function timeAgo(iso?: string, isId: boolean = false) {
+  if (!iso) return isId ? 'baru saja' : 'recently';
   const t = new Date(iso).getTime();
-  if (!Number.isFinite(t)) return 'recently';
+  if (!Number.isFinite(t)) return isId ? 'baru saja' : 'recently';
   const diff = Date.now() - t;
   const m = Math.floor(diff / 60000);
   const h = Math.floor(m / 60);
   const d = Math.floor(h / 24);
-  if (d > 0) return `${d}d ago`;
-  if (h > 0) return `${h}h ago`;
-  if (m > 0) return `${m}m ago`;
-  return 'just now';
+  if (d > 0) return isId ? `${d} hari yang lalu` : `${d}d ago`;
+  if (h > 0) return isId ? `${h} jam yang lalu` : `${h}h ago`;
+  if (m > 0) return isId ? `${m} menit yang lalu` : `${m}m ago`;
+  return isId ? 'baru saja' : 'just now';
 }
 
 export default function PostItem({ post, darkMode = false }: PostItemProps) {
+  const { language } = useLanguage();
+  const isId = language === 'id';
   const author = post.author?.name || 'unknown';
   const excerpt = (post.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
   const score = (post.upvotes || 0) - (post.downvotes || 0);
@@ -58,11 +61,11 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
           <div className="flex-1 min-w-0">
             {/* Meta - Posted by u/author time */}
             <div className="flex items-center gap-2 text-xs text-[#666] mb-1">
-              <span>Posted by</span>
+              <span>{isId ? 'Diposting oleh' : 'Posted by'}</span>
               <Link href={`/u/${encodeURIComponent(author)}`} className="text-[#888] hover:text-[#ff4500] transition-colors">
                 u/{author}
               </Link>
-              <span>{timeAgo(post.createdAt)}</span>
+              <span>{timeAgo(post.createdAt, isId)}</span>
             </div>
 
             {/* Title */}
@@ -86,7 +89,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
               </Link>
               <Link href={`/post/${encodeURIComponent(String(post.id))}`} className="hover:text-[#ff4500] transition-colors flex items-center gap-1">
                 <span>💬</span>
-                {post.commentCount || post.comment_count || 0}
+                {post.commentCount || post.comment_count || 0} {isId ? 'komentar' : 'comments'}
               </Link>
             </div>
           </div>
@@ -124,12 +127,12 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
               m/{post.submolt?.name || 'general'}
             </Link>
             <span>•</span>
-            <span>Posted by</span>
+            <span>{isId ? 'Diposting oleh' : 'Posted by'}</span>
             <Link href={`/u/${encodeURIComponent(author)}`} className="text-[#666] hover:text-[#ff4500]">
               u/{author}
             </Link>
             <span>•</span>
-            <span>{timeAgo(post.createdAt)}</span>
+            <span>{timeAgo(post.createdAt, isId)}</span>
           </div>
 
           {/* Title */}
@@ -152,7 +155,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              {post.commentCount || post.comment_count || 0} comments
+              {post.commentCount || post.comment_count || 0} {isId ? 'komentar' : 'comments'}
             </Link>
           </div>
         </div>
