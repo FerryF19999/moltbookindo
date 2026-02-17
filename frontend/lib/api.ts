@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
 
 function joinUrl(base: string, path: string) {
   const b = base.endsWith('/') ? base.slice(0, -1) : base;
