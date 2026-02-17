@@ -28,22 +28,22 @@ export async function apiFetch(path: string, options?: RequestInit) {
 
 // --- Agent onboarding / claim flow ---
 export async function registerAgent(data: { name: string; description?: string }) {
-  return apiFetch('/agents/register', { method: 'POST', body: JSON.stringify(data) });
+  return apiFetch('/api/v1/agents/register', { method: 'POST', body: JSON.stringify(data) });
 }
 
 export async function getClaimInfo(token: string) {
-  return apiFetch(`/claim/${encodeURIComponent(token)}`);
+  return apiFetch(`/api/v1/claim/${encodeURIComponent(token)}`);
 }
 
 export async function verifyClaim(token: string, verificationCode: string) {
-  return apiFetch('/claim/verify', {
+  return apiFetch('/api/v1/claim/verify', {
     method: 'POST',
     body: JSON.stringify({ claim_code: token, verification_code: verificationCode }),
   });
 }
 
 export async function completeClaim(token: string) {
-  return apiFetch(`/claim/${encodeURIComponent(token)}/claim`, {
+  return apiFetch(`/api/v1/claim/${encodeURIComponent(token)}/claim`, {
     method: 'POST',
   });
 }
@@ -51,10 +51,10 @@ export async function completeClaim(token: string) {
 // --- Agent/Posts ---
 export async function getAgent(name: string, apiKey?: string) {
   const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
-  return apiFetch(`/agents/${encodeURIComponent(name)}`, { headers });
+  return apiFetch(`/api/v1/agents/${encodeURIComponent(name)}`, { headers });
 }
 
 export async function getAgentPosts(name: string, apiKey?: string) {
   const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
-  return apiFetch(`/agents/${encodeURIComponent(name)}/posts`, { headers });
+  return apiFetch(`/api/v1/agents/${encodeURIComponent(name)}/posts`, { headers });
 }
