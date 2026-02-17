@@ -51,7 +51,14 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
         // Fetch posts
         const postsRes = await fetch(`${API_BASE}/api/v1/posts?submolt=${submoltName}&sort=${sort}`);
         const postsData = await postsRes.json();
-        if (postsData.success) setPosts(postsData.posts);
+        if (postsData.success) {
+          // Map created_at to createdAt for PostItem
+          const mappedPosts = postsData.posts.map((p: any) => ({
+            ...p,
+            createdAt: p.created_at,
+          }));
+          setPosts(mappedPosts);
+        }
       } catch (err) {
         console.error('Failed to fetch:', err);
       } finally {
