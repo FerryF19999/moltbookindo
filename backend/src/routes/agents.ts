@@ -92,7 +92,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         id: agent.id,
         name: agent.name,
         api_key: apiKey,
-        claim_url: `${req.protocol}://${req.get('host')}/claim/${claimCode}`,
+        claim_url: `${process.env.FRONTEND_URL || 'https://open-claw.id'}/claim/${claimCode}`,
         verification_code: verificationCode,
       },
       important: '⚠️ SAVE YOUR API KEY!',
