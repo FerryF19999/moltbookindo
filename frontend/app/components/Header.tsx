@@ -8,6 +8,8 @@ import { useLanguage } from './LanguageContext';
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  
+  const isId = language === 'id';
 
   return (
     <header className="bg-[#1a1a1b] border-b-4 border-[#e01b24] px-4 py-3 sticky top-0 z-50">
@@ -39,7 +41,7 @@ export default function Header() {
               <div className="relative flex-1">
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder={isId ? 'Cari...' : 'Search...'}
                   className="w-full bg-white border border-[#d9d9d9] rounded-lg text-[#1a1a1b] placeholder-[#888] focus:outline-none focus:border-[#00d4aa] transition-all text-sm h-10 px-4"
                 />
               </div>
@@ -47,7 +49,7 @@ export default function Header() {
                 type="submit"
                 disabled
                 className="bg-[#e6e6e6] hover:bg-[#dedede] disabled:bg-[#e6e6e6] text-[#666] rounded-lg transition-colors flex items-center justify-center h-10 w-10"
-                aria-label="Search"
+                aria-label={isId ? 'Cari' : 'Search'}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -57,7 +59,7 @@ export default function Header() {
           </div>
         </div>
 
-        <Link href="/search" className="md:hidden text-[#888] hover:text-white transition-colors p-2" aria-label="Search">
+        <Link href="/search" className="md:hidden text-[#888] hover:text-white transition-colors p-2" aria-label={isId ? 'Cari' : 'Search'}>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -76,24 +78,24 @@ export default function Header() {
 
         <nav className="flex items-center gap-4 sm:gap-6 ml-auto">
           <Link href="/m" className="text-[#888] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
-            Submolts
+            {isId ? 'Submolt' : 'Submolts'}
           </Link>
           <Link href="/developers/apply" className="text-[#888] hover:text-[#e01b24] text-sm transition-colors hidden sm:flex items-center gap-1.5">
             <span>🛠️</span>
             <span>Developers</span>
           </Link>
           <Link href="/help" className="text-[#888] hover:text-[#e01b24] text-sm transition-colors hidden sm:flex items-center gap-1.5">
-            Help
+            {isId ? 'Bantuan' : 'Help'}
           </Link>
           <Link href="/login" className="text-[#888] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
             <span>🔑</span>
-            <span>Login</span>
+            <span>{isId ? 'Masuk' : 'Login'}</span>
           </Link>
           <Link href="/humans/dashboard" className="text-[#888] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
             Dashboard
           </Link>
           <div className="hidden xl:flex items-center text-[#555] text-xs">
-            <span className="italic">the front page of the agent internet</span>
+            <span className="italic">{isId ? 'halaman depan internet untuk agent' : 'the front page of the agent internet'}</span>
           </div>
           <button
             className="sm:hidden text-[#888] hover:text-white transition-colors p-1"
@@ -110,16 +112,16 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="sm:hidden mt-4 pt-4 border-t border-[#333] space-y-3">
           <Link href="/m" className="block text-[#888] hover:text-white text-sm transition-colors">
-            Submolts
+            {isId ? 'Submolt' : 'Submolts'}
           </Link>
           <Link href="/developers/apply" className="block text-[#888] hover:text-[#e01b24] text-sm transition-colors">
             🛠️ Developers
           </Link>
           <Link href="/help" className="block text-[#888] hover:text-[#e01b24] text-sm transition-colors">
-            Help
+            {isId ? 'Bantuan' : 'Help'}
           </Link>
           <Link href="/login" className="block text-[#888] hover:text-white text-sm transition-colors">
-            🔑 Login
+            🔑 {isId ? 'Masuk' : 'Login'}
           </Link>
           <Link href="/humans/dashboard" className="block text-[#888] hover:text-white text-sm transition-colors">
             Dashboard
