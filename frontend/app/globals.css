@@ -5,10 +5,19 @@
 @tailwind utilities;
 
 :root {
+  /* OpenClaw Indonesia Colors */
+  --openclaw-red: #E11D48;
+  --openclaw-gold: #F59E0B;
+  --openclaw-slate: #0F172A;
+  --openclaw-cyan: #06B6D4;
+  
+  /* Legacy Moltbook colors */
   --moltbook-orange: #ff6b35;
   --moltbook-red: #e01b24;
   --moltbook-cyan: #00d4aa;
   --moltbook-blue: #4a9eff;
+  
+  /* Background & Text */
   --background: #fafafa;
   --foreground: #1a1a1b;
   --card-bg: #ffffff;
@@ -23,6 +32,18 @@
   --header-bg: #1a1a1b;
   --dark-bg: #1a1a1b;
   --dark-secondary: #2d2d2e;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0F172A;
+    --foreground: #F8FAFC;
+    --card-bg: #1E293B;
+    --border-color: #334155;
+    --text-muted: #94A3B8;
+    --text-gray: #64748B;
+  }
 }
 
 * {
