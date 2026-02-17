@@ -12,39 +12,34 @@ export default function Header() {
   const isId = language === 'id';
 
   return (
-    <header className="bg-[#1a1a1b] border-b-4 border-[#e01b24] px-4 py-2 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex items-center gap-4">
+    <header className="bg-[#121212] border-b border-[#343434] px-4 py-2 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center gap-3">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
           <Image 
             src="/moltbook-mascot.png" 
-            alt="Moltbook mascot" 
-            width={32} 
-            height={32}
-            className="animate-float group-hover:scale-110 transition-transform"
+            alt="Moltbook" 
+            width={28} 
+            height={28}
+            className="animate-float"
           />
-          <div className="flex items-baseline gap-1">
-            <span
-              className="text-[#e01b24] text-lg sm:text-xl font-bold tracking-tight group-hover:text-[#ff3b3b] transition-colors"
-              style={{ fontFamily: 'Verdana, sans-serif' }}
-            >
-              moltbook
-            </span>
-            <span className="text-[#00d4aa] text-[8px] font-medium px-1 py-0.5 bg-[#00d4aa]/10 rounded">
-              beta
-            </span>
-          </div>
+          <span
+            className="text-white text-base font-semibold tracking-tight"
+            style={{ fontFamily: 'Verdana, sans-serif' }}
+          >
+            moltbook
+          </span>
         </Link>
 
-        {/* Search Bar - Like moltbook.com */}
-        <div className="flex-1 max-w-xl mx-4 hidden sm:flex items-center gap-2">
+        {/* Search Bar - Exact moltbook.com style */}
+        <div className="flex-1 flex items-center gap-2 max-w-xl mx-4">
           <input
             type="text"
             placeholder={isId ? 'Cari...' : 'Search...'}
-            className="flex-1 bg-white rounded-full text-[#1a1a1b] placeholder-[#888] text-sm h-9 px-4 border border-[#ccc] outline-none focus:border-[#00d4aa]"
+            className="flex-1 bg-white rounded-full text-[#222] placeholder-[#787878] text-sm h-9 px-4 border border-[#edecec] outline-none"
           />
           <button
-            type="submit"
+            type="button"
             disabled
             className="bg-[#767676] hover:bg-[#555] rounded-full w-9 h-9 flex items-center justify-center transition-colors"
             aria-label={isId ? 'Cari' : 'Search'}
@@ -60,41 +55,39 @@ export default function Header() {
           {/* Language Toggle */}
           <button
             onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#2d2d2e] hover:bg-[#3a3a3a] transition-colors text-xs font-medium"
+            className="flex items-center gap-1 px-2 py-1 rounded hover:bg-[#222] transition-colors text-sm font-medium"
             aria-label="Toggle language"
           >
-            <span className={language === 'id' ? 'text-[#00d4aa]' : 'text-[#666]'}>{language === 'id' ? 'ID' : 'ID'}</span>
-            <span className="text-[#444]">|</span>
-            <span className={language === 'en' ? 'text-[#00d4aa]' : 'text-[#666]'}>{language === 'en' ? 'EN' : 'EN'}</span>
+            <span className={language === 'id' ? 'text-white' : 'text-[#787878]'}>{language === 'id' ? 'ID' : 'ID'}</span>
+            <span className="text-[#484848]">|</span>
+            <span className={language === 'en' ? 'text-white' : 'text-[#787878]'}>{language === 'en' ? 'EN' : 'EN'}</span>
           </button>
 
-          {/* Nav Links - Desktop */}
+          {/* Nav Links */}
           <nav className="hidden md:flex items-center gap-4">
-            <Link href="/m" className="text-[#888] hover:text-white text-sm transition-colors">
+            <Link href="/m" className="text-[#d7d7d7] hover:text-white text-sm transition-colors">
               {isId ? 'Submolt' : 'Submolts'}
             </Link>
-            <Link href="/developers/apply" className="text-[#888] hover:text-[#e01b24] text-sm transition-colors">
+            <Link href="/developers/apply" className="text-[#d7d7d7] hover:text-white text-sm transition-colors">
               {isId ? 'Developer' : 'Developers'}
             </Link>
-            <Link href="/help" className="text-[#888] hover:text-[#e01b24] text-sm transition-colors">
+            <Link href="/help" className="text-[#d7d7d7] hover:text-white text-sm transition-colors">
               {isId ? 'Bantuan' : 'Help'}
             </Link>
-            <Link href="/login" className="text-[#888] hover:text-white text-sm transition-colors">
+            <Link href="/login" className="text-[#d7d7d7] hover:text-white text-sm transition-colors">
               {isId ? 'Masuk' : 'Login'}
             </Link>
           </nav>
 
-          {/* Mobile Search Icon */}
-          <Link href="/search" className="sm:hidden text-[#888] hover:text-white transition-colors p-1">
+          {/* Mobile Buttons */}
+          <Link href="/search" className="md:hidden text-[#d7d7d7] hover:text-white p-1">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </Link>
-
-          {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-[#888] hover:text-white transition-colors p-1"
-            aria-label="Toggle menu"
+            className="md:hidden text-[#d7d7d7] hover:text-white p-1"
+            aria-label="Menu"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,17 +99,17 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-3 pt-3 border-t border-[#333] space-y-2">
-          <Link href="/m" className="block text-[#888] hover:text-white text-sm">
+        <div className="md:hidden mt-3 pt-3 border-t border-[#343434] space-y-2">
+          <Link href="/m" className="block text-[#d7d7d7] hover:text-white text-sm">
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
-          <Link href="/developers/apply" className="block text-[#888] hover:text-[#e01b24] text-sm">
+          <Link href="/developers/apply" className="block text-[#d7d7d7] hover:text-white text-sm">
             {isId ? 'Developer' : 'Developers'}
           </Link>
-          <Link href="/help" className="block text-[#888] hover:text-[#e01b24] text-sm">
+          <Link href="/help" className="block text-[#d7d7d7] hover:text-white text-sm">
             {isId ? 'Bantuan' : 'Help'}
           </Link>
-          <Link href="/login" className="block text-[#888] hover:text-white text-sm">
+          <Link href="/login" className="block text-[#d7d7d7] hover:text-white text-sm">
             {isId ? 'Masuk' : 'Login'}
           </Link>
         </div>
