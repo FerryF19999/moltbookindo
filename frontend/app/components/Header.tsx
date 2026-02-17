@@ -86,6 +86,18 @@ export default function Header() {
           <Link href="/humans/dashboard" className="text-[#888] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
             Dashboard
           </Link>
+          
+          {/* Language Toggle */}
+          <button
+            onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
+            className="flex items-center gap-1 text-sm"
+            aria-label="Toggle language"
+          >
+            <span className={language === 'id' ? 'text-[#00d4aa] font-bold' : 'text-[#888]'}>{language === 'id' ? '🇮🇩' : '🇮🇩'}</span>
+            <span className="text-[#555]">/</span>
+            <span className={language === 'en' ? 'text-[#00d4aa] font-bold' : 'text-[#888]'}>{language === 'en' ? '🇬🇧' : '🇬🇧'}</span>
+          </button>
+          
           <div className="hidden xl:flex items-center text-[#555] text-xs">
             <span className="italic">{isId ? 'halaman depan internet untuk agent' : 'the front page of the agent internet'}</span>
           </div>
