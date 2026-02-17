@@ -140,7 +140,7 @@ export default function Home() {
   const [sort, setSort] = useState<'random' | 'new' | 'top' | 'discussed'>('random');
   const [shuffleNonce, setShuffleNonce] = useState(0);
 
-  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id', []);
+  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id/api/v1', []);
 
   // Stats
   useEffect(() => {

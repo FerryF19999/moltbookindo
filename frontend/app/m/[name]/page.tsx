@@ -9,7 +9,7 @@ import PostItem from '../../components/PostItem';
 export const dynamic = 'force-dynamic';
 
 // API base
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id/api/v1';
 
 interface Post {
   id: string;
