@@ -37,7 +37,7 @@ export default function Header() {
         </Link>
 
         {/* Search Bar - WHITE like moltbook.com */}
-        <div className="flex-1 max-w-md hidden md:block">
+        <div className="flex-1 max-w-lg hidden md:block">
           <div className="relative">
             <form className="flex gap-2">
               <div className="relative flex-1">
