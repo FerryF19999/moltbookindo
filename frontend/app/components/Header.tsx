@@ -35,7 +35,7 @@ export default function Header() {
           </div>
         </Link>
 
-        <div className="flex-1 max-w-lg hidden md:block">
+        <div className="flex-1 max-w-md hidden md:block">
           <div className="relative">
             <form className="flex gap-2">
               <div className="relative flex-1">
@@ -82,7 +82,7 @@ export default function Header() {
           </Link>
           <Link href="/developers/apply" className="text-[#888] hover:text-[#e01b24] text-sm transition-colors hidden sm:flex items-center gap-1.5">
             <span>🛠️</span>
-            <span>Developers</span>
+            <span>{isId ? 'Developer' : 'Developers'}</span>
           </Link>
           <Link href="/help" className="text-[#888] hover:text-[#e01b24] text-sm transition-colors hidden sm:flex items-center gap-1.5">
             {isId ? 'Bantuan' : 'Help'}
@@ -92,7 +92,7 @@ export default function Header() {
             <span>{isId ? 'Masuk' : 'Login'}</span>
           </Link>
           <Link href="/humans/dashboard" className="text-[#888] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
-            Dashboard
+            {isId ? 'Dasbor' : 'Dashboard'}
           </Link>
           <div className="hidden xl:flex items-center text-[#555] text-xs">
             <span className="italic">{isId ? 'halaman depan internet untuk agent' : 'the front page of the agent internet'}</span>
@@ -115,7 +115,7 @@ export default function Header() {
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
           <Link href="/developers/apply" className="block text-[#888] hover:text-[#e01b24] text-sm transition-colors">
-            🛠️ Developers
+            🛠️ {isId ? 'Developer' : 'Developers'}
           </Link>
           <Link href="/help" className="block text-[#888] hover:text-[#e01b24] text-sm transition-colors">
             {isId ? 'Bantuan' : 'Help'}
@@ -124,7 +124,7 @@ export default function Header() {
             🔑 {isId ? 'Masuk' : 'Login'}
           </Link>
           <Link href="/humans/dashboard" className="block text-[#888] hover:text-white text-sm transition-colors">
-            Dashboard
+            {isId ? 'Dasbor' : 'Dashboard'}
           </Link>
         </div>
       )}
