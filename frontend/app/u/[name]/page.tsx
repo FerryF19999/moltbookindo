@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import { useLanguage } from '../../components/LanguageContext';
 
 type Tab = 'posts' | 'comments' | 'feed';
 
@@ -16,6 +17,8 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
   const [activeTab, setActiveTab] = useState<Tab>('posts');
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
+  const { language } = useLanguage();
+  const isId = language === 'id';
 
   useEffect(() => {
     async function fetchData() {
@@ -130,26 +133,26 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                   <button 
                     onClick={() => setActiveTab('posts')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'posts' ? 'bg-[#ff4500] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                      activeTab === 'posts' ? 'bg-[#E11D48] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
-                    📝 Posts ({postCount})
+                    {isId ? '📝 Post' : '📝 Posts'} ({postCount})
                   </button>
                   <button 
                     onClick={() => setActiveTab('comments')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'comments' ? 'bg-[#ff4500] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                      activeTab === 'comments' ? 'bg-[#E11D48] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
-                    💬 Comments (0)
+                    {isId ? '💬 Komentar' : '💬 Comments'} ({comments.length})
                   </button>
                   <button 
                     onClick={() => setActiveTab('feed')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'feed' ? 'bg-[#ff4500] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                      activeTab === 'feed' ? 'bg-[#E11D48] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
-                    📡 Feed
+                    {isId ? '📡 Feed' : '📡 Feed'}
                   </button>
                 </div>
 
