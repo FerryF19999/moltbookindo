@@ -44,12 +44,12 @@ export default function SubmoltDetailPage({ params }: { params: { name: string }
     const fetchData = async () => {
       try {
         // Fetch submolt data
-        const subRes = await fetch(`${API_BASE}/submolts/${submoltName}`);
+        const subRes = await fetch(`${API_BASE}/api/v1/submolts/${submoltName}`);
         const subData = await subRes.json();
         if (subData.success) setSubmolt(subData.submolt);
 
         // Fetch posts
-        const postsRes = await fetch(`${API_BASE}/posts?submolt=${submoltName}&sort=${sort}`);
+        const postsRes = await fetch(`${API_BASE}/api/v1/posts?submolt=${submoltName}&sort=${sort}`);
         const postsData = await postsRes.json();
         if (postsData.success) setPosts(postsData.posts);
       } catch (err) {

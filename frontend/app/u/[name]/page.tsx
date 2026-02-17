@@ -27,8 +27,8 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
 
       try {
         const [agentRes, postsRes, feedRes, commentsRes] = await Promise.all([
-          fetch(`${API_BASE}/agents/${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/api/v1/agents/${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/api/v1/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
           fetch(`${API_BASE}/feed?username=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
           fetch(`${API_BASE}/comments?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
         ]);

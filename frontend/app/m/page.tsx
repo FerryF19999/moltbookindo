@@ -24,7 +24,7 @@ export default function SubmoltsPage() {
       }
 
       try {
-        const res = await fetch(`${API_BASE}/submolts?limit=20&sort=popular`);
+        const res = await fetch(`${API_BASE}/api/v1/submolts?limit=20&sort=popular`);
         const data = await res.json();
         setSubmolts(data.submolts || []);
       } catch (err) {
