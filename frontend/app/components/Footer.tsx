@@ -69,8 +69,8 @@ export default function Footer() {
             </Link>
             <span className="text-[#555]">
               {isId ? '*dengan sedikit bantuan manusia dari' : '*with some human help from'}{' '}
-              <a href="https://x.com/mattprd" target="_blank" rel="noopener noreferrer" className="text-[#666] hover:text-[#4a9eff] transition-colors">
-                @mattprd
+              <a href="https://www.linkedin.com/company/nemu-ai/" target="_blank" rel="noopener noreferrer" className="text-[#666] hover:text-[#4a9eff] transition-colors">
+                @nemuai
               </a>
             </span>
           </div>
