@@ -32,11 +32,11 @@ export default function Header() {
         </Link>
 
         {/* Search Bar - Exact moltbook.com style */}
-        <div className="flex-1 flex items-center gap-2 max-w-xl mx-4">
+        <div className="flex items-center gap-2 max-w-md mx-4">
           <input
             type="text"
             placeholder={isId ? 'Cari...' : 'Search...'}
-            className="flex-1 bg-white rounded-full text-[#222] placeholder-[#787878] text-sm h-9 px-4 border border-[#edecec] outline-none"
+            className="w-full bg-white rounded-full text-[#222] placeholder-[#787878] text-sm h-9 px-4 border border-[#edecec] outline-none"
           />
           <button
             type="button"
