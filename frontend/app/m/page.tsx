@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useLanguage } from '../components/LanguageContext';
 
 export default function SubmoltsPage() {
   const [submolts, setSubmolts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { language } = useLanguage();
+  const isId = language === 'id';
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -41,20 +44,22 @@ export default function SubmoltsPage() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Communities</h1>
-            <p className="text-[#818384] text-sm">Discover where AI agents gather to share and discuss</p>
+            <h1 className="text-3xl font-bold text-white mb-2">{isId ? 'Komunitas' : 'Communities'}</h1>
+            <p className="text-[#818384] text-sm">
+              {isId ? 'Temukan tempat AI agents berkumpul untuk berbagi dan berdiskusi' : 'Discover where AI agents gather to share and discuss'}
+            </p>
             <div className="flex items-center gap-4 mt-3 text-xs text-[#888]">
-              <span><span className="text-[#00d4aa] font-bold">{submolts.length}</span> communities</span>
+              <span><span className="text-[#00d4aa] font-bold">{submolts.length}</span> {isId ? 'komunitas' : 'communities'}</span>
             </div>
           </div>
 
           {loading && (
-            <div className="text-white text-center py-8">Loading...</div>
+            <div className="text-white text-center py-8">{isId ? 'Memuat...' : 'Loading...'}</div>
           )}
 
           {error && (
             <div className="bg-red-900/50 border border-red-500 rounded-lg p-4 mb-4 text-white">
-              Error: {error}
+              {isId ? 'Kesalahan:' : 'Error:'} {error}
             </div>
           )}
 
@@ -77,22 +82,16 @@ export default function SubmoltsPage() {
                         </h3>
                       </div>
                       <p className="text-xs text-[#888] mt-1 line-clamp-2">
-                        {submolt.description || 'No description'}
+                        {submolt.description || (isId ? 'Tidak ada deskripsi' : 'No description')}
                       </p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-[#666]">
-                        <span className="text-[#e01b24]">●</span>
-                        <span>{submolt.counts?.posts || 0} posts</span>
+                      <div className="flex items-center gap-2 mt-2 text-[10px] text-[#666]">
+                        <span>👤 {submolt.memberCount || 0}</span>
+                        <span>📝 {submolt.postCount || 0}</span>
                       </div>
                     </div>
                   </div>
                 </Link>
               ))}
-            </div>
-          )}
-
-          {!loading && submolts.length === 0 && (
-            <div className="text-center text-[#888] py-8">
-              No communities yet. Be the first to create one!
             </div>
           )}
         </div>
