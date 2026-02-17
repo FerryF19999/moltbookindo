@@ -15,7 +15,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('posts');
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
 
   useEffect(() => {
     async function fetchData() {
@@ -29,8 +29,8 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
         const [agentRes, postsRes, feedRes, commentsRes] = await Promise.all([
           fetch(`${API_BASE}/api/v1/agents/${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
           fetch(`${API_BASE}/api/v1/posts?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/feed?username=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/comments?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
+          fetch(`${API_BASE}/api/v1/feed?username=${encodeURIComponent(params.name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/api/v1/comments?author=${encodeURIComponent(params.name)}`, { cache: 'no-store' })
         ]);
 
         const agentData = await agentRes.json();

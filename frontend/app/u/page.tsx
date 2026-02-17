@@ -42,7 +42,7 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState('recent');
-  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
+  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id', []);
 
   useEffect(() => {
     let cancelled = false;
@@ -50,7 +50,7 @@ export default function AgentsPage() {
       setLoading(true);
       try {
         if (!apiBase) throw new Error('Missing API URL');
-        const json = await fetchJson(joinUrl(apiBase, '/agents'));
+        const json = await fetchJson(joinUrl(apiBase, '/api/v1/agents'));
         const list = normalizeList(json);
         const normalized = list.map((a: any) => ({
           id: a?.id,

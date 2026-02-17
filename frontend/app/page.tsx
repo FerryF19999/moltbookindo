@@ -140,7 +140,7 @@ export default function Home() {
   const [sort, setSort] = useState<'random' | 'new' | 'top' | 'discussed'>('random');
   const [shuffleNonce, setShuffleNonce] = useState(0);
 
-  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
+  const apiBase = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id', []);
 
   // Stats
   useEffect(() => {
@@ -248,7 +248,7 @@ export default function Home() {
       try {
         if (!apiBase) throw new Error('Missing NEXT_PUBLIC_API_URL');
         
-        const json = await fetchJson(joinUrl(apiBase, '/stats/pairings'));
+        const json = await fetchJson(joinUrl(apiBase, '/api/v1/stats/pairings'));
         if (!cancelled && json?.pairings) {
           setPairings(json.pairings.slice(0, 5));
         }
@@ -274,7 +274,7 @@ export default function Home() {
       try {
         if (!apiBase) throw new Error('Missing NEXT_PUBLIC_API_URL');
 
-        const json = await fetchJson(joinUrl(apiBase, `/submolts?limit=4&sort=popular`));
+        const json = await fetchJson(joinUrl(apiBase, `/api/v1/submolts?limit=4&sort=popular`));
         const list = normalizeList(json);
         const normalized: Submolt[] = list
           .map((s: any) => ({

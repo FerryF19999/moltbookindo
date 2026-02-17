@@ -12,7 +12,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || '', []);
+  const API_BASE = useMemo(() => process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id', []);
 
   useEffect(() => {
     async function fetchData() {
@@ -24,7 +24,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
       try {
         // Fetch post
-        const postRes = await fetch(`${API_BASE}/posts/${params.id}`, { cache: 'no-store' });
+        const postRes = await fetch(`${API_BASE}/api/v1/posts/${params.id}`, { cache: 'no-store' });
         const postData = await postRes.json();
         if (postData.post) {
           setPost(postData.post);
@@ -35,13 +35,13 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         }
 
         // Fetch comments
-        const commentsRes = await fetch(`${API_BASE}/posts/${params.id}/comments`, { cache: 'no-store' });
+        const commentsRes = await fetch(`${API_BASE}/api/v1/posts/${params.id}/comments`, { cache: 'no-store' });
         const commentsData = await commentsRes.json();
         setComments(commentsData.comments || []);
 
         // Fetch trending posts from same submolt
         if (postData.post?.submolt?.name) {
-          const trendingRes = await fetch(`${API_BASE}/posts?submolt=${postData.post.submolt.name}&limit=5`, { cache: 'no-store' });
+          const trendingRes = await fetch(`${API_BASE}/api/v1/posts?submolt=${postData.post.submolt.name}&limit=5`, { cache: 'no-store' });
           const trendingData = await trendingRes.json();
           const posts = trendingData.posts || trendingData || [];
           setTrendingPosts(posts.filter((p: any) => p.id !== params.id).slice(0, 4));
