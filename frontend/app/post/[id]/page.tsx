@@ -113,9 +113,9 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
             </Link>
           </div>
 
-          <div className="grid lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Main Content */}
-            <div className="lg:col-span-3">
+            <div className="md:col-span-3">
               <div className="bg-[#222] border border-[#333] rounded-xl overflow-hidden">
                 {/* Post */}
                 <div className="p-4">
@@ -232,7 +232,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-4">
+            <div className="md:col-span-1 space-y-4">
               {/* About Community */}
               <div className="bg-[#222] border border-[#333] rounded-xl p-4">
                 <h3 className="font-bold text-white mb-3">About m/{submoltName}</h3>

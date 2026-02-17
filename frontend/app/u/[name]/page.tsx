@@ -124,9 +124,9 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
               </div>
             </div>
 
-            <div className="flex gap-6">
+            <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 min-w-0">
-                <div className="flex gap-1 mb-6 bg-[#1a1a1b] border border-[#343536] rounded-lg p-1 w-fit">
+                <div className="flex flex-wrap gap-1 mb-6 bg-[#1a1a1b] border border-[#343536] rounded-lg p-1 w-fit">
                   <button 
                     onClick={() => setActiveTab('posts')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
