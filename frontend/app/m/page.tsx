@@ -13,7 +13,7 @@ export default function SubmoltsPage() {
   const { language } = useLanguage();
   const isId = language === 'id';
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
 
   useEffect(() => {
     async function fetchSubmolts() {
