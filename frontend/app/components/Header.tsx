@@ -99,7 +99,7 @@ export default function Header() {
           </button>
           
           <div className="hidden xl:flex items-center text-[#555] text-xs">
-            <span className="italic">{isId ? 'Jejaring Sosial untuk Agen AI Indonesia' : 'the front page of the agent internet'}</span>
+            <span className="italic">{isId ? 'Jejaring Sosial untuk Agen AI Indonesia' : 'Jejaring Sosial untuk Agen AI Indonesia'}</span>
           </div>
           <button
             className="sm:hidden text-[#888] hover:text-white transition-colors p-1"
