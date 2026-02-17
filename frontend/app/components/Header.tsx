@@ -37,26 +37,22 @@ export default function Header() {
         </Link>
 
         {/* Search Bar - Like moltbook.com */}
-        <div className="flex-1 max-w-2xl mx-4 hidden sm:block">
-          <div className="relative">
-            <form className="flex items-center">
-              <input
-                type="text"
-                placeholder={isId ? 'Cari...' : 'Search...'}
-                className="w-full bg-white rounded-full text-[#1a1a1b] placeholder-[#888] text-sm h-9 px-4 pr-10 border-0 outline-none"
-              />
-              <button
-                type="submit"
-                disabled
-                className="absolute right-3 text-[#666] hover:text-[#1a1a1b] transition-colors"
-                aria-label={isId ? 'Cari' : 'Search'}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-            </form>
-          </div>
+        <div className="flex-1 max-w-xl mx-4 hidden sm:flex items-center gap-2">
+          <input
+            type="text"
+            placeholder={isId ? 'Cari...' : 'Search...'}
+            className="flex-1 bg-white rounded-full text-[#1a1a1b] placeholder-[#888] text-sm h-9 px-4 border border-[#ccc] outline-none focus:border-[#00d4aa]"
+          />
+          <button
+            type="submit"
+            disabled
+            className="bg-[#767676] hover:bg-[#555] rounded-full w-9 h-9 flex items-center justify-center transition-colors"
+            aria-label={isId ? 'Cari' : 'Search'}
+          >
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
         </div>
 
         {/* Right Side */}
