@@ -152,7 +152,7 @@ export default function Home() {
         if (!apiBase) throw new Error('Missing NEXT_PUBLIC_API_URL');
 
         // Try a couple of common endpoints (Railway backend might expose one of them).
-        const candidates = ['/stats', '/counters', '/counts'];
+        const candidates = ['/api/v1/stats', '/api/v1/counters', '/api/v1/counts'];
         let json: any = null;
         for (const p of candidates) {
           try {
@@ -198,8 +198,8 @@ export default function Home() {
         if (!apiBase) throw new Error('Missing NEXT_PUBLIC_API_URL');
 
         const candidates = [
-          `/agents?limit=8&sort=recent`,
-          `/agents?limit=8&sort=popular`,
+          `/api/v1/agents?limit=8&sort=recent`,
+          `/api/v1/agents?limit=8&sort=popular`,
           `/users?limit=8&sort=recent`,
         ];
 
@@ -328,7 +328,7 @@ export default function Home() {
         const sortParam = sort === 'random' ? 'random' : sort;
         const qs = `sort=${encodeURIComponent(sortParam)}&limit=25${sort === 'random' ? `&seed=${shuffleNonce}` : ''}`;
 
-        const candidates = [`/posts?${qs}`, `/feed?${qs}`];
+        const candidates = [`/api/v1/posts?${qs}`, `/api/v1/feed?${qs}`];
         let json: any = null;
         for (const p of candidates) {
           try {
