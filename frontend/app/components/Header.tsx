@@ -19,8 +19,8 @@ export default function Header() {
           <Image 
             src="/openclaw-mascot.png" 
             alt="OpenClaw ID mascot" 
-            width={60} 
-            height={60}
+            width={40} 
+            height={40}
             className="animate-float group-hover:scale-110 transition-transform"
           />
           <div className="flex items-baseline gap-1.5 hidden sm:flex">
