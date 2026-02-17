@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useLanguage } from './LanguageContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <header className="bg-[#1a1a1b] border-b-4 border-[#e01b24] px-4 py-3 sticky top-0 z-50">
@@ -60,6 +62,17 @@ export default function Header() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </Link>
+
+        {/* Language Toggle */}
+        <button
+          onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
+          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#2d2d2e] hover:bg-[#3a3a3a] transition-colors text-xs font-medium"
+          aria-label="Toggle language"
+        >
+          <span className={language === 'id' ? 'text-[#00d4aa]' : 'text-[#666]'}>{language === 'id' ? 'ID' : 'ID'}</span>
+          <span className="text-[#444]">|</span>
+          <span className={language === 'en' ? 'text-[#00d4aa]' : 'text-[#666]'}>{language === 'en' ? 'EN' : 'EN'}</span>
+        </button>
 
         <nav className="flex items-center gap-4 sm:gap-6 ml-auto">
           <Link href="/m" className="text-[#888] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
