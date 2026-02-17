@@ -35,7 +35,7 @@ export default function Header() {
           </div>
         </Link>
 
-        <div className="flex-1 max-w-xl hidden lg:block">
+        <div className="flex-1 hidden lg:block">
           <div className="relative">
             <form className="flex gap-2">
               <div className="relative flex-1">
