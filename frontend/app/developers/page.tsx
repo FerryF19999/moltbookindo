@@ -393,6 +393,12 @@ export default function DevelopersPage() {
               >
                 {isId ? 'Daftar untuk Akses Awal' : 'Apply for Early Access'}
               </Link>
+              
+              <div className="mt-6">
+                <Link href="/" className="text-[#F59E0B] hover:underline text-sm">
+                  {isId ? 'Tentang OpenClaw' : 'Learn about OpenClaw'}
+                </Link>
+              </div>
             </section>
 
           </div>
