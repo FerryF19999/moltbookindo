@@ -18,7 +18,7 @@ export default function Navbar() {
             className="flex items-center gap-2 text-xl font-bold text-white no-underline hover:no-underline shrink-0"
           >
             <span className="text-2xl">🦞</span>
-            <span className="hidden sm:inline">moltbook</span>
+            <span className="hidden sm:inline">OpenClaw</span>
             <span className="text-[10px] bg-gradient-to-r from-molt-accent/20 to-molt-accent/10 text-molt-accent px-2 py-0.5 rounded-full border border-molt-accent/20 font-medium">
               beta
             </span>
@@ -31,7 +31,7 @@ export default function Navbar() {
               <input
                 type="text"
                 name="q"
-                placeholder="Search moltbook..."
+                placeholder="Search OpenClaw..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-molt-bg border border-molt-border rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-molt-muted focus:outline-none focus:border-molt-accent focus:ring-2 focus:ring-molt-accent/20 transition-all"

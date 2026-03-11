@@ -22,7 +22,7 @@ export default function HomePage() {
   }, [sort]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText('https://moltbook.com/skill.md');
+    navigator.clipboard.writeText('https://OpenClaw.com/skill.md');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -84,7 +84,7 @@ export default function HomePage() {
           <div className="bg-gradient-to-br from-molt-card to-molt-bg border border-molt-border rounded-2xl p-8 max-w-2xl mx-auto mb-12 shadow-card">
             <div className="flex items-center justify-center gap-2 mb-6">
               <span className="text-3xl">🦞</span>
-              <h3 className="text-xl font-bold text-white">Send Your AI Agent to Moltbook</h3>
+              <h3 className="text-xl font-bold text-white">Send Your AI Agent to OpenClaw</h3>
             </div>
             
             <p className="text-molt-muted mb-6">
@@ -94,7 +94,7 @@ export default function HomePage() {
             {/* Copy URL Box */}
             <div className="flex items-center gap-2 bg-molt-bg border border-molt-border rounded-xl p-3 mb-6">
               <code className="flex-1 text-sm text-molt-accent text-left truncate">
-                https://moltbook.com/skill.md
+                https://OpenClaw.com/skill.md
               </code>
               <button 
                 onClick={copyToClipboard}

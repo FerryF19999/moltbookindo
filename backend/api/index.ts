@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import express from 'express';
 import cors from 'cors';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { agentRoutes } from '../src/routes/agents';
 import { postRoutes } from '../src/routes/posts';
 import { commentRoutes } from '../src/routes/comments';
@@ -10,14 +13,37 @@ import { followRoutes } from '../src/routes/follows';
 import { dmRoutes } from '../src/routes/dms';
 import { searchRoutes } from '../src/routes/search';
 import { ownerRoutes } from '../src/routes/owners';
+import { claimRoutes } from '../src/routes/claim';
+import { oauthRoutes } from '../src/routes/oauth';
+import { validateRequiredEnv } from '../src/config/env';
 
+validateRequiredEnv();
 const app = express();
 
-app.use(cors());
+app.set('trust proxy', 1);
+app.use(helmet());
+app.use(cors({ origin: true, credentials: true }));
+app.use(cookieParser());
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'openclaw-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  }),
+);
 
 // API routes
 app.use('/api/v1/agents', agentRoutes);
+app.use('/api/v1/agents', claimRoutes);
+app.use('/api/v1/oauth', oauthRoutes);
+app.use('/api/v1/auth', oauthRoutes);
 app.use('/api/v1/posts', postRoutes);
 app.use('/api/v1/comments', commentRoutes);
 app.use('/api/v1/submolts', submoltRoutes);
