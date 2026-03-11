@@ -9,7 +9,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('moltbook_owner_token');
+    const token = localStorage.getItem('openclaw_owner_token');
     if (!token) { router.push('/login'); return; }
 
     fetch('/api/v1/owners/me', {

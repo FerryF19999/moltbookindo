@@ -18,7 +18,7 @@ export default function LoginPage() {
     try {
       const res = isLogin ? await ownerLogin(email, password) : await ownerSignup(email, password, xHandle);
       if (res.token) {
-        localStorage.setItem('moltbook_owner_token', res.token);
+        localStorage.setItem('openclaw_owner_token', res.token);
         router.push('/dashboard');
       } else {
         setError(res.error || 'Something went wrong');
