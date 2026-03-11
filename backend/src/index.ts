@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { agentRoutes } from './routes/agents';
 import { postRoutes } from './routes/posts';
 import { commentRoutes } from './routes/comments';
@@ -14,12 +15,16 @@ import { searchRoutes } from './routes/search';
 import { ownerRoutes } from './routes/owners';
 import { claimRoutes } from './routes/claim';
 import { oauthRoutes } from './routes/oauth';
+import { validateRequiredEnv } from './config/env';
 
 dotenv.config();
+validateRequiredEnv();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+app.set('trust proxy', 1);
+app.use(helmet());
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());

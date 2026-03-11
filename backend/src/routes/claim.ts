@@ -1,9 +1,21 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import axios from 'axios';
+import rateLimit from 'express-rate-limit';
 import { prisma } from '../utils/prisma';
+import { isValidClaimToken, isValidEmail, isValidUsername, sanitizeString } from '../utils/validation';
 
 export const claimRoutes = Router();
+
+const claimLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many claim attempts, please try again in 15 minutes' },
+});
+
+claimRoutes.use(claimLimiter);
 
 type SessionData = {
   ownerId?: string;
@@ -24,14 +36,21 @@ function getVerificationTemplate(agentName: string, code: string, provider: 'x' 
 }
 
 async function findAgentByClaimToken(claimToken?: string | null) {
-  if (!claimToken) return null;
+  if (!claimToken || !isValidClaimToken(claimToken)) return null;
   return prisma.agent.findUnique({ where: { claimCode: claimToken } });
 }
 
 function ensureClaimNotExpired(agent: any) {
-  if (agent.claimExpiresAt && new Date(agent.claimExpiresAt).getTime() < Date.now()) {
+  if (!agent.claimExpiresAt) return 'Claim token expired';
+  if (new Date(agent.claimExpiresAt).getTime() < Date.now()) {
     return 'Claim token expired';
   }
+
+  // Enforce max 30 min TTL since creation even if DB has a larger expiry.
+  if (agent.createdAt && Date.now() - new Date(agent.createdAt).getTime() > 30 * 60 * 1000) {
+    return 'Claim token expired';
+  }
+
   return null;
 }
 
@@ -70,8 +89,16 @@ async function saveArtifact(input: {
   });
 }
 
-claimRoutes.get('/claim', async (req: Request, res: Response) => {
-  const claimToken = (req.query.claim_token as string) || '';
+const asyncHandler =
+  (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+
+claimRoutes.get('/claim', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.query.claim_token);
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+
   const agent = await findAgentByClaimToken(claimToken);
   if (!agent) return res.status(404).json({ error: 'Invalid claim token' });
 
@@ -94,15 +121,22 @@ claimRoutes.get('/claim', async (req: Request, res: Response) => {
       final_rule: 'At least one social proof (X or Threads) is required.',
     },
   });
-});
+}));
 
-claimRoutes.post('/verify-email', async (req: Request, res: Response) => {
-  const { claim_token, email, username } = req.body;
-  if (!claim_token || !email || !username) {
+claimRoutes.post('/verify-email', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.body.claim_token);
+  const email = sanitizeString(req.body.email).toLowerCase();
+  const username = sanitizeString(req.body.username);
+
+  if (!claimToken || !email || !username) {
     return res.status(400).json({ error: 'claim_token, email, and username are required' });
   }
 
-  const agent = await findAgentByClaimToken(claim_token);
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+  if (!isValidEmail(email)) return res.status(400).json({ error: 'Invalid email format' });
+  if (!isValidUsername(username)) return res.status(400).json({ error: 'Invalid username format' });
+
+  const agent = await findAgentByClaimToken(claimToken);
   if (!agent) return res.status(404).json({ error: 'Invalid claim token' });
   const expiredError = ensureClaimNotExpired(agent);
   if (expiredError) return res.status(400).json({ error: expiredError });
@@ -138,20 +172,24 @@ claimRoutes.post('/verify-email', async (req: Request, res: Response) => {
 
   const session = getSession(req);
   session.ownerId = owner.id;
-  session.claimToken = claim_token;
+  session.claimToken = claimToken;
 
   res.json({ success: true, status: 'email_verified', owner: { id: owner.id, email: owner.email } });
-});
+}));
 
-claimRoutes.post('/verify-tweet', async (req: Request, res: Response) => {
-  const claimToken = req.body.claim_token || getSession(req).claimToken;
+claimRoutes.post('/verify-tweet', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.body.claim_token || getSession(req).claimToken);
   const session = getSession(req);
   if (!session.ownerId || !session.xAccessToken) {
     return res.status(401).json({ error: 'Connect X account first' });
   }
 
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+
   const agent = await findAgentByClaimToken(claimToken);
   if (!agent) return res.status(404).json({ error: 'Invalid claim token' });
+  const expiredError = ensureClaimNotExpired(agent);
+  if (expiredError) return res.status(400).json({ error: expiredError });
 
   const owner = await prisma.owner.findUnique({ where: { id: session.ownerId } });
   if (!owner?.xUserId) return res.status(401).json({ error: 'X OAuth identity not found' });
@@ -181,17 +219,21 @@ claimRoutes.post('/verify-tweet', async (req: Request, res: Response) => {
 
   await prisma.agent.update({ where: { id: agent.id }, data: { status: 'x_verified' } });
   res.json({ success: true, status: 'x_verified', post_id: matched.id });
-});
+}));
 
-claimRoutes.post('/verify-threads', async (req: Request, res: Response) => {
-  const claimToken = req.body.claim_token || getSession(req).claimToken;
+claimRoutes.post('/verify-threads', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.body.claim_token || getSession(req).claimToken);
   const session = getSession(req);
   if (!session.ownerId || !session.threadsAccessToken) {
     return res.status(401).json({ error: 'Connect Threads account first' });
   }
 
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+
   const agent = await findAgentByClaimToken(claimToken);
   if (!agent) return res.status(404).json({ error: 'Invalid claim token' });
+  const expiredError = ensureClaimNotExpired(agent);
+  if (expiredError) return res.status(400).json({ error: expiredError });
 
   const owner = await prisma.owner.findUnique({ where: { id: session.ownerId } });
   if (!owner?.threadsUserId) return res.status(401).json({ error: 'Threads OAuth identity not found' });
@@ -224,15 +266,19 @@ claimRoutes.post('/verify-threads', async (req: Request, res: Response) => {
 
   await prisma.agent.update({ where: { id: agent.id }, data: { status: 'threads_verified' } });
   res.json({ success: true, status: 'threads_verified', post_id: matched.id });
-});
+}));
 
-claimRoutes.post('/claim/complete', async (req: Request, res: Response) => {
-  const claimToken = req.body.claim_token || getSession(req).claimToken;
+claimRoutes.post('/claim/complete', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.body.claim_token || getSession(req).claimToken);
   const session = getSession(req);
   if (!session.ownerId) return res.status(401).json({ error: 'Email verification required' });
 
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+
   const agent = await findAgentByClaimToken(claimToken);
   if (!agent) return res.status(404).json({ error: 'Invalid claim token' });
+  const expiredError = ensureClaimNotExpired(agent);
+  if (expiredError) return res.status(400).json({ error: expiredError });
 
   const artifacts = await prisma.verificationArtifact.count({
     where: {
@@ -257,4 +303,10 @@ claimRoutes.post('/claim/complete', async (req: Request, res: Response) => {
   });
 
   res.json({ success: true, status: updated.status, agent_id: updated.id, claimed_at: updated.claimedAt });
+}));
+
+claimRoutes.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Claim route error:', err?.message || err);
+  const status = err?.response?.status && err.response.status >= 400 && err.response.status < 500 ? 400 : 500;
+  return res.status(status).json({ error: status === 400 ? 'Verification request failed' : 'Internal server error' });
 });

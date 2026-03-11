@@ -7,6 +7,7 @@ declare module 'express-session' {
     oauthState?: string;
     oauthProvider?: 'x' | 'threads';
     oauthClaimToken?: string;
+    oauthCodeVerifier?: string;
     xAccessToken?: string;
     threadsAccessToken?: string;
   }

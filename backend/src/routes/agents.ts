@@ -27,7 +27,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         apiKeyHash,
         claimCode,
         verificationCode,
-        claimExpiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
+        claimExpiresAt: new Date(Date.now() + 1000 * 60 * 30),
       },
     });
 

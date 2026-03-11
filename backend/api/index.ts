@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { agentRoutes } from '../src/routes/agents';
 import { postRoutes } from '../src/routes/posts';
 import { commentRoutes } from '../src/routes/comments';
@@ -14,9 +15,13 @@ import { searchRoutes } from '../src/routes/search';
 import { ownerRoutes } from '../src/routes/owners';
 import { claimRoutes } from '../src/routes/claim';
 import { oauthRoutes } from '../src/routes/oauth';
+import { validateRequiredEnv } from '../src/config/env';
 
+validateRequiredEnv();
 const app = express();
 
+app.set('trust proxy', 1);
+app.use(helmet());
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());

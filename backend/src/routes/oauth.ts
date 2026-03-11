@@ -1,7 +1,8 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import axios from 'axios';
 import { prisma } from '../utils/prisma';
+import { isValidClaimToken, sanitizeString } from '../utils/validation';
 
 export const oauthRoutes = Router();
 
@@ -9,6 +10,7 @@ type SessionData = {
   oauthState?: string;
   oauthProvider?: 'x' | 'threads';
   oauthClaimToken?: string;
+  oauthCodeVerifier?: string;
   ownerId?: string;
   xAccessToken?: string;
   threadsAccessToken?: string;
@@ -26,13 +28,33 @@ function randomString(size = 32) {
   return crypto.randomBytes(size).toString('hex');
 }
 
-oauthRoutes.get('/x/start', async (req: Request, res: Response) => {
-  const claimToken = (req.query.claim_token as string) || '';
+function toBase64Url(buffer: Buffer) {
+  return buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function createPkcePair() {
+  const verifier = toBase64Url(crypto.randomBytes(32));
+  const challenge = toBase64Url(crypto.createHash('sha256').update(verifier).digest());
+  return { verifier, challenge };
+}
+
+const asyncHandler =
+  (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+
+oauthRoutes.get('/x/start', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.query.claim_token);
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+
   const state = randomString(16);
+  const { verifier, challenge } = createPkcePair();
   const session = getSession(req);
   session.oauthState = state;
   session.oauthProvider = 'x';
   session.oauthClaimToken = claimToken;
+  session.oauthCodeVerifier = verifier;
 
   const callbackUrl = `${appBaseUrl(req)}/api/v1/oauth/x/callback`;
   const query = new URLSearchParams({
@@ -41,18 +63,19 @@ oauthRoutes.get('/x/start', async (req: Request, res: Response) => {
     redirect_uri: callbackUrl,
     scope: 'tweet.read users.read offline.access',
     state,
-    code_challenge: 'plain',
-    code_challenge_method: 'plain',
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
   });
 
   res.redirect(`https://twitter.com/i/oauth2/authorize?${query.toString()}`);
-});
+}));
 
-oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
-  const { code, state } = req.query as { code: string; state: string };
+oauthRoutes.get('/x/callback', asyncHandler(async (req: Request, res: Response) => {
+  const code = sanitizeString(req.query.code);
+  const state = sanitizeString(req.query.state);
   const session = getSession(req);
 
-  if (!code || !state || state !== session.oauthState || session.oauthProvider !== 'x') {
+  if (!code || !state || state !== session.oauthState || session.oauthProvider !== 'x' || !session.oauthCodeVerifier) {
     return res.status(400).json({ error: 'Invalid OAuth state' });
   }
 
@@ -64,7 +87,7 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
       grant_type: 'authorization_code',
       client_id: process.env.X_CLIENT_ID || '',
       redirect_uri: callbackUrl,
-      code_verifier: 'plain',
+      code_verifier: session.oauthCodeVerifier,
     }),
     {
       headers: {
@@ -105,11 +128,16 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
   }
 
   session.xAccessToken = accessToken;
+  session.oauthState = undefined;
+  session.oauthProvider = undefined;
+  session.oauthCodeVerifier = undefined;
   res.redirect(`${process.env.FRONTEND_BASE_URL || 'http://localhost:3000'}/claim/${session.oauthClaimToken || ''}?x_connected=true`);
-});
+}));
 
-oauthRoutes.get('/threads/start', async (req: Request, res: Response) => {
-  const claimToken = (req.query.claim_token as string) || '';
+oauthRoutes.get('/threads/start', asyncHandler(async (req: Request, res: Response) => {
+  const claimToken = sanitizeString(req.query.claim_token);
+  if (!isValidClaimToken(claimToken)) return res.status(400).json({ error: 'Invalid claim token format' });
+
   const state = randomString(16);
   const session = getSession(req);
   session.oauthState = state;
@@ -126,10 +154,11 @@ oauthRoutes.get('/threads/start', async (req: Request, res: Response) => {
   });
 
   res.redirect(`https://threads.net/oauth/authorize?${query.toString()}`);
-});
+}));
 
-oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
-  const { code, state } = req.query as { code: string; state: string };
+oauthRoutes.get('/threads/callback', asyncHandler(async (req: Request, res: Response) => {
+  const code = sanitizeString(req.query.code);
+  const state = sanitizeString(req.query.state);
   const session = getSession(req);
 
   if (!code || !state || state !== session.oauthState || session.oauthProvider !== 'threads') {
@@ -177,10 +206,12 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
   }
 
   session.threadsAccessToken = accessToken;
+  session.oauthState = undefined;
+  session.oauthProvider = undefined;
   res.redirect(`${process.env.FRONTEND_BASE_URL || 'http://localhost:3000'}/claim/${session.oauthClaimToken || ''}?threads_connected=true`);
-});
+}));
 
-oauthRoutes.get('/me', async (req: Request, res: Response) => {
+oauthRoutes.get('/me', asyncHandler(async (req: Request, res: Response) => {
   const session = getSession(req);
   if (!session.ownerId) return res.status(401).json({ authenticated: false });
 
@@ -200,4 +231,10 @@ oauthRoutes.get('/me', async (req: Request, res: Response) => {
 
   if (!owner) return res.status(401).json({ authenticated: false });
   res.json({ authenticated: true, owner });
+}));
+
+oauthRoutes.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('OAuth route error:', err?.message || err);
+  const status = err?.response?.status && err.response.status >= 400 && err.response.status < 500 ? 400 : 500;
+  return res.status(status).json({ error: status === 400 ? 'OAuth request failed' : 'Internal server error' });
 });
