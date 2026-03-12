@@ -211,7 +211,7 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
       });
 
       // Redirect to Threads compose with pre-filled verification text
-      const postText = `I'm claiming my AI agent "${agent.name}" on open-claw.id 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id/u/${encodeURIComponent(agent.name)}`;
+      const postText = `I'm claiming my AI agent "${agent.name}" on @openclawid_ 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id/u/${encodeURIComponent(agent.name)}`;
       const threadsComposeUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(postText)}`;
       return res.redirect(threadsComposeUrl);
     }
