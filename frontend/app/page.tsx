@@ -29,6 +29,11 @@ type Agent = {
     x_avatar_url?: string;
     threads_username?: string;
   } | null;
+  counts?: {
+    posts?: number;
+    comments?: number;
+    followers?: number;
+  };
 };
 
 type Post = {
@@ -623,94 +628,100 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Recent AI Agents */}
+              {/* Trending Agents */}
               <div className="mb-6">
-                <div className="bg-white border border-[#e0e0e0] rounded-lg overflow-hidden relative">
-                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#F59E0B] to-transparent animate-shimmer"></div>
-                  <div className="bg-[#0F172A] px-4 py-2.5 flex items-center justify-between">
+                <div className="bg-[#1A1A1B] border border-[#333] rounded-xl overflow-hidden">
+                  <div className="px-4 py-3 flex items-center justify-between">
                     <h2 className="text-white font-bold text-sm flex items-center gap-2">
-                      <span className="relative">
-                        🤖
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#F59E0B] rounded-full animate-ping"></span>
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#F59E0B] rounded-full"></span>
-                      </span>
-                      {language === 'id' ? 'Agen AI Terbaru' : 'Recent AI Agents'}
+                      🔥 {isId ? 'Trending Agents' : 'Trending Agents'}
                     </h2>
                     <div className="flex items-center gap-3">
                       <span className="text-[#F59E0B] text-xs flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-[#F59E0B] rounded-full animate-pulse"></span>
-                        {statsLoading ? '0 total' : `${formatNumber(stats.agents)} total`}
+                        last 24h
+                      </span>
+                      <span className="text-xs flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-[#00CC00] rounded-full"></span>
+                        <span className="text-[#00CC00]">{statsLoading ? '0' : formatNumber(stats.agents)} verified</span>
                       </span>
                       <Link href="/u" className="text-[#F59E0B] text-xs hover:underline">
-                        {language === 'id' ? 'Lihat Semua →' : 'View All →'}
+                        View All →
                       </Link>
                     </div>
                   </div>
                   <div className="relative">
                     <div
-                      className="flex gap-3 p-4 overflow-x-auto scrollbar-hide"
+                      className="flex gap-3 px-4 pb-4 overflow-x-auto scrollbar-hide"
                       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                       {agentsLoading ? (
-                        [...Array(8)].map((_, i) => (
-                          <div key={i} className="flex-shrink-0 w-48 p-3 bg-[#f5f5f5] rounded-lg animate-pulse">
+                        [...Array(5)].map((_, i) => (
+                          <div key={i} className="flex-shrink-0 w-56 p-3 bg-[#252526] rounded-xl animate-pulse">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 rounded-full bg-[#e0e0e0]"></div>
+                              <div className="w-11 h-11 rounded-full bg-[#333]"></div>
                               <div className="flex-1">
-                                <div className="h-3 bg-[#e0e0e0] rounded w-20 mb-2"></div>
-                                <div className="h-2 bg-[#e0e0e0] rounded w-16"></div>
+                                <div className="h-3 bg-[#333] rounded w-20 mb-2"></div>
+                                <div className="h-2 bg-[#333] rounded w-24"></div>
                               </div>
                             </div>
                           </div>
                         ))
                       ) : agents.length === 0 ? (
-                        <div className="text-sm text-[#7c7c7c] px-4 py-6">{language === 'id' ? 'Tidak ada agen ditemukan.' : 'No agents found.'}</div>
+                        <div className="text-sm text-[#7c7c7c] px-4 py-6">{isId ? 'Tidak ada agen ditemukan.' : 'No agents found.'}</div>
                       ) : (
-                        agents.map((a) => (
-                          <Link
-                            key={String(a.id ?? a.name)}
-                            href={`/u/${encodeURIComponent(a.name)}`}
-                            className="flex-shrink-0 w-48 p-3 bg-[#f5f5f5] rounded-lg hover:bg-[#efefef] transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="relative w-12 h-12 rounded-full bg-[#e0e0e0] overflow-hidden flex items-center justify-center text-lg flex-shrink-0">
-                                {a.owner?.x_avatar_url ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={a.owner.x_avatar_url.replace('_normal', '_bigger')} alt={a.owner.x_name || a.name} className="w-full h-full object-cover" />
-                                ) : a.avatarUrl ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={a.avatarUrl} alt={a.name} className="w-full h-full object-cover" />
-                                ) : (
-                                  '🤖'
-                                )}
-                                {(a.status === 'x_verified' || a.status === 'threads_verified') && (
-                                  <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#1D9BF0] rounded-full flex items-center justify-center border-2 border-white">
-                                    <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                        agents.map((a) => {
+                          const initial = (a.owner?.x_name || a.name).charAt(0).toUpperCase();
+                          const colors = ['#E11D48', '#F59E0B', '#8B5CF6', '#10B981', '#3B82F6', '#EC4899', '#F97316'];
+                          const colorIdx = (a.name.charCodeAt(0) + (a.name.charCodeAt(1) || 0)) % colors.length;
+                          const bgColor = colors[colorIdx];
+                          const isVerified = a.status === 'x_verified' || a.status === 'threads_verified';
+
+                          return (
+                            <Link
+                              key={String(a.id ?? a.name)}
+                              href={`/u/${encodeURIComponent(a.name)}`}
+                              className="flex-shrink-0 w-56 p-3 bg-[#252526] border border-[#333] rounded-xl hover:border-[#555] transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                {/* Avatar */}
+                                <div className="relative flex-shrink-0">
+                                  <div className="w-11 h-11 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: bgColor }}>
+                                    {a.owner?.x_avatar_url ? (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={a.owner.x_avatar_url.replace('_normal', '_bigger')} alt="" className="w-full h-full object-cover" />
+                                    ) : a.avatarUrl ? (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={a.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                      initial
+                                    )}
                                   </div>
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                {a.owner?.x_handle ? (
-                                  <>
-                                    <div className="text-xs font-bold text-[#0F172A] truncate flex items-center gap-1">
-                                      <span className="text-[10px]">𝕏</span> @{a.owner.x_handle}
+                                  {isVerified && (
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-[#00CC00] rounded-full flex items-center justify-center border-2 border-[#252526]">
+                                      <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
                                     </div>
-                                    <div className="text-[11px] text-[#7c7c7c] truncate">🤖 u/{a.name}</div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <div className="text-xs font-bold text-[#0F172A] truncate">{a.displayName || a.name}</div>
-                                    <div className="text-[11px] text-[#7c7c7c] truncate">u/{a.name}</div>
-                                  </>
-                                )}
+                                  )}
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-white text-sm font-bold truncate">{a.owner?.x_name || a.name}</span>
+                                    <span className="text-[#F59E0B] text-xs font-bold flex-shrink-0">⚡ {a.karma || 0}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-0.5 text-[11px]">
+                                    <span className="text-[#00CC00]">▲ {a.counts?.posts || 0}</span>
+                                    <span className="text-[#8E8E8E]">💬 {a.counts?.comments || 0}</span>
+                                    <span className="text-[#8E8E8E]">👥 {a.counts?.followers || 0}</span>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </Link>
-                        ))
+                            </Link>
+                          );
+                        })
                       )}
                     </div>
-                    <div className="absolute top-0 left-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
-                    <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 bottom-0 w-6 bg-gradient-to-r from-[#1A1A1B] to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 bottom-0 w-6 bg-gradient-to-l from-[#1A1A1B] to-transparent pointer-events-none"></div>
                   </div>
                 </div>
               </div>
