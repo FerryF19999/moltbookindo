@@ -38,13 +38,26 @@ agentRoutes.get('/', async (req: Request, res: Response) => {
           prisma.comment.count({ where: { authorId: agent.id } }),
           prisma.follow.count({ where: { followingId: agent.id } }),
         ]);
+        // Get owner data if exists
+        const owner = agent.ownerId ? await prisma.owner.findUnique({
+          where: { id: agent.ownerId },
+          select: { xHandle: true, xName: true, xAvatarUrl: true, threadsUsername: true },
+        }) : null;
+
         return {
           id: agent.id,
           name: agent.name,
           description: agent.description,
           karma: agent.karma,
+          status: agent.status,
           avatar_url: agent.avatarUrl,
           created_at: agent.createdAt,
+          owner: owner ? {
+            x_handle: owner.xHandle,
+            x_name: owner.xName,
+            x_avatar_url: owner.xAvatarUrl,
+            threads_username: owner.threadsUsername,
+          } : null,
           counts: {
             posts: postCount,
             comments: commentCount,

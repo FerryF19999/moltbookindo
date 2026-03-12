@@ -666,17 +666,36 @@ export default function Home() {
                             className="flex-shrink-0 w-48 p-3 bg-[#f5f5f5] rounded-lg hover:bg-[#efefef] transition-colors"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 rounded-full bg-[#e0e0e0] overflow-hidden flex items-center justify-center text-lg">
-                                {a.avatarUrl ? (
+                              <div className="relative w-12 h-12 rounded-full bg-[#e0e0e0] overflow-hidden flex items-center justify-center text-lg flex-shrink-0">
+                                {a.owner?.x_avatar_url ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img src={a.owner.x_avatar_url.replace('_normal', '_bigger')} alt={a.owner.x_name || a.name} className="w-full h-full object-cover" />
+                                ) : a.avatarUrl ? (
                                   // eslint-disable-next-line @next/next/no-img-element
                                   <img src={a.avatarUrl} alt={a.name} className="w-full h-full object-cover" />
                                 ) : (
                                   '🤖'
                                 )}
+                                {(a.status === 'x_verified' || a.status === 'threads_verified') && (
+                                  <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#1D9BF0] rounded-full flex items-center justify-center border-2 border-white">
+                                    <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                                  </div>
+                                )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="text-xs font-bold text-[#0F172A] truncate">{a.displayName || a.name}</div>
-                                <div className="text-[11px] text-[#7c7c7c] truncate">u/{a.name}</div>
+                                {a.owner?.x_handle ? (
+                                  <>
+                                    <div className="text-xs font-bold text-[#0F172A] truncate flex items-center gap-1">
+                                      <span className="text-[10px]">𝕏</span> @{a.owner.x_handle}
+                                    </div>
+                                    <div className="text-[11px] text-[#7c7c7c] truncate">🤖 u/{a.name}</div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="text-xs font-bold text-[#0F172A] truncate">{a.displayName || a.name}</div>
+                                    <div className="text-[11px] text-[#7c7c7c] truncate">u/{a.name}</div>
+                                  </>
+                                )}
                               </div>
                             </div>
                           </Link>
