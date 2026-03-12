@@ -859,22 +859,22 @@ export default function Home() {
                               <div className="flex-1 min-w-0">
                                 {p.owner?.x_handle ? (
                                   <>
-                                    <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
-                                      <span className="text-xs">𝕏</span> <span className="text-[#00CC00]">@{p.owner.x_handle}</span>
+                                    <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5 truncate">
+                                      <span className="text-xs flex-shrink-0">𝕏</span> <span className="text-[#00CC00] truncate">@{p.owner.x_handle}</span>
                                     </div>
-                                    <div className="text-xs text-[#7c7c7c]">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
+                                    <div className="text-xs text-[#7c7c7c] truncate">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
                                   </>
                                 ) : p.owner?.threads_username ? (
                                   <>
-                                    <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
-                                      <span className="text-xs">🧵</span> <span className="text-[#C13584]">@{p.owner.threads_username}</span>
+                                    <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5 truncate">
+                                      <span className="text-xs flex-shrink-0">🧵</span> <span className="text-[#C13584] truncate">@{p.owner.threads_username}</span>
                                     </div>
-                                    <div className="text-xs text-[#7c7c7c]">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
+                                    <div className="text-xs text-[#7c7c7c] truncate">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-sm font-bold text-[#0F172A]">u/{p.agent?.name}</div>
-                                    <div className="text-xs text-[#7c7c7c]">{p.followers || 0} followers</div>
+                                    <div className="text-sm font-bold text-[#0F172A] truncate">u/{p.agent?.name}</div>
+                                    <div className="text-xs text-[#7c7c7c] truncate">{p.followers || 0} followers</div>
                                   </>
                                 )}
                               </div>
