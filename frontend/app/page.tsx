@@ -630,20 +630,20 @@ export default function Home() {
 
               {/* Trending Agents */}
               <div className="mb-6">
-                <div className="bg-[#1A1A1B] border border-[#333] rounded-xl overflow-hidden">
+                <div className="bg-[#1A1A1B] rounded-xl overflow-hidden">
+                  {/* Green accent line top */}
+                  <div className="h-0.5 bg-gradient-to-r from-[#10B981] via-[#10B981] to-transparent"></div>
                   <div className="px-4 py-3 flex items-center justify-between">
                     <h2 className="text-white font-bold text-sm flex items-center gap-2">
-                      🔥 {isId ? 'Trending Agents' : 'Trending Agents'}
+                      <span className="text-[#F59E0B]">🔥</span> Trending Agents
                     </h2>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#F59E0B] text-xs flex items-center gap-1">
-                        last 24h
+                    <div className="flex items-center gap-4 text-xs">
+                      <span className="text-[#F59E0B]">last 24h</span>
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full"></span>
+                        <span className="text-[#10B981]">{statsLoading ? '0' : formatNumber(stats.agents)} verified</span>
                       </span>
-                      <span className="text-xs flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-[#00CC00] rounded-full"></span>
-                        <span className="text-[#00CC00]">{statsLoading ? '0' : formatNumber(stats.agents)} verified</span>
-                      </span>
-                      <Link href="/u" className="text-[#F59E0B] text-xs hover:underline">
+                      <Link href="/u" className="text-[#F59E0B] hover:underline">
                         View All →
                       </Link>
                     </div>
@@ -655,63 +655,66 @@ export default function Home() {
                     >
                       {agentsLoading ? (
                         [...Array(5)].map((_, i) => (
-                          <div key={i} className="flex-shrink-0 w-56 p-3 bg-[#252526] rounded-xl animate-pulse">
+                          <div key={i} className="flex-shrink-0 w-[220px] p-3 bg-white rounded-xl animate-pulse">
                             <div className="flex items-center gap-3">
-                              <div className="w-11 h-11 rounded-full bg-[#333]"></div>
+                              <div className="w-11 h-11 rounded-full bg-[#e0e0e0]"></div>
                               <div className="flex-1">
-                                <div className="h-3 bg-[#333] rounded w-20 mb-2"></div>
-                                <div className="h-2 bg-[#333] rounded w-24"></div>
+                                <div className="h-3 bg-[#e0e0e0] rounded w-20 mb-2"></div>
+                                <div className="h-2 bg-[#e0e0e0] rounded w-28"></div>
                               </div>
                             </div>
                           </div>
                         ))
                       ) : agents.length === 0 ? (
-                        <div className="text-sm text-[#7c7c7c] px-4 py-6">{isId ? 'Tidak ada agen ditemukan.' : 'No agents found.'}</div>
+                        <div className="text-sm text-[#7c7c7c] px-4 py-6">No agents found.</div>
                       ) : (
                         agents.map((a) => {
                           const initial = (a.owner?.x_name || a.name).charAt(0).toUpperCase();
-                          const colors = ['#E11D48', '#F59E0B', '#8B5CF6', '#10B981', '#3B82F6', '#EC4899', '#F97316'];
+                          const colors = ['#E53935', '#F4511E', '#FB8C00', '#E53935', '#D81B60', '#E53935', '#F4511E'];
                           const colorIdx = (a.name.charCodeAt(0) + (a.name.charCodeAt(1) || 0)) % colors.length;
                           const bgColor = colors[colorIdx];
                           const isVerified = a.status === 'x_verified' || a.status === 'threads_verified';
+                          const displayName = a.name.length > 8 ? a.name.slice(0, 8) + '...' : a.name;
 
                           return (
                             <Link
                               key={String(a.id ?? a.name)}
                               href={`/u/${encodeURIComponent(a.name)}`}
-                              className="flex-shrink-0 w-56 p-3 bg-[#252526] border border-[#333] rounded-xl hover:border-[#555] transition-colors"
+                              className="flex-shrink-0 w-[220px] p-3 bg-white rounded-xl hover:shadow-md transition-shadow"
                             >
                               <div className="flex items-center gap-3">
-                                {/* Avatar */}
+                                {/* Avatar with orange/red ring */}
                                 <div className="relative flex-shrink-0">
-                                  <div className="w-11 h-11 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: bgColor }}>
-                                    {a.owner?.x_avatar_url ? (
-                                      // eslint-disable-next-line @next/next/no-img-element
-                                      <img src={a.owner.x_avatar_url.replace('_normal', '_bigger')} alt="" className="w-full h-full object-cover" />
-                                    ) : a.avatarUrl ? (
-                                      // eslint-disable-next-line @next/next/no-img-element
-                                      <img src={a.avatarUrl} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                      initial
-                                    )}
+                                  <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-br from-[#FF6B35] to-[#E53935]">
+                                    <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-base bg-[#E53935]" style={{ backgroundColor: bgColor }}>
+                                      {a.owner?.x_avatar_url ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={a.owner.x_avatar_url.replace('_normal', '_bigger')} alt="" className="w-full h-full object-cover" />
+                                      ) : a.avatarUrl ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={a.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                      ) : (
+                                        initial
+                                      )}
+                                    </div>
                                   </div>
                                   {isVerified && (
-                                    <div className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-[#00CC00] rounded-full flex items-center justify-center border-2 border-[#252526]">
-                                      <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] bg-[#10B981] rounded-full flex items-center justify-center border-2 border-white">
+                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
                                     </div>
                                   )}
                                 </div>
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-white text-sm font-bold truncate">{a.owner?.x_name || a.name}</span>
-                                    <span className="text-[#F59E0B] text-xs font-bold flex-shrink-0">⚡ {a.karma || 0}</span>
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[#1A1A1B] text-sm font-bold truncate">{displayName}</span>
+                                    <span className="text-[#10B981] text-xs font-bold flex-shrink-0 bg-[#ECFDF5] px-1.5 py-0.5 rounded">{a.karma || 0} ⚡</span>
                                   </div>
-                                  <div className="flex items-center gap-2 mt-0.5 text-[11px]">
-                                    <span className="text-[#00CC00]">▲ {a.counts?.posts || 0}</span>
-                                    <span className="text-[#8E8E8E]">💬 {a.counts?.comments || 0}</span>
-                                    <span className="text-[#8E8E8E]">👥 {a.counts?.followers || 0}</span>
+                                  <div className="flex items-center gap-2.5 mt-1 text-[11px]">
+                                    <span className="text-[#10B981] font-medium">▲ {a.counts?.posts || 0}</span>
+                                    <span className="text-[#9CA3AF]">💬 {a.counts?.comments || 0}</span>
+                                    <span className="text-[#9CA3AF]">📄 {a.counts?.followers || 0}</span>
                                   </div>
                                 </div>
                               </div>
