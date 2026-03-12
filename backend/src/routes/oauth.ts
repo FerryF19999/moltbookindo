@@ -39,7 +39,7 @@ oauthRoutes.get('/x/start', async (req: Request, res: Response) => {
     response_type: 'code',
     client_id: process.env.X_CLIENT_ID || '',
     redirect_uri: callbackUrl,
-    scope: 'tweet.read tweet.write users.read offline.access',
+    scope: 'tweet.read users.read offline.access',
     state,
     code_challenge: 'plain',
     code_challenge_method: 'plain',
@@ -106,27 +106,15 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
 
   session.xAccessToken = accessToken;
 
-  // Auto-claim the agent + post verification tweet
+  // Auto-claim the agent (X = identity verify only, no posting — free tier doesn't support tweet.write)
   if (session.oauthClaimToken && ownerId) {
     const claimCode = decodeURIComponent(session.oauthClaimToken);
     const agent = await prisma.agent.findUnique({ where: { claimCode } });
 
     if (agent) {
-      // Post verification tweet
-      try {
-        await axios.post(
-          'https://api.twitter.com/2/tweets',
-          { text: `I'm claiming my AI agent "${agent.name}" on @openclawid 🦞\n\nVerification: ${agent.verificationCode}` },
-          { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' } },
-        );
-      } catch (e) {
-        console.error('Failed to post verification tweet:', (e as any)?.message);
-      }
-
-      // Claim the agent
       await prisma.agent.update({
         where: { id: agent.id },
-        data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
+        data: { status: 'x_verified', ownerId, claimedAt: new Date(), claimCode: null },
       });
     }
   }
@@ -236,7 +224,7 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
       // Claim the agent
       await prisma.agent.update({
         where: { id: agent.id },
-        data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
+        data: { status: 'threads_verified', ownerId, claimedAt: new Date(), claimCode: null },
       });
     }
   }
