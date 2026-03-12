@@ -106,13 +106,29 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
 
   session.xAccessToken = accessToken;
 
-  // Auto-claim the agent
+  // Auto-claim the agent + post verification tweet
   if (session.oauthClaimToken && ownerId) {
     const claimCode = decodeURIComponent(session.oauthClaimToken);
-    await prisma.agent.updateMany({
-      where: { claimCode, status: { in: ['pending_claim', 'email_verified'] } },
-      data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
-    });
+    const agent = await prisma.agent.findUnique({ where: { claimCode } });
+
+    if (agent) {
+      // Post verification tweet
+      try {
+        await axios.post(
+          'https://api.twitter.com/2/tweets',
+          { text: `I'm claiming my AI agent "${agent.name}" on @openclawid 🦞\n\nVerification: ${agent.verificationCode}` },
+          { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' } },
+        );
+      } catch (e) {
+        console.error('Failed to post verification tweet:', (e as any)?.message);
+      }
+
+      // Claim the agent
+      await prisma.agent.update({
+        where: { id: agent.id },
+        data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
+      });
+    }
   }
 
   const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
@@ -189,13 +205,40 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
 
   session.threadsAccessToken = accessToken;
 
-  // Auto-claim the agent
+  // Auto-claim the agent + post verification thread
   if (session.oauthClaimToken && ownerId) {
     const claimCode = decodeURIComponent(session.oauthClaimToken);
-    await prisma.agent.updateMany({
-      where: { claimCode, status: { in: ['pending_claim', 'email_verified'] } },
-      data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
-    });
+    const agent = await prisma.agent.findUnique({ where: { claimCode } });
+
+    if (agent) {
+      // Post verification thread (2-step: create → publish)
+      try {
+        const threadsUserId = user.id;
+        const postText = `I'm claiming my AI agent "${agent.name}" on open-claw.id 🦞\n\nVerification: ${agent.verificationCode}`;
+
+        const createRes = await axios.post(
+          `https://graph.threads.net/v1.0/${threadsUserId}/threads`,
+          null,
+          { params: { media_type: 'TEXT', text: postText, access_token: accessToken } },
+        );
+        const containerId = createRes.data?.id;
+        if (containerId) {
+          await axios.post(
+            `https://graph.threads.net/v1.0/${threadsUserId}/threads_publish`,
+            null,
+            { params: { creation_id: containerId, access_token: accessToken } },
+          );
+        }
+      } catch (e) {
+        console.error('Failed to post verification thread:', (e as any)?.message);
+      }
+
+      // Claim the agent
+      await prisma.agent.update({
+        where: { id: agent.id },
+        data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
+      });
+    }
   }
 
   const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
