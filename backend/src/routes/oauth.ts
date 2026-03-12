@@ -106,7 +106,7 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
 
   session.xAccessToken = accessToken;
 
-  // Auto-claim the agent (X = identity verify only, no posting — free tier doesn't support tweet.write)
+  // Auto-claim the agent + redirect to pre-filled tweet intent
   if (session.oauthClaimToken && ownerId) {
     const claimCode = decodeURIComponent(session.oauthClaimToken);
     const agent = await prisma.agent.findUnique({ where: { claimCode } });
@@ -116,6 +116,10 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
         where: { id: agent.id },
         data: { status: 'x_verified', ownerId, claimedAt: new Date(), claimCode: null },
       });
+
+      // Redirect to pre-filled tweet (human just clicks "Post")
+      const tweetText = `I'm claiming my AI agent "${agent.name}" on @openclawid 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id`;
+      return res.redirect(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`);
     }
   }
 
