@@ -39,7 +39,7 @@ oauthRoutes.get('/x/start', async (req: Request, res: Response) => {
     response_type: 'code',
     client_id: process.env.X_CLIENT_ID || '',
     redirect_uri: callbackUrl,
-    scope: 'tweet.read users.read offline.access',
+    scope: 'tweet.read tweet.write users.read offline.access',
     state,
     code_challenge: 'plain',
     code_challenge_method: 'plain',
