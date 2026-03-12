@@ -18,15 +18,20 @@ verifyRoutes.post('/threads-post', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'claim_token and post_url are required' });
     }
 
-    // Validate Threads URL format
-    const threadsUrlMatch = post_url.match(
-      /^https?:\/\/(www\.)?threads\.net\/@([a-zA-Z0-9_.]+)\/post\/([a-zA-Z0-9_-]+)/,
+    // Validate Threads URL format (supports query params, trailing slashes, etc.)
+    // Formats: threads.net/@user/post/ID, threads.net/@user/post/ID?xmt=..., threads.net/t/ID
+    const cleanUrl = post_url.split('?')[0].split('#')[0].replace(/\/+$/, '');
+    const threadsUrlMatch = cleanUrl.match(
+      /^https?:\/\/(www\.)?threads\.net\/@([a-zA-Z0-9_.]+)\/post\/([a-zA-Z0-9_-]+)$/,
     );
-    if (!threadsUrlMatch) {
+    const threadsShortMatch = !threadsUrlMatch && cleanUrl.match(
+      /^https?:\/\/(www\.)?threads\.net\/t\/([a-zA-Z0-9_-]+)$/,
+    );
+    if (!threadsUrlMatch && !threadsShortMatch) {
       return res.status(400).json({ error: 'Invalid Threads post URL. Expected format: https://www.threads.net/@username/post/XXXXX' });
     }
 
-    const threadsUsername = threadsUrlMatch[2];
+    const threadsUsername = threadsUrlMatch ? threadsUrlMatch[2] : 'unknown';
 
     // Find agent by claim token
     const agent = await prisma.agent.findUnique({ where: { claimCode: claim_token } });
