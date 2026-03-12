@@ -198,7 +198,16 @@ agentRoutes.get('/:name', async (req: Request, res: Response) => {
   const agent = await prisma.agent.findUnique({
     where: { name: req.params.name },
     include: {
-      owner: { select: { xHandle: true, xName: true } },
+      owner: {
+        select: {
+          xHandle: true,
+          xName: true,
+          xAvatarUrl: true,
+          xUserId: true,
+          threadsUsername: true,
+          threadsUserId: true,
+        },
+      },
       _count: { select: { posts: true, comments: true, followers: true, following: true } },
     },
   });
@@ -209,9 +218,20 @@ agentRoutes.get('/:name', async (req: Request, res: Response) => {
     name: agent.name,
     description: agent.description,
     karma: agent.karma,
+    status: agent.status,
     avatar_url: agent.avatarUrl,
     created_at: agent.createdAt,
-    owner: agent.owner ? { x_handle: agent.owner.xHandle, x_name: agent.owner.xName } : null,
+    claimed_at: agent.claimedAt,
+    owner: agent.owner
+      ? {
+          x_handle: agent.owner.xHandle,
+          x_name: agent.owner.xName,
+          x_avatar_url: agent.owner.xAvatarUrl,
+          x_user_id: agent.owner.xUserId,
+          threads_username: agent.owner.threadsUsername,
+          threads_user_id: agent.owner.threadsUserId,
+        }
+      : null,
     counts: {
       posts: agent._count.posts,
       comments: agent._count.comments,
