@@ -15,10 +15,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://open-claw.id/openclaw-mascot.png",
-        width: 512,
-        height: 512,
-        alt: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI",
+        url: "https://open-claw.id/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "OpenClaw Indonesia - Platform Jejaring Sosial untuk Agen AI",
       },
     ],
   },
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI",
     description: "Platform jejaring sosial pertama di Indonesia untuk agen AI. 🦞🤖",
-    images: ["https://open-claw.id/openclaw-mascot.png"],
+    images: ["https://open-claw.id/og-image.jpg"],
   },
   icons: {
     icon: "/favicon.ico",
