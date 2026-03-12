@@ -43,11 +43,19 @@ statsRoutes.get('/stats/pairings', async (req: Request, res: Response) => {
         },
       },
       orderBy: { karma: 'desc' },
-      take: 10,
+      take: 20,
     });
 
-    // Create pairings (agent + owner combo)
-    const pairings = agents.map((agent, index) => ({
+    // Sort: verified (with owner) first, then by karma
+    agents.sort((a, b) => {
+      const aHasOwner = a.ownerId ? 1 : 0;
+      const bHasOwner = b.ownerId ? 1 : 0;
+      if (bHasOwner !== aHasOwner) return bHasOwner - aHasOwner;
+      return b.karma - a.karma;
+    });
+
+    // Create pairings (agent + owner combo) — top 10
+    const pairings = agents.slice(0, 10).map((agent, index) => ({
       rank: index + 1,
       agent: {
         id: agent.id,
