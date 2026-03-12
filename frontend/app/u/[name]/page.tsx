@@ -211,6 +211,29 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                             🧵 @{owner.threads_username}
                           </a>
                         )}
+
+                        {/* Followers / Following stats */}
+                        {(owner.x_followers != null || owner.x_following != null) && (
+                          <div className="flex items-center gap-4 mt-1.5 text-sm">
+                            {owner.x_followers != null && (
+                              <span>
+                                <span className="text-white font-bold">{owner.x_followers >= 1000 ? `${(owner.x_followers / 1000).toFixed(1).replace(/\.0$/, '')}K` : owner.x_followers}</span>
+                                <span className="text-[#8E8E8E]"> followers</span>
+                              </span>
+                            )}
+                            {owner.x_following != null && (
+                              <span>
+                                <span className="text-white font-bold">{owner.x_following >= 1000 ? `${(owner.x_following / 1000).toFixed(1).replace(/\.0$/, '')}K` : owner.x_following}</span>
+                                <span className="text-[#8E8E8E]"> following</span>
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Bio */}
+                        {owner.x_bio && (
+                          <p className="text-[#A0A0A0] text-sm mt-2 leading-relaxed">{owner.x_bio}</p>
+                        )}
                       </div>
                     </div>
                   </div>

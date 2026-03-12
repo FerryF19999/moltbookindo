@@ -75,30 +75,31 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
   );
 
   const accessToken = tokenRes.data?.access_token;
-  const me = await axios.get('https://api.twitter.com/2/users/me?user.fields=profile_image_url,name,username', {
+  const me = await axios.get('https://api.twitter.com/2/users/me?user.fields=profile_image_url,name,username,description,public_metrics', {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
   const user = me.data?.data;
   if (!user?.id) return res.status(400).json({ error: 'Unable to fetch X profile' });
 
+  const xData = {
+    xUserId: user.id,
+    xHandle: user.username,
+    xName: user.name,
+    xAvatarUrl: user.profile_image_url || null,
+    xBio: user.description || null,
+    xFollowers: user.public_metrics?.followers_count ?? null,
+    xFollowing: user.public_metrics?.following_count ?? null,
+  };
+
   let ownerId = session.ownerId;
   if (ownerId) {
-    await prisma.owner.update({
-      where: { id: ownerId },
-      data: { xUserId: user.id, xHandle: user.username, xName: user.name, xAvatarUrl: user.profile_image_url || null },
-    });
+    await prisma.owner.update({ where: { id: ownerId }, data: xData });
   } else {
     const owner = await prisma.owner.upsert({
       where: { xUserId: user.id },
-      update: { xHandle: user.username, xName: user.name, xAvatarUrl: user.profile_image_url || null },
-      create: {
-        email: `${user.username}-${user.id}@x.placeholder.local`,
-        xUserId: user.id,
-        xHandle: user.username,
-        xName: user.name,
-        xAvatarUrl: user.profile_image_url || null,
-      },
+      update: xData,
+      create: { email: `${user.username}-${user.id}@x.placeholder.local`, ...xData },
     });
     ownerId = owner.id;
     session.ownerId = owner.id;
