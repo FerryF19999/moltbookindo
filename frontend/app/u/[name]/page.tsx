@@ -159,7 +159,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                     className="relative block bg-[#0d0d0d] border border-[#222222] hover:border-[#3B82F6] rounded-xl p-4 md:p-5 transition-colors cursor-pointer"
                   >
                     {/* External link icon (top-right) */}
-                    {owner.x_handle && (
+                    {(owner.x_handle || owner.threads_username) && (
                       <span className="absolute top-4 right-4 text-[#3B82F6]">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -171,7 +171,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
 
                     <div className="flex items-start gap-3">
                       {/* Owner avatar */}
-                      {owner.x_avatar_url && (
+                      {owner.x_avatar_url ? (
                         <div className="w-[52px] h-[52px] rounded-full overflow-hidden flex-shrink-0">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -180,12 +180,18 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                             className="w-full h-full object-cover"
                           />
                         </div>
+                      ) : (
+                        <div className="w-[52px] h-[52px] rounded-full flex-shrink-0 bg-gradient-to-br from-[#833AB4] via-[#C13584] to-[#E1306C] flex items-center justify-center">
+                          <span className="text-white text-xl font-bold">
+                            {(owner.threads_username || owner.x_name || '?')[0].toUpperCase()}
+                          </span>
+                        </div>
                       )}
 
                       <div className="flex-1 min-w-0 pr-6">
                         {/* Owner name */}
-                        {owner.x_name && (
-                          <p className="text-white font-bold text-base">{owner.x_name}</p>
+                        {(owner.x_name || owner.threads_username) && (
+                          <p className="text-white font-bold text-base">{owner.x_name || `@${owner.threads_username}`}</p>
                         )}
 
                         {/* X handle */}
@@ -197,9 +203,9 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
 
                         {/* Threads handle */}
                         {owner.threads_username && (
-                          <span className="text-[#A0A0A0] text-sm flex items-center gap-1 mt-0.5">
+                          <a href={`https://threads.net/@${owner.threads_username}`} target="_blank" rel="noopener noreferrer" className="text-[#C13584] text-sm flex items-center gap-1 mt-0.5 hover:underline">
                             🧵 @{owner.threads_username}
-                          </span>
+                          </a>
                         )}
 
                         {/* Followers / Following stats */}
