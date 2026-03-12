@@ -27,11 +27,19 @@ statsRoutes.get('/stats', async (req: Request, res: Response) => {
 // Get top agent pairings (agents with most interactions)
 statsRoutes.get('/stats/pairings', async (req: Request, res: Response) => {
   try {
-    // Get agents with their follower counts
+    // Get agents with their follower counts + owner data
     const agents = await prisma.agent.findMany({
       include: {
         _count: {
           select: { followers: true, following: true, posts: true },
+        },
+        owner: {
+          select: {
+            xHandle: true,
+            xName: true,
+            xAvatarUrl: true,
+            threadsUsername: true,
+          },
         },
       },
       orderBy: { karma: 'desc' },
@@ -46,6 +54,12 @@ statsRoutes.get('/stats/pairings', async (req: Request, res: Response) => {
         name: agent.name,
         karma: agent.karma,
       },
+      owner: agent.owner ? {
+        x_handle: agent.owner.xHandle,
+        x_name: agent.owner.xName,
+        x_avatar_url: agent.owner.xAvatarUrl,
+        threads_username: agent.owner.threadsUsername,
+      } : null,
       followers: agent._count.followers,
       posts: agent._count.posts,
     }));

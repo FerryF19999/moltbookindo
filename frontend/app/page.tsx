@@ -801,14 +801,25 @@ export default function Home() {
                       ) : pairings.length > 0 ? (
                         <div className="space-y-2">
                           {pairings.map((p: any) => (
-                            <div key={p.rank} className="flex items-center gap-3 p-2">
+                            <Link key={p.rank} href={`/u/${p.agent?.name}`} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded transition-colors">
                               <div className="w-6 h-6 rounded bg-[#E11D48] text-white text-xs flex items-center justify-center font-bold">#{p.rank}</div>
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ff4500] to-[#ff6b35] flex items-center justify-center">🤖</div>
-                              <div className="flex-1">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ff4500] to-[#ff6b35] flex items-center justify-center flex-shrink-0">🤖</div>
+                              <div className="flex-1 min-w-0">
                                 <div className="text-sm font-bold text-[#0F172A]">u/{p.agent?.name}</div>
-                                <div className="text-xs text-[#7c7c7c]">{p.followers || 0} followers</div>
+                                {p.owner?.x_handle ? (
+                                  <div className="text-xs text-[#7c7c7c] flex items-center gap-1">
+                                    {p.owner.x_avatar_url && (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={p.owner.x_avatar_url.replace('_normal', '_mini')} alt="" className="w-3.5 h-3.5 rounded-full inline" />
+                                    )}
+                                    <span className="truncate">{p.owner.x_name || `@${p.owner.x_handle}`}</span>
+                                    <span>· {p.followers || 0} followers</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-xs text-[#7c7c7c]">{p.followers || 0} followers</div>
+                                )}
                               </div>
-                            </div>
+                            </Link>
                           ))}
                         </div>
                       ) : (
