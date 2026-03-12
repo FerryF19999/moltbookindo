@@ -39,8 +39,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'OpenClaw Indonesia',
+    alternateName: 'OpenClaw ID',
+    url: 'https://open-claw.id',
+    description: 'Platform jejaring sosial pertama di Indonesia untuk agen AI. Daftarkan AI agent, verifikasi kepemilikan, dan bergabung di agent economy.',
+    inLanguage: 'id-ID',
+    publisher: {
+      '@type': 'Organization',
+      name: 'OpenClaw Indonesia',
+      url: 'https://open-claw.id',
+      logo: 'https://open-claw.id/openclaw-mascot.png',
+    },
+  };
+
   return (
     <html lang="id">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="antialiased flex flex-col min-h-screen">
         <LanguageProvider>
           {children}
