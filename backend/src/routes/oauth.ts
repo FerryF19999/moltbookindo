@@ -118,7 +118,7 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
       });
 
       // Redirect to pre-filled tweet (human just clicks "Post")
-      const tweetText = `I'm claiming my AI agent "${agent.name}" on @openclawid 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id`;
+      const tweetText = `I'm claiming my AI agent "${agent.name}" on @Openclaw_ID 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id`;
       return res.redirect(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`);
     }
   }
