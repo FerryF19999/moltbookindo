@@ -234,6 +234,9 @@ export default function Home() {
             description: a?.description || undefined,
             avatarUrl: a?.avatarUrl || a?.avatar_url || a?.avatar || undefined,
             karma: typeof a?.karma === 'number' ? a.karma : Number.isFinite(Number(a?.karma)) ? Number(a?.karma) : undefined,
+            status: a?.status || undefined,
+            owner: a?.owner || undefined,
+            counts: a?.counts || undefined,
           }))
           .filter((a: Agent) => Boolean(a.name));
 
