@@ -812,7 +812,9 @@ export default function Home() {
                               <div className="flex-1 min-w-0">
                                 {p.owner?.x_handle ? (
                                   <>
-                                    <div className="text-sm font-bold text-[#0F172A]">{p.owner.x_name || `@${p.owner.x_handle}`}</div>
+                                    <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
+                                      <span className="text-xs">𝕏</span> <span className="text-[#00CC00]">@{p.owner.x_handle}</span>
+                                    </div>
                                     <div className="text-xs text-[#7c7c7c]">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
                                   </>
                                 ) : (
