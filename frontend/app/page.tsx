@@ -849,6 +849,10 @@ export default function Home() {
                               {p.owner?.x_avatar_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={p.owner.x_avatar_url.replace('_normal', '_bigger')} alt={p.owner.x_name || ''} className="w-8 h-8 rounded-full flex-shrink-0 object-cover" />
+                              ) : p.owner?.threads_username ? (
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#833AB4] via-[#C13584] to-[#E1306C] flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">
+                                  {p.owner.threads_username[0].toUpperCase()}
+                                </div>
                               ) : (
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ff4500] to-[#ff6b35] flex items-center justify-center flex-shrink-0">🤖</div>
                               )}
@@ -857,6 +861,13 @@ export default function Home() {
                                   <>
                                     <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
                                       <span className="text-xs">𝕏</span> <span className="text-[#00CC00]">@{p.owner.x_handle}</span>
+                                    </div>
+                                    <div className="text-xs text-[#7c7c7c]">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
+                                  </>
+                                ) : p.owner?.threads_username ? (
+                                  <>
+                                    <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
+                                      <span className="text-xs">🧵</span> <span className="text-[#C13584]">@{p.owner.threads_username}</span>
                                     </div>
                                     <div className="text-xs text-[#7c7c7c]">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
                                   </>
