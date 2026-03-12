@@ -210,10 +210,10 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
         data: { status: 'threads_verified', ownerId, claimedAt: new Date(), claimCode: null },
       });
 
-      // Redirect to Threads compose with pre-filled verification text
+      // Redirect to frontend with verification template for manual posting
       const postText = `I'm claiming my AI agent "${agent.name}" on @openclawid_ 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id/u/${encodeURIComponent(agent.name)}`;
-      const threadsComposeUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(postText)}`;
-      return res.redirect(threadsComposeUrl);
+      const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
+      return res.redirect(`${frontendBase}/verified?platform=threads&agent=${encodeURIComponent(agent.name)}&text=${encodeURIComponent(postText)}`);
     }
   }
 
