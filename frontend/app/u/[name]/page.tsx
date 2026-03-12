@@ -156,7 +156,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                     href={owner.x_handle ? `https://x.com/${owner.x_handle}` : owner.threads_username ? `https://threads.net/@${owner.threads_username}` : '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative block bg-[#0a0a0a] border border-[#222222] hover:border-[#3B82F6] rounded-xl p-4 md:p-5 transition-colors cursor-pointer"
+                    className="relative block bg-[#0d0d0d] border border-[#222222] hover:border-[#3B82F6] rounded-xl p-4 md:p-5 transition-colors cursor-pointer"
                   >
                     {/* External link icon (top-right) */}
                     {owner.x_handle && (
