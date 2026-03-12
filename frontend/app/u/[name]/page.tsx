@@ -132,6 +132,49 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                   </div>
                 </div>
               </div>
+
+              {/* HUMAN OWNER - inside profile card */}
+              {owner && (owner.x_handle || owner.threads_username) && (
+                <div className="mt-4 pt-4 border-t border-[#343536]">
+                  <div className="flex items-center gap-2 mb-3 text-[#818384] text-xs font-medium uppercase tracking-wider">
+                    <span>👤</span>
+                    <span>Human Owner</span>
+                  </div>
+                  <div className="bg-[#1a1a2e] border border-[#343536] rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      {owner.x_avatar_url && (
+                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={owner.x_avatar_url.replace('_normal', '_200x200')} alt={owner.x_name || 'Owner'} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        {owner.x_name && (
+                          <p className="text-white font-bold text-sm">{owner.x_name}</p>
+                        )}
+                        {owner.x_handle && (
+                          <a href={`https://x.com/${owner.x_handle}`} target="_blank" rel="noopener noreferrer"
+                            className="text-[#1DA1F2] text-sm hover:underline flex items-center gap-1">
+                            <span>𝕏</span> @{owner.x_handle}
+                          </a>
+                        )}
+                        {owner.threads_username && (
+                          <a href={`https://threads.net/@${owner.threads_username}`} target="_blank" rel="noopener noreferrer"
+                            className="text-[#818384] text-sm hover:underline flex items-center gap-1 mt-0.5">
+                            🧵 @{owner.threads_username}
+                          </a>
+                        )}
+                      </div>
+                      {owner.x_handle && (
+                        <a href={`https://x.com/${owner.x_handle}`} target="_blank" rel="noopener noreferrer"
+                          className="text-[#818384] hover:text-white transition-colors text-sm">
+                          ↗
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col md:flex-row gap-6">
@@ -254,87 +297,8 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                 <div className="lg:hidden mt-8"></div>
               </div>
 
-              <aside className="w-full lg:w-80 flex-shrink-0">
-                <div className="sticky top-6 space-y-4">
-                  {/* HUMAN OWNER Card */}
-                  {owner && (owner.x_handle || owner.threads_username) && (
-                    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-3 text-[#818384] text-sm font-medium uppercase tracking-wider">
-                        <span>👤</span>
-                        <span>Human Owner</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        {owner.x_avatar_url && (
-                          <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={owner.x_avatar_url.replace('_normal', '_200x200')} alt={owner.x_name || 'Owner'} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          {owner.x_name && (
-                            <p className="text-white font-bold text-sm truncate">{owner.x_name}</p>
-                          )}
-                          {owner.x_handle && (
-                            <a
-                              href={`https://x.com/${owner.x_handle}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#1DA1F2] text-sm hover:underline flex items-center gap-1"
-                            >
-                              <span>𝕏</span> @{owner.x_handle}
-                            </a>
-                          )}
-                          {owner.threads_username && (
-                            <a
-                              href={`https://threads.net/@${owner.threads_username}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#818384] text-sm hover:underline flex items-center gap-1 mt-0.5"
-                            >
-                              🧵 @{owner.threads_username}
-                            </a>
-                          )}
-                        </div>
-                        {owner.x_handle && (
-                          <a
-                            href={`https://x.com/${owner.x_handle}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#818384] hover:text-white transition-colors"
-                          >
-                            ↗
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Agent Info Card */}
-                  <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
-                    <div className="text-[#818384] text-sm font-medium uppercase tracking-wider mb-3">Agent Info</div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-[#818384]">Status</span>
-                        <span className={`font-medium ${isVerified ? 'text-green-400' : 'text-yellow-400'}`}>
-                          {agent?.status === 'x_verified' ? '✓ X Verified' :
-                           agent?.status === 'threads_verified' ? '✓ Threads Verified' :
-                           agent?.status === 'claimed' ? '✓ Claimed' :
-                           '⏳ Pending'}
-                        </span>
-                      </div>
-                      {agent?.claimed_at && (
-                        <div className="flex justify-between">
-                          <span className="text-[#818384]">Claimed</span>
-                          <span className="text-white">{new Date(agent.claimed_at).toLocaleDateString()}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between">
-                        <span className="text-[#818384]">Joined</span>
-                        <span className="text-white">{createdAt}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <aside className="hidden lg:block w-80 flex-shrink-0">
+                <div className="sticky top-6"></div>
               </aside>
             </div>
           </main>
