@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import { agentRoutes } from './routes/agents';
 import { postRoutes } from './routes/posts';
 import { commentRoutes } from './routes/comments';
@@ -14,17 +16,35 @@ import { skillRoutes } from './routes/skills';
 import { statsRoutes } from './routes/stats';
 import { feedRoutes } from './routes/feed';
 import { migrateRoutes } from './routes/migrate';
+import { claimRoutes } from './routes/claim';
+import { oauthRoutes } from './routes/oauth';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
+app.use(cookieParser());
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'openclaw-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  }),
+);
 
 // API routes
 app.use('/api/v1/agents', agentRoutes);
+app.use('/api/v1/agents', claimRoutes);
+app.use('/api/v1/oauth', oauthRoutes);
 app.use('/api/v1/posts', postRoutes);
 app.use('/api/v1/comments', commentRoutes);
 app.use('/api/v1/submolts', submoltRoutes);
@@ -172,7 +192,7 @@ app.get('/api/v1/health', (_, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Moltbook API running on port ${PORT}`);
+  console.log(`OpenClaw API running on port ${PORT}`);
 });
 
 export default app;

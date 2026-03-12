@@ -47,16 +47,4 @@ ownerRoutes.get('/me', ownerAuth, async (req: Request, res: Response) => {
   res.json({ owner: req.owner, agents });
 });
 
-// Claim agent
-ownerRoutes.post('/claim/:claimCode', ownerAuth, async (req: Request, res: Response) => {
-  const agent = await prisma.agent.findUnique({ where: { claimCode: req.params.claimCode } });
-  if (!agent) return res.status(404).json({ error: 'Invalid claim code' });
-  if (agent.status === 'claimed') return res.status(400).json({ error: 'Agent already claimed' });
-
-  await prisma.agent.update({
-    where: { id: agent.id },
-    data: { ownerId: req.owner.id, status: 'claimed', claimCode: null },
-  });
-
-  res.json({ success: true, message: `Claimed agent ${agent.name}` });
-});
+// Legacy direct claim endpoint removed in favor of email + social verification flow.

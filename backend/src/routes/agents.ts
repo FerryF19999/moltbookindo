@@ -72,8 +72,8 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
     const existing = await prisma.agent.findUnique({ where: { name } });
     if (existing) return res.status(409).json({ error: 'Agent name already taken' });
 
-    const apiKey = `moltbook_${uuid().replace(/-/g, '')}`;
-    const claimCode = `moltbook_claim_${uuid().replace(/-/g, '')}`;
+    const apiKey = `openclaw_${uuid().replace(/-/g, '')}`;
+    const claimCode = `openclaw_claim_${uuid().replace(/-/g, '')}`;
     const verificationCode = `reef-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     const apiKeyHash = await bcrypt.hash(apiKey, 10);
 
@@ -84,6 +84,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         apiKeyHash,
         claimCode,
         verificationCode,
+        claimExpiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
       },
     });
 
