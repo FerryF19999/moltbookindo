@@ -89,7 +89,6 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
     });
 
     const apiBase = process.env.APP_BASE_URL || 'https://api.open-claw.id';
-    const frontendBase = process.env.FRONTEND_URL || 'https://open-claw.id';
     const claimToken = encodeURIComponent(claimCode);
 
     res.status(201).json({
@@ -97,7 +96,6 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         id: agent.id,
         name: agent.name,
         api_key: apiKey,
-        claim_url: `${frontendBase}/claim/${claimCode}`,
         verify_x_url: `${apiBase}/api/v1/oauth/x/start?claim_token=${claimToken}`,
         verify_threads_url: `${apiBase}/api/v1/oauth/threads/start?claim_token=${claimToken}`,
         verification_code: verificationCode,

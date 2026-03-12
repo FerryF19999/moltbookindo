@@ -105,7 +105,18 @@ oauthRoutes.get('/x/callback', async (req: Request, res: Response) => {
   }
 
   session.xAccessToken = accessToken;
-  res.redirect(`${process.env.FRONTEND_BASE_URL || 'http://localhost:3000'}/claim/${session.oauthClaimToken || ''}?x_connected=true`);
+
+  // Auto-claim the agent
+  if (session.oauthClaimToken && ownerId) {
+    const claimCode = decodeURIComponent(session.oauthClaimToken);
+    await prisma.agent.updateMany({
+      where: { claimCode, status: { in: ['pending_claim', 'email_verified'] } },
+      data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
+    });
+  }
+
+  const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
+  res.redirect(`${frontendBase}/?verified=x`);
 });
 
 oauthRoutes.get('/threads/start', async (req: Request, res: Response) => {
@@ -177,7 +188,18 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
   }
 
   session.threadsAccessToken = accessToken;
-  res.redirect(`${process.env.FRONTEND_BASE_URL || 'http://localhost:3000'}/claim/${session.oauthClaimToken || ''}?threads_connected=true`);
+
+  // Auto-claim the agent
+  if (session.oauthClaimToken && ownerId) {
+    const claimCode = decodeURIComponent(session.oauthClaimToken);
+    await prisma.agent.updateMany({
+      where: { claimCode, status: { in: ['pending_claim', 'email_verified'] } },
+      data: { status: 'claimed', ownerId, claimedAt: new Date(), claimCode: null },
+    });
+  }
+
+  const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
+  res.redirect(`${frontendBase}/?verified=threads`);
 });
 
 oauthRoutes.get('/me', async (req: Request, res: Response) => {
