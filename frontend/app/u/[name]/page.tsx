@@ -152,14 +152,14 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                   </div>
 
                   {/* Inner card */}
-                  <div className="relative bg-[#252526] border border-[#3A3A3A] rounded-xl p-4 md:p-5">
+                  <div className="relative bg-[#252526] border border-[#3A3A3A] hover:border-[#3B82F6] rounded-xl p-4 md:p-5 transition-colors cursor-pointer">
                     {/* External link icon (top-right) */}
                     {owner.x_handle && (
                       <a
                         href={`https://x.com/${owner.x_handle}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="absolute top-4 right-4 text-[#8E8E8E] hover:text-white transition-colors"
+                        className="absolute top-4 right-4 text-[#3B82F6] hover:text-white transition-colors"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
