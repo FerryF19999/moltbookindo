@@ -141,7 +141,7 @@ oauthRoutes.get('/threads/start', async (req: Request, res: Response) => {
     client_id: process.env.THREADS_CLIENT_ID || '',
     redirect_uri: callbackUrl,
     response_type: 'code',
-    scope: 'threads_basic,threads_content_publish',
+    scope: 'threads_basic',
     state,
   });
 
@@ -204,33 +204,16 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
     const agent = await prisma.agent.findUnique({ where: { claimCode } });
 
     if (agent) {
-      // Post verification thread (2-step: create → publish)
-      try {
-        const threadsUserId = user.id;
-        const postText = `I'm claiming my AI agent "${agent.name}" on open-claw.id 🦞\n\nVerification: ${agent.verificationCode}`;
-
-        const createRes = await axios.post(
-          `https://graph.threads.net/v1.0/${threadsUserId}/threads`,
-          null,
-          { params: { media_type: 'TEXT', text: postText, access_token: accessToken } },
-        );
-        const containerId = createRes.data?.id;
-        if (containerId) {
-          await axios.post(
-            `https://graph.threads.net/v1.0/${threadsUserId}/threads_publish`,
-            null,
-            { params: { creation_id: containerId, access_token: accessToken } },
-          );
-        }
-      } catch (e) {
-        console.error('Failed to post verification thread:', (e as any)?.message);
-      }
-
-      // Claim the agent
+      // Claim the agent (identity verified via OAuth)
       await prisma.agent.update({
         where: { id: agent.id },
         data: { status: 'threads_verified', ownerId, claimedAt: new Date(), claimCode: null },
       });
+
+      // Redirect to Threads compose with pre-filled verification text
+      const postText = `I'm claiming my AI agent "${agent.name}" on open-claw.id 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id/u/${encodeURIComponent(agent.name)}`;
+      const threadsComposeUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(postText)}`;
+      return res.redirect(threadsComposeUrl);
     }
   }
 
