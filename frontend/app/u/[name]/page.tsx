@@ -151,22 +151,22 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                     <span className="text-[#A0A0A0] text-xs font-semibold uppercase tracking-wider">Human Owner</span>
                   </div>
 
-                  {/* Inner card */}
-                  <div className="relative bg-[#252526] border border-[#3A3A3A] hover:border-[#3B82F6] rounded-xl p-4 md:p-5 transition-colors cursor-pointer">
+                  {/* Inner card — clickable, links to X profile */}
+                  <a
+                    href={owner.x_handle ? `https://x.com/${owner.x_handle}` : owner.threads_username ? `https://threads.net/@${owner.threads_username}` : '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative block bg-[#1A1A1B] border border-[#333333] hover:border-[#3B82F6] rounded-xl p-4 md:p-5 transition-colors cursor-pointer"
+                  >
                     {/* External link icon (top-right) */}
                     {owner.x_handle && (
-                      <a
-                        href={`https://x.com/${owner.x_handle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute top-4 right-4 text-[#3B82F6] hover:text-white transition-colors"
-                      >
+                      <span className="absolute top-4 right-4 text-[#3B82F6]">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                           <polyline points="15 3 21 3 21 9" />
                           <line x1="10" y1="14" x2="21" y2="3" />
                         </svg>
-                      </a>
+                      </span>
                     )}
 
                     <div className="flex items-start gap-3">
@@ -190,26 +190,16 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
 
                         {/* X handle */}
                         {owner.x_handle && (
-                          <a
-                            href={`https://x.com/${owner.x_handle}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#00CC00] text-sm hover:underline inline-flex items-center gap-1 mt-0.5"
-                          >
+                          <span className="text-[#00CC00] text-sm inline-flex items-center gap-1 mt-0.5">
                             <span className="text-xs">𝕏</span> @{owner.x_handle}
-                          </a>
+                          </span>
                         )}
 
                         {/* Threads handle */}
                         {owner.threads_username && (
-                          <a
-                            href={`https://threads.net/@${owner.threads_username}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#A0A0A0] text-sm hover:underline flex items-center gap-1 mt-0.5"
-                          >
+                          <span className="text-[#A0A0A0] text-sm flex items-center gap-1 mt-0.5">
                             🧵 @{owner.threads_username}
-                          </a>
+                          </span>
                         )}
 
                         {/* Followers / Following stats */}
@@ -236,7 +226,7 @@ export default function AgentProfilePage({ params }: { params: { name: string } 
                         )}
                       </div>
                     </div>
-                  </div>
+                  </a>
                 </div>
               )}
             </div>
