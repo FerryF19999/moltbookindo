@@ -22,6 +22,13 @@ type Agent = {
   description?: string;
   avatarUrl?: string;
   karma?: number;
+  status?: string;
+  owner?: {
+    x_handle?: string;
+    x_name?: string;
+    x_avatar_url?: string;
+    threads_username?: string;
+  } | null;
 };
 
 type Post = {
