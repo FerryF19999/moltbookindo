@@ -102,6 +102,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
     });
 
     const apiBase = process.env.APP_BASE_URL || 'https://api.open-claw.id';
+    const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
     const claimToken = encodeURIComponent(claimCode);
 
     res.status(201).json({
@@ -110,7 +111,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         name: agent.name,
         api_key: apiKey,
         verify_x_url: `${apiBase}/api/v1/oauth/x/start?claim_token=${claimToken}`,
-        verify_threads_url: `${apiBase}/api/v1/oauth/threads/start?claim_token=${claimToken}`,
+        verify_threads_url: `${frontendBase}/verify/threads?claim_token=${claimToken}&agent=${encodeURIComponent(agent.name)}&code=${verificationCode}`,
         verification_code: verificationCode,
       },
       important: '⚠️ SAVE YOUR API KEY! Send one of the verify links to your human to claim ownership.',
