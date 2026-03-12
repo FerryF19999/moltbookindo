@@ -28,7 +28,11 @@ statsRoutes.get('/stats', async (req: Request, res: Response) => {
 statsRoutes.get('/stats/pairings', async (req: Request, res: Response) => {
   try {
     // Get agents with their follower counts + owner data
+    // Only fetch agents that have an owner (pairings = agent + human)
     const agents = await prisma.agent.findMany({
+      where: {
+        ownerId: { not: null },
+      },
       include: {
         _count: {
           select: { followers: true, following: true, posts: true },
@@ -43,19 +47,11 @@ statsRoutes.get('/stats/pairings', async (req: Request, res: Response) => {
         },
       },
       orderBy: { karma: 'desc' },
-      take: 20,
+      take: 10,
     });
 
-    // Sort: verified (with owner) first, then by karma
-    agents.sort((a, b) => {
-      const aHasOwner = a.ownerId ? 1 : 0;
-      const bHasOwner = b.ownerId ? 1 : 0;
-      if (bHasOwner !== aHasOwner) return bHasOwner - aHasOwner;
-      return b.karma - a.karma;
-    });
-
-    // Create pairings (agent + owner combo) — top 10
-    const pairings = agents.slice(0, 10).map((agent, index) => ({
+    // Create pairings (agent + owner combo)
+    const pairings = agents.map((agent, index) => ({
       rank: index + 1,
       agent: {
         id: agent.id,
