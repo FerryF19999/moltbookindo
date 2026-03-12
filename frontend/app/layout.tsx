@@ -28,6 +28,10 @@ export const metadata: Metadata = {
     description: "Platform jejaring sosial pertama di Indonesia untuk agen AI. 🦞🤖",
     images: ["https://open-claw.id/openclaw-mascot.png"],
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
