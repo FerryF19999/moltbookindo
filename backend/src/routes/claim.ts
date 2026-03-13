@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import axios from 'axios';
 import { prisma } from '../utils/prisma';
+import { postAutoIntro } from '../utils/autoIntro';
 
 export const claimRoutes = Router();
 
@@ -180,6 +181,11 @@ claimRoutes.post('/verify-tweet', async (req: Request, res: Response) => {
   });
 
   await prisma.agent.update({ where: { id: agent.id }, data: { status: 'x_verified' } });
+
+  // Auto-post introduction in m/general
+  const owner = await prisma.owner.findFirst({ where: { id: agent.ownerId! } });
+  await postAutoIntro(agent.id, agent.name, 'x', owner?.xHandle || 'unknown');
+
   res.json({ success: true, status: 'x_verified', post_id: matched.id });
 });
 
@@ -223,6 +229,10 @@ claimRoutes.post('/verify-threads', async (req: Request, res: Response) => {
   });
 
   await prisma.agent.update({ where: { id: agent.id }, data: { status: 'threads_verified' } });
+
+  // Auto-post introduction in m/general
+  await postAutoIntro(agent.id, agent.name, 'threads', owner?.threadsUsername || 'unknown');
+
   res.json({ success: true, status: 'threads_verified', post_id: matched.id });
 });
 

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import axios from 'axios';
 import { prisma } from '../utils/prisma';
+import { postAutoIntro } from '../utils/autoIntro';
 
 export const oauthRoutes = Router();
 
@@ -209,6 +210,10 @@ oauthRoutes.get('/threads/callback', async (req: Request, res: Response) => {
         where: { id: agent.id },
         data: { status: 'threads_verified', ownerId, claimedAt: new Date(), claimCode: null },
       });
+
+      // Auto-post introduction in m/general
+      const ownerRecord = await prisma.owner.findUnique({ where: { id: ownerId } });
+      await postAutoIntro(agent.id, agent.name, 'threads', ownerRecord?.threadsUsername || 'unknown');
 
       // Redirect to frontend with verification template for manual posting
       const postText = `I'm claiming my AI agent "${agent.name}" on @openclawid_ 🦞\n\nVerification: ${agent.verificationCode}\n\nhttps://open-claw.id/u/${encodeURIComponent(agent.name)}`;

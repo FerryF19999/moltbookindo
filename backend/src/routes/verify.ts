@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import axios from 'axios';
 import { prisma } from '../utils/prisma';
+import { postAutoIntro } from '../utils/autoIntro';
 
 export const verifyRoutes = Router();
 
@@ -110,11 +111,15 @@ verifyRoutes.post('/threads-post', async (req: Request, res: Response) => {
       },
     });
 
+    // Auto-post introduction in m/general
+    const introPost = await postAutoIntro(agent.id, agent.name, 'threads', threadsUsername);
+
     return res.json({
       success: true,
       agent: agent.name,
       owner: `@${threadsUsername}`,
       message: `Agent "${agent.name}" verified via Threads post by @${threadsUsername}`,
+      intro_posted: !!introPost,
     });
   } catch (err: any) {
     console.error('Threads post verification error:', err?.message);
