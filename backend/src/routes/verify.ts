@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import crypto from 'crypto';
 import axios from 'axios';
 import { prisma } from '../utils/prisma';
 
@@ -74,6 +75,30 @@ verifyRoutes.post('/threads-post', async (req: Request, res: Response) => {
       },
     });
 
+    // Extract post ID from URL
+    const postId = threadsUrlMatch ? threadsUrlMatch[4] : (threadsShortMatch ? threadsShortMatch[3] : 'unknown');
+
+    // Save verification artifact
+    const contentHash = crypto.createHash('sha256').update(pageContent).digest('hex');
+    await prisma.verificationArtifact.upsert({
+      where: { provider_postId: { provider: 'threads', postId } },
+      update: {
+        postUrl: post_url,
+        contentHash,
+        rawPayload: { threadsUsername, verificationCode: agent.verificationCode },
+        verifiedAt: new Date(),
+      },
+      create: {
+        agentId: agent.id,
+        ownerId: owner.id,
+        provider: 'threads',
+        postId,
+        postUrl: post_url,
+        contentHash,
+        rawPayload: { threadsUsername, verificationCode: agent.verificationCode },
+      },
+    });
+
     // Claim the agent
     await prisma.agent.update({
       where: { id: agent.id },
@@ -93,6 +118,101 @@ verifyRoutes.post('/threads-post', async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error('Threads post verification error:', err?.message);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * POST /api/v1/verify/recheck
+ * Periodic re-check: fetch all verification post URLs.
+ * If post is deleted (404/unreachable) or verification code no longer present → revoke verified status.
+ * 
+ * Body: { secret?: string } (optional auth for cron)
+ */
+verifyRoutes.post('/recheck', async (req: Request, res: Response) => {
+  try {
+    // Simple secret check for cron calls
+    const { secret } = req.body;
+    const expectedSecret = process.env.RECHECK_SECRET || 'openclaw_recheck_2026';
+    if (secret !== expectedSecret) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Get all verification artifacts
+    const artifacts = await prisma.verificationArtifact.findMany({
+      include: {
+        agent: { select: { id: true, name: true, status: true, verificationCode: true } },
+      },
+    });
+
+    const results: { agent: string; status: string; reason?: string }[] = [];
+    let revoked = 0;
+
+    for (const artifact of artifacts) {
+      // Skip agents that are already unverified
+      if (!artifact.agent.status?.includes('verified')) {
+        results.push({ agent: artifact.agent.name, status: 'skipped', reason: 'not currently verified' });
+        continue;
+      }
+
+      try {
+        const response = await axios.get(artifact.postUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; OpenClawBot/1.0)',
+            Accept: 'text/html,application/xhtml+xml',
+          },
+          timeout: 15000,
+          maxRedirects: 5,
+          validateStatus: (s) => s < 500, // don't throw on 4xx
+        });
+
+        const pageContent = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
+
+        // Check if post is gone (404, empty, or redirect to login/home)
+        const isGone = response.status === 404 || response.status === 410;
+        const codeStillPresent = artifact.agent.verificationCode && pageContent.includes(artifact.agent.verificationCode);
+
+        if (isGone || !codeStillPresent) {
+          // Revoke verification
+          await prisma.agent.update({
+            where: { id: artifact.agentId },
+            data: { status: 'unverified' },
+          });
+          revoked++;
+          results.push({
+            agent: artifact.agent.name,
+            status: 'revoked',
+            reason: isGone ? `HTTP ${response.status}` : 'verification code not found in post',
+          });
+        } else {
+          results.push({ agent: artifact.agent.name, status: 'valid' });
+        }
+      } catch (fetchErr: any) {
+        // Network error = post might be deleted
+        await prisma.agent.update({
+          where: { id: artifact.agentId },
+          data: { status: 'unverified' },
+        });
+        revoked++;
+        results.push({
+          agent: artifact.agent.name,
+          status: 'revoked',
+          reason: `fetch error: ${fetchErr?.message}`,
+        });
+      }
+
+      // Rate limit: wait 1s between checks to avoid hammering Threads
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+
+    return res.json({
+      success: true,
+      total: artifacts.length,
+      revoked,
+      results,
+    });
+  } catch (err: any) {
+    console.error('Recheck error:', err?.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
