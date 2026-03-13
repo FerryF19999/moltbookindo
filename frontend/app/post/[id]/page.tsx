@@ -202,26 +202,87 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
                     <div className="space-y-4">
                       {comments.map((comment) => {
                         const commentScore = (comment.upvotes || 0) - (comment.downvotes || 0);
-                        const commentScoreColor = commentScore > 0 ? 'text-[#ff4500]' : commentScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]';
                         return (
-                          <div key={comment.id} className="flex gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-sm">
-                              🤖
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
-                                <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
-                                  {comment.author?.name || 'unknown'}
-                                </Link>
-                                <span>•</span>
-                                <span>{timeAgo(comment.createdAt || comment.created_at)}</span>
+                          <div key={comment.id}>
+                            <div className="flex gap-3">
+                              <div className="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-sm">
+                                🤖
                               </div>
-                              <p className="text-sm text-white mb-2">{comment.content}</p>
-                              <div className="flex items-center gap-3 text-xs">
-                                <span className={commentScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {comment.upvotes || 0}</span>
-                                <span className={commentScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {comment.downvotes || 0}</span>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
+                                  <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
+                                    {comment.author?.name || 'unknown'}
+                                  </Link>
+                                  <span>•</span>
+                                  <span>{timeAgo(comment.createdAt || comment.created_at)}</span>
+                                </div>
+                                <p className="text-sm text-white mb-2">{comment.content}</p>
+                                <div className="flex items-center gap-3 text-xs">
+                                  <span className={commentScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {comment.upvotes || 0}</span>
+                                  <span className={commentScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {comment.downvotes || 0}</span>
+                                </div>
                               </div>
                             </div>
+                            {/* Render replies */}
+                            {comment.replies && comment.replies.length > 0 && (
+                              <div className="ml-11 mt-3 space-y-3 border-l-2 border-[#334155] pl-4">
+                                {comment.replies.map((reply: any) => {
+                                  const replyScore = (reply.upvotes || 0) - (reply.downvotes || 0);
+                                  return (
+                                    <div key={reply.id}>
+                                      <div className="flex gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#334155] flex items-center justify-center text-xs">
+                                          🤖
+                                        </div>
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
+                                            <Link href={`/u/${reply.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
+                                              {reply.author?.name || 'unknown'}
+                                            </Link>
+                                            <span>•</span>
+                                            <span>{timeAgo(reply.createdAt || reply.created_at)}</span>
+                                          </div>
+                                          <p className="text-sm text-white mb-2">{reply.content}</p>
+                                          <div className="flex items-center gap-3 text-xs">
+                                            <span className={replyScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {reply.upvotes || 0}</span>
+                                            <span className={replyScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {reply.downvotes || 0}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      {/* Render nested replies (level 2) */}
+                                      {reply.replies && reply.replies.length > 0 && (
+                                        <div className="ml-9 mt-3 space-y-3 border-l-2 border-[#334155] pl-4">
+                                          {reply.replies.map((nested: any) => {
+                                            const nestedScore = (nested.upvotes || 0) - (nested.downvotes || 0);
+                                            return (
+                                              <div key={nested.id} className="flex gap-3">
+                                                <div className="w-5 h-5 rounded-full bg-[#334155] flex items-center justify-center text-xs">
+                                                  🤖
+                                                </div>
+                                                <div className="flex-1">
+                                                  <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
+                                                    <Link href={`/u/${nested.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
+                                                      {nested.author?.name || 'unknown'}
+                                                    </Link>
+                                                    <span>•</span>
+                                                    <span>{timeAgo(nested.createdAt || nested.created_at)}</span>
+                                                  </div>
+                                                  <p className="text-sm text-white mb-2">{nested.content}</p>
+                                                  <div className="flex items-center gap-3 text-xs">
+                                                    <span className={nestedScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {nested.upvotes || 0}</span>
+                                                    <span className={nestedScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {nested.downvotes || 0}</span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
