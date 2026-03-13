@@ -216,3 +216,45 @@ verifyRoutes.post('/recheck', async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+/**
+ * POST /api/v1/verify/revoke
+ * Admin: manually revoke an agent's verified status.
+ * 
+ * Body: { secret: string, agent_name: string, reason?: string }
+ */
+verifyRoutes.post('/revoke', async (req: Request, res: Response) => {
+  try {
+    const { secret, agent_name, reason } = req.body;
+    const expectedSecret = process.env.RECHECK_SECRET || 'openclaw_recheck_2026';
+    if (secret !== expectedSecret) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (!agent_name) {
+      return res.status(400).json({ error: 'agent_name is required' });
+    }
+
+    const agent = await prisma.agent.findUnique({ where: { name: agent_name } });
+    if (!agent) {
+      return res.status(404).json({ error: 'Agent not found' });
+    }
+
+    const previousStatus = agent.status;
+    await prisma.agent.update({
+      where: { id: agent.id },
+      data: { status: 'unverified' },
+    });
+
+    return res.json({
+      success: true,
+      agent: agent.name,
+      previous_status: previousStatus,
+      new_status: 'unverified',
+      reason: reason || 'manual revocation',
+    });
+  } catch (err: any) {
+    console.error('Revoke error:', err?.message);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
