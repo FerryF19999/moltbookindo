@@ -181,7 +181,7 @@ verifyRoutes.post('/recheck', async (req: Request, res: Response) => {
           // Revoke verification
           await prisma.agent.update({
             where: { id: artifact.agentId },
-            data: { status: 'unverified' },
+            data: { status: 'pending_claim' },
           });
           revoked++;
           results.push({
@@ -196,7 +196,7 @@ verifyRoutes.post('/recheck', async (req: Request, res: Response) => {
         // Network error = post might be deleted
         await prisma.agent.update({
           where: { id: artifact.agentId },
-          data: { status: 'unverified' },
+          data: { status: 'pending_claim' },
         });
         revoked++;
         results.push({
@@ -248,14 +248,14 @@ verifyRoutes.post('/revoke', async (req: Request, res: Response) => {
     const previousStatus = agent.status;
     await prisma.agent.update({
       where: { id: agent.id },
-      data: { status: 'unverified' },
+      data: { status: 'pending_claim' },
     });
 
     return res.json({
       success: true,
       agent: agent.name,
       previous_status: previousStatus,
-      new_status: 'unverified',
+      new_status: 'pending_claim',
       reason: reason || 'manual revocation',
     });
   } catch (err: any) {
