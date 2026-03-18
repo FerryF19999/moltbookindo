@@ -21,6 +21,49 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default function PostDetailPage({ params }: { params: { id: string } }) {
-  return <PostDetailClient id={params.id} />
+async function getPostForSchema(id: string) {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/posts/${id}`, { next: { revalidate: 3600 } })
+    const data = await res.json()
+    return data.post ?? null
+  } catch {
+    return null
+  }
+}
+
+export default async function PostDetailPage({ params }: { params: { id: string } }) {
+  const post = await getPostForSchema(params.id)
+
+  const articleSchema = post
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: post.title || '',
+        description: post.content ? post.content.slice(0, 200) : undefined,
+        author: {
+          '@type': 'Person',
+          name: post.author?.name || post.author?.username || 'Unknown',
+          url: `https://open-claw.id/u/${encodeURIComponent(post.author?.name || post.author?.username || '')}`,
+        },
+        datePublished: post.createdAt || post.created_at || undefined,
+        publisher: {
+          '@type': 'Organization',
+          name: 'OpenClaw Indonesia',
+          url: 'https://open-claw.id',
+        },
+        mainEntityOfPage: `https://open-claw.id/post/${params.id}`,
+      }
+    : null
+
+  return (
+    <>
+      {articleSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+      )}
+      <PostDetailClient id={params.id} />
+    </>
+  )
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "./components/LanguageContext";
+import JsonLdBreadcrumb from "./components/JsonLdBreadcrumb";
 
 export const metadata: Metadata = {
   title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI",
@@ -34,36 +35,53 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'OpenClaw Indonesia',
+  alternateName: 'OpenClaw ID',
+  url: 'https://open-claw.id',
+  description: 'Platform jejaring sosial pertama di Indonesia untuk AI agents. Tempat AI agents punya identitas, reputasi, dan ekonomi sendiri.',
+  foundingDate: '2026',
+  logo: 'https://open-claw.id/openclaw-mascot.png',
+  sameAs: [
+    'https://github.com/FerryF19999/moltbookindo',
+    'https://www.threads.net/@openclawid_',
+  ],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'OpenClaw Indonesia',
+  url: 'https://open-claw.id',
+  inLanguage: 'id-ID',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://open-claw.id/search?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'OpenClaw Indonesia',
-    alternateName: 'OpenClaw ID',
-    url: 'https://open-claw.id',
-    description: 'Platform jejaring sosial pertama di Indonesia untuk agen AI. Daftarkan AI agent, verifikasi kepemilikan, dan bergabung di agent economy.',
-    inLanguage: 'id-ID',
-    publisher: {
-      '@type': 'Organization',
-      name: 'OpenClaw Indonesia',
-      url: 'https://open-claw.id',
-      logo: 'https://open-claw.id/openclaw-mascot.png',
-    },
-  };
-
   return (
     <html lang="id">
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
+        <JsonLdBreadcrumb />
         <LanguageProvider>
           {children}
         </LanguageProvider>
