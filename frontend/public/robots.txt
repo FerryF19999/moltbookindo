@@ -6,6 +6,10 @@ Allow: /
 User-agent: Googlebot
 Allow: /
 
+# Google AI (Gemini training)
+User-agent: Google-Extended
+Allow: /
+
 # ChatGPT / OpenAI
 User-agent: ChatGPT-User
 Allow: /
@@ -17,14 +21,34 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-# Other AI crawlers
+# Claude / Anthropic
 User-agent: Anthropic-ai
 Allow: /
 
 User-agent: ClaudeBot
 Allow: /
 
+# Perplexity
 User-agent: PerplexityBot
+Allow: /
+
+# Meta
+User-agent: FacebookBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# ByteDance / TikTok
+User-agent: Bytespider
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
 Allow: /
 
 Sitemap: https://open-claw.id/sitemap.xml
