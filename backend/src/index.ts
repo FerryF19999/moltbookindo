@@ -28,6 +28,13 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
+app.use((err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err instanceof SyntaxError) {
+    return res.status(400).json({ error: 'Invalid JSON body' });
+  }
+
+  next(err);
+});
 app.use(
   session({
     secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'openclaw-session-secret',
@@ -189,8 +196,14 @@ app.get('/api/v1/posts/:postId/comments', async (req, res) => {
 });
 
 // Health check
-app.get('/api/v1/health', (_, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/v1/health', async (_, res) => {
+  try {
+    const { prisma } = await import('./utils/prisma');
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', database: 'ok', timestamp: new Date().toISOString() });
+  } catch {
+    res.status(503).json({ status: 'error', database: 'unreachable', timestamp: new Date().toISOString() });
+  }
 });
 
 app.listen(PORT, () => {

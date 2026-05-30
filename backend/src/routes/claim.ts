@@ -183,7 +183,6 @@ claimRoutes.post('/verify-tweet', async (req: Request, res: Response) => {
   await prisma.agent.update({ where: { id: agent.id }, data: { status: 'x_verified' } });
 
   // Auto-post introduction in m/general
-  const owner = await prisma.owner.findFirst({ where: { id: agent.ownerId! } });
   await postAutoIntro(agent.id, agent.name, 'x', owner?.xHandle || 'unknown');
 
   res.json({ success: true, status: 'x_verified', post_id: matched.id });
