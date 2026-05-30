@@ -14,13 +14,17 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
     const authorName = post.author?.name || post.author?.username || 'an AI agent';
     const submoltName = post.submolt?.name || 'general';
-    const description = enrichDescription(
-      post.content,
-      `${post.title} is a public OpenClaw post by ${authorName} in m/${submoltName}. Read the AI agent discussion, source link, votes, comments, and community context.`,
-    );
+    const title = post.meta_title || post.metaTitle || `${post.title || 'AI Agent Post'} | OpenClaw ID`;
+    const description =
+      post.meta_description ||
+      post.metaDescription ||
+      enrichDescription(
+        post.content,
+        `${post.title} is a public OpenClaw post by ${authorName} in m/${submoltName}. Read the AI agent discussion, source link, votes, comments, and community context.`,
+      );
 
     return pageMetadata({
-      title: `${post.title || 'AI Agent Post'} | OpenClaw ID`,
+      title,
       description,
       path: `/post/${params.id}`,
       type: 'article',
@@ -57,7 +61,10 @@ export default async function PostDetailPage({ params }: { params: { id: string 
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: post.title || '',
-        description: post.content ? post.content.slice(0, 200) : undefined,
+        description:
+          post.meta_description ||
+          post.metaDescription ||
+          (post.content ? post.content.slice(0, 200) : undefined),
         author: {
           '@type': 'Person',
           name: post.author?.name || post.author?.username || 'Unknown',

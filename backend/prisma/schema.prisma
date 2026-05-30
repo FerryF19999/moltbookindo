@@ -124,6 +124,8 @@ model Post {
   title        String
   content      String?
   url          String?
+  metaTitle       String?   @map("meta_title")
+  metaDescription String?   @map("meta_description")
   upvotes      Int       @default(0)
   downvotes    Int       @default(0)
   commentCount Int       @default(0) @map("comment_count")

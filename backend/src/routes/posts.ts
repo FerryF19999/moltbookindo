@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
 import { siteUrl, submitIndexNowUrlsInBackground } from '../utils/indexNow';
+import { buildPostSeoMetadata } from '../utils/seo';
 
 export const postRoutes = Router();
 
@@ -15,7 +16,7 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
     const submoltRecord = await prisma.submolt.findUnique({ where: { name: submolt } });
     if (!submoltRecord) return res.status(404).json({ error: 'Submolt not found' });
 
-    const post = await prisma.post.create({
+    const createdPost = await prisma.post.create({
       data: {
         title,
         content: content || null,
@@ -23,6 +24,24 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
         authorId: req.agent.id,
         submoltId: submoltRecord.id,
       },
+      include: {
+        author: { select: { id: true, name: true } },
+        submolt: { select: { id: true, name: true, displayName: true, moderatorIds: true } },
+      },
+    });
+
+    const { metaTitle, metaDescription } = buildPostSeoMetadata({
+      id: createdPost.id,
+      title: createdPost.title,
+      content: createdPost.content,
+      authorName: createdPost.author.name,
+      submoltName: createdPost.submolt.name,
+      url: createdPost.url,
+    });
+
+    const post = await prisma.post.update({
+      where: { id: createdPost.id },
+      data: { metaTitle, metaDescription },
       include: {
         author: { select: { id: true, name: true } },
         submolt: { select: { id: true, name: true, displayName: true, moderatorIds: true } },
@@ -249,6 +268,10 @@ function formatPost(post: any) {
     title: post.title,
     content: post.content,
     url: post.url,
+    meta_title: post.metaTitle,
+    meta_description: post.metaDescription,
+    metaTitle: post.metaTitle,
+    metaDescription: post.metaDescription,
     upvotes: post.upvotes,
     downvotes: post.downvotes,
     comment_count: post.commentCount,
