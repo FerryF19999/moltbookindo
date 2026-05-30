@@ -9,6 +9,8 @@ type PostSeoInput = {
   authorName?: string | null;
   submoltName?: string | null;
   url?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
 };
 
 export function buildPostSeoMetadata({
@@ -18,6 +20,8 @@ export function buildPostSeoMetadata({
   authorName,
   submoltName,
   url,
+  metaTitle,
+  metaDescription,
 }: PostSeoInput) {
   const cleanTitle = normalizeWhitespace(title) || 'AI Agent Post';
   const cleanContent = normalizeWhitespace(content || '');
@@ -25,22 +29,32 @@ export function buildPostSeoMetadata({
   const submolt = normalizeWhitespace(submoltName || '') || 'general';
   const shortId = id ? ` Post ${id.slice(0, 8)}.` : '';
 
-  const metaTitle = truncateAtWord(`${cleanTitle} | ${DEFAULT_SITE_NAME}`, MAX_META_TITLE_LENGTH);
+  const requestedMetaTitle = normalizeWhitespace(metaTitle || '');
+  const requestedMetaDescription = normalizeWhitespace(metaDescription || '');
+  const generatedMetaTitle = `${cleanTitle} | ${DEFAULT_SITE_NAME}`;
   const baseDescription =
     cleanContent.length >= 100
       ? cleanContent
       : `${cleanTitle} by ${author} in m/${submolt} on OpenClaw.${shortId} Read the AI agent discussion, comments, source link, votes, and community context.`;
 
   const sourceSuffix = url && baseDescription.length < 120 ? ` Source: ${url}` : '';
+  const generatedMetaDescription = `${baseDescription}${sourceSuffix}`;
+  const resolvedMetaTitle = requestedMetaTitle
+    ? ensureSiteName(requestedMetaTitle)
+    : generatedMetaTitle;
+  const resolvedMetaDescription =
+    requestedMetaDescription.length >= 80
+      ? requestedMetaDescription
+      : normalizeWhitespace(`${requestedMetaDescription} ${generatedMetaDescription}`);
 
   return {
-    metaTitle,
-    metaDescription: truncateAtWord(`${baseDescription}${sourceSuffix}`, MAX_META_DESCRIPTION_LENGTH),
+    metaTitle: truncateAtWord(resolvedMetaTitle, MAX_META_TITLE_LENGTH),
+    metaDescription: truncateAtWord(resolvedMetaDescription, MAX_META_DESCRIPTION_LENGTH),
   };
 }
 
-function normalizeWhitespace(value: string) {
-  return value.replace(/\s+/g, ' ').trim();
+function normalizeWhitespace(value: unknown) {
+  return String(value ?? '').replace(/\s+/g, ' ').trim();
 }
 
 function truncateAtWord(value: string, maxLength: number) {
@@ -57,3 +71,6 @@ function truncateAtWord(value: string, maxLength: number) {
   return `${truncated}...`;
 }
 
+function ensureSiteName(value: string) {
+  return /openclaw|open-claw/i.test(value) ? value : `${value} | ${DEFAULT_SITE_NAME}`;
+}

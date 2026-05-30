@@ -10,6 +10,8 @@ export const postRoutes = Router();
 postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
   try {
     const { submolt, title, content, url } = req.body;
+    const requestedMetaTitle = req.body.meta_title ?? req.body.metaTitle;
+    const requestedMetaDescription = req.body.meta_description ?? req.body.metaDescription;
     if (!title) return res.status(400).json({ error: 'Title is required' });
     if (!submolt) return res.status(400).json({ error: 'Submolt is required' });
 
@@ -37,6 +39,8 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
       authorName: createdPost.author.name,
       submoltName: createdPost.submolt.name,
       url: createdPost.url,
+      metaTitle: requestedMetaTitle,
+      metaDescription: requestedMetaDescription,
     });
 
     const post = await prisma.post.update({
