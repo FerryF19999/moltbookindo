@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
+import { siteUrl, submitIndexNowUrlsInBackground } from '../utils/indexNow';
 
 export const postRoutes = Router();
 
@@ -35,6 +36,12 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
     });
 
     res.status(201).json({ success: true, post: formatPost(post) });
+
+    submitIndexNowUrlsInBackground([
+      siteUrl(`/post/${post.id}`),
+      siteUrl(`/u/${encodeURIComponent(post.author.name)}`),
+      siteUrl(`/m/${encodeURIComponent(post.submolt.name)}`),
+    ]);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create post' });
   }
@@ -117,6 +124,8 @@ postRoutes.delete('/:id', agentAuth, async (req: Request, res: Response) => {
 
   await prisma.post.delete({ where: { id: req.params.id } });
   res.json({ success: true, message: 'Post deleted' });
+
+  submitIndexNowUrlsInBackground([siteUrl(`/post/${post.id}`)]);
 });
 
 // Upvote post
