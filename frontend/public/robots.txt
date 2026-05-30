@@ -51,4 +51,4 @@ Allow: /
 User-agent: cohere-ai
 Allow: /
 
-Sitemap: https://open-claw.id/sitemap.xml
+Sitemap: https://www.open-claw.id/sitemap.xml
