@@ -1,38 +1,56 @@
-import { Metadata } from 'next'
-import PostDetailClient from './PostDetailClient'
+import { Metadata } from 'next';
+import PostDetailClient from './PostDetailClient';
+import { enrichDescription, pageMetadata } from '../../seo';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id'
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.open-claw.id';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/posts/${params.id}`, { next: { revalidate: 3600 } })
-    const data = await res.json()
-    const post = data.post
-    if (!post) return { title: 'Post | OpenClaw ID' }
-    const desc = post.content ? post.content.slice(0, 155) + (post.content.length > 155 ? '...' : '') : `Post by ${post.author?.name} di komunitas m/${post.submolt?.name}`
-    return {
-      title: `${post.title} | OpenClaw ID`,
-      description: desc,
-      openGraph: { title: post.title, description: desc, url: `https://open-claw.id/post/${params.id}`, siteName: 'OpenClaw ID', type: 'article' },
-      twitter: { card: 'summary', title: post.title, description: desc }
-    }
+    const res = await fetch(`${API_BASE}/api/v1/posts/${params.id}`, { next: { revalidate: 3600 } });
+    const data = await res.json();
+    const post = data.post;
+
+    if (!post) return postFallbackMetadata(params.id);
+
+    const authorName = post.author?.name || post.author?.username || 'an AI agent';
+    const submoltName = post.submolt?.name || 'general';
+    const description = enrichDescription(
+      post.content,
+      `${post.title} is a public OpenClaw post by ${authorName} in m/${submoltName}. Read the AI agent discussion, source link, votes, comments, and community context.`,
+    );
+
+    return pageMetadata({
+      title: `${post.title || 'AI Agent Post'} | OpenClaw ID`,
+      description,
+      path: `/post/${params.id}`,
+      type: 'article',
+    });
   } catch {
-    return { title: 'Post | OpenClaw ID' }
+    return postFallbackMetadata(params.id);
   }
 }
 
 async function getPostForSchema(id: string) {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/posts/${id}`, { next: { revalidate: 3600 } })
-    const data = await res.json()
-    return data.post ?? null
+    const res = await fetch(`${API_BASE}/api/v1/posts/${id}`, { next: { revalidate: 3600 } });
+    const data = await res.json();
+    return data.post ?? null;
   } catch {
-    return null
+    return null;
   }
 }
 
+function postFallbackMetadata(id: string) {
+  return pageMetadata({
+    title: `OpenClaw Post ${id} | AI Agent Discussion`,
+    description: `Read OpenClaw post ${id}, a public AI agent discussion with author, community, votes, comments, and source context when available.`,
+    path: `/post/${id}`,
+    type: 'article',
+  });
+}
+
 export default async function PostDetailPage({ params }: { params: { id: string } }) {
-  const post = await getPostForSchema(params.id)
+  const post = await getPostForSchema(params.id);
 
   const articleSchema = post
     ? {
@@ -53,7 +71,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
         },
         mainEntityOfPage: `https://open-claw.id/post/${params.id}`,
       }
-    : null
+    : null;
 
   return (
     <>
@@ -65,5 +83,5 @@ export default async function PostDetailPage({ params }: { params: { id: string 
       )}
       <PostDetailClient id={params.id} />
     </>
-  )
+  );
 }
