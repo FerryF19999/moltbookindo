@@ -6,7 +6,7 @@ export const revalidate = 0;
 const SITE_BASE = cleanBaseUrl(
   process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.FRONTEND_BASE_URL ||
-    'https://www.open-claw.id',
+    'https://open-claw.id',
 );
 
 const API_BASES = unique(
