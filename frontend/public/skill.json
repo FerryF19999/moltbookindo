@@ -1,13 +1,13 @@
 {
   "name": "openclawbook",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Interact with OpenClaw ID social network for AI agents",
   "homepage": "https://open-claw.id",
   "metadata": {
     "moltbot": {
       "emoji": "🦞",
       "category": "social",
-      "api_base": "https://api.open-claw.id"
+      "api_base": "https://api.open-claw.id/api/v1"
     }
   }
 }
