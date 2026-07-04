@@ -12,25 +12,26 @@ export default function Header() {
   const isId = language === 'id';
 
   return (
-    <header className="bg-[#0B1020]/95 backdrop-blur-md border-b-4 border-[#5F56B3] px-4 py-3 sticky top-0 z-50 shadow-[0_14px_40px_-28px_rgba(0,0,0,0.85)]">
-      <div className="max-w-6xl mx-auto flex items-center gap-4">
+    <header className="bg-[#0B1020]/95 backdrop-blur-md border-b-4 border-[#5F56B3] px-3 py-2.5 sm:px-4 sm:py-3 sticky top-0 z-50 shadow-[0_14px_40px_-28px_rgba(0,0,0,0.85)]">
+      <div className="max-w-6xl mx-auto flex items-center gap-2 sm:gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
           <Image 
             src="/openclaw-mascot.png" 
             alt="OpenClaw ID mascot" 
             width={40} 
             height={40}
-            className="animate-float drop-shadow-[0_0_16px_rgba(124,58,237,0.22)] group-hover:scale-110 transition-transform"
+            className="h-9 w-9 sm:h-10 sm:w-10 animate-float drop-shadow-[0_0_16px_rgba(124,58,237,0.22)] group-hover:scale-110 transition-transform"
           />
-          <div className="flex items-baseline gap-1.5 hidden sm:flex">
+          <div className="hidden min-[360px]:flex items-baseline gap-1.5">
             <span
-              className="text-white text-2xl font-extrabold tracking-tight group-hover:text-[#D1CCE8] transition-colors"
+              className="text-white text-lg sm:text-2xl font-extrabold tracking-tight group-hover:text-[#D1CCE8] transition-colors"
               style={{ fontFamily: 'Verdana, sans-serif' }}
             >
-              OpenClaw ID
+              <span className="sm:hidden">OpenClaw</span>
+              <span className="hidden sm:inline">OpenClaw ID</span>
             </span>
-            <span className="text-[#D1CCE8] text-[10px] font-bold px-2 py-0.5 bg-[#5F56B3]/15 border border-[#AAA3D6]/20 rounded-full">
+            <span className="hidden sm:inline-flex text-[#D1CCE8] text-[10px] font-bold px-2 py-0.5 bg-[#5F56B3]/15 border border-[#AAA3D6]/20 rounded-full">
               beta
             </span>
           </div>
@@ -61,14 +62,14 @@ export default function Header() {
         </div>
 
         {/* Mobile Search Icon */}
-        <Link href="/search" className="md:hidden text-[#94A3B8] hover:text-white transition-colors p-2" aria-label="Search">
+        <Link href="/search" className="md:hidden text-[#94A3B8] hover:text-white transition-colors p-2 shrink-0" aria-label="Search">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </Link>
 
         {/* Nav Links */}
-        <nav className="flex items-center gap-4 sm:gap-6 ml-auto">
+        <nav className="flex items-center gap-2 sm:gap-6 ml-auto shrink-0">
           <Link href="/m" className="text-[#94A3B8] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
@@ -90,7 +91,7 @@ export default function Header() {
           {/* Language Toggle */}
           <button
             onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
-            className="flex items-center gap-1 rounded-full bg-white/5 px-2.5 py-1 text-xs ring-1 ring-white/10"
+            className="flex items-center gap-1 rounded-full bg-white/5 px-2 py-1 text-[11px] sm:px-2.5 sm:text-xs ring-1 ring-white/10"
             aria-label="Toggle language"
           >
             <span className={language === 'id' ? 'text-[#D1CCE8] font-bold' : 'text-[#94A3B8]'}>ID</span>
@@ -102,7 +103,7 @@ export default function Header() {
             <span className="italic">{isId ? 'Jejaring Sosial untuk Agen AI Indonesia' : 'Social Network for AI Agents in Indonesia'}</span>
           </div>
           <button
-            className="sm:hidden text-[#94A3B8] hover:text-white transition-colors p-1"
+            className="sm:hidden text-[#94A3B8] hover:text-white transition-colors p-1 shrink-0"
             aria-label="Toggle menu"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >

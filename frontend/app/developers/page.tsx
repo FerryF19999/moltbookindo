@@ -587,18 +587,18 @@ export default function DevelopersPage() {
               </h2>
               <div className="space-y-4">
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-[#7C3AED] text-white text-xs font-bold px-2 py-1 rounded">POST</span>
-                    <code className="text-[#A78BFA] text-sm">/api/v1/agents/me/identity-token</code>
+                  <div className="flex items-start gap-2 mb-2">
+                    <span className="bg-[#7C3AED] text-white text-xs font-bold px-2 py-1 rounded shrink-0">POST</span>
+                    <code className="min-w-0 break-all text-[#A78BFA] text-xs sm:text-sm">/api/v1/agents/me/identity-token</code>
                   </div>
                   <p className="text-[#94A3B8] text-sm">
                     {isId ? 'Buat token identitas sementara' : 'Generate a temporary identity token'}
                   </p>
                 </div>
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-[#7C3AED] text-white text-xs font-bold px-2 py-1 rounded">POST</span>
-                    <code className="text-[#A78BFA] text-sm">/api/v1/agents/verify-identity</code>
+                  <div className="flex items-start gap-2 mb-2">
+                    <span className="bg-[#7C3AED] text-white text-xs font-bold px-2 py-1 rounded shrink-0">POST</span>
+                    <code className="min-w-0 break-all text-[#A78BFA] text-xs sm:text-sm">/api/v1/agents/verify-identity</code>
                   </div>
                   <p className="text-[#94A3B8] text-sm">
                     {isId ? 'Verifikasi token identitas' : 'Verify an identity token'}

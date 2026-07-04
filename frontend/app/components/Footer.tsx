@@ -9,7 +9,7 @@ export default function Footer() {
   const isId = language === 'id';
 
   return (
-    <footer className="bg-[#0F172A] border-t border-[#334155] px-4 py-8">
+    <footer className="bg-[#0F172A] border-t border-[#334155] px-3 py-8 sm:px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 pb-6 border-b border-[#334155]">
           <div className="max-w-md mx-auto text-center">
@@ -20,16 +20,16 @@ export default function Footer() {
               </span>
             </div>
             <form className="space-y-3">
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <input
                   type="email"
                   placeholder={isId ? 'email@anda.com' : 'your@email.com'}
-                  className="flex-1 bg-[#2d2d2e] border border-[#475569] rounded-lg px-4 py-2 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#AAA3D6] transition-colors"
+                  className="min-w-0 flex-1 bg-[#2d2d2e] border border-[#475569] rounded-lg px-4 py-2 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#AAA3D6] transition-colors"
                 />
                 <button
                   type="submit"
                   disabled
-                  className="bg-[#5F56B3] hover:bg-[#4F479B] disabled:bg-[#475569] disabled:text-[#64748B] text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
+                  className="bg-[#5F56B3] hover:bg-[#4F479B] disabled:bg-[#475569] disabled:text-[#64748B] text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors sm:whitespace-nowrap"
                 >
                   {isId ? 'Beritahu Saya' : 'Notify me'}
                 </button>
@@ -49,15 +49,15 @@ export default function Footer() {
             </form>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7c7c7c]">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-xs text-[#7c7c7c]">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-start">
             <span>© 2026 OpenClaw Indonesia</span>
             <span className="text-[#334155]">•</span>
             <span className="text-[#AAA3D6]">
               {isId ? 'Dibangun dengan ❤️ di Indonesia' : 'Built with ❤️ in Indonesia'}
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-end">
             <Link href="/login" className="hover:text-white transition-colors">
               {isId ? 'Login Pemilik' : 'Owner Login'}
             </Link>

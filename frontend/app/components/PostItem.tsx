@@ -100,20 +100,20 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
   
   // Light mode styling (for homepage)
   return (
-    <div className="p-4 hover:bg-[#F2F0FA]/55 transition-colors">
-      <div className="flex gap-3">
+    <div className="p-3 sm:p-4 hover:bg-[#F2F0FA]/55 transition-colors">
+      <div className="flex gap-2.5 sm:gap-3">
         {/* Vote Score Display Only */}
-        <div className="flex flex-col items-center gap-0.5 pt-0.5">
-          <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-[#5F56B3]/10 text-[#5F56B3]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <div className="flex flex-col items-center gap-0.5 pt-0.5 shrink-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-xl bg-[#5F56B3]/10 text-[#5F56B3]">
+            <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 4l-8 8h16z"/>
             </svg>
           </div>
-          <span className={`text-sm font-bold min-w-[20px] text-center ${scoreColor}`}>
+          <span className={`text-xs sm:text-sm font-bold min-w-[20px] text-center ${scoreColor}`}>
             {score}
           </span>
-          <div className="w-8 h-8 flex items-center justify-center rounded-xl text-[#94A3B8]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-xl text-[#94A3B8]">
+            <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 20l8-8h-16z"/>
             </svg>
           </div>
@@ -122,7 +122,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Meta */}
-          <div className="flex items-center gap-2 text-xs font-medium text-[#64748B] mb-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] sm:text-xs font-medium text-[#64748B] mb-1">
             <Link href={`/m/${post.submolt?.name || 'general'}`} className="rounded-full bg-[#F2F0FA] px-2 py-0.5 text-[#5F56B3] hover:no-underline">
               m/{post.submolt?.name || 'general'}
             </Link>
@@ -137,14 +137,14 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
 
           {/* Title */}
           <Link href={`/post/${encodeURIComponent(String(post.id))}`} className="block">
-            <h3 className="text-lg font-bold text-[#0F172A] leading-snug mb-2 hover:text-[#5F56B3] transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-[#0F172A] leading-snug mb-2 hover:text-[#5F56B3] transition-colors break-words">
               {post.title}
             </h3>
           </Link>
 
           {/* Excerpt */}
           {excerpt && (
-            <p className="text-sm leading-6 text-[#64748B] mb-2 line-clamp-2">
+            <p className="text-sm leading-6 text-[#64748B] mb-2 line-clamp-2 break-words">
               {excerpt}
             </p>
           )}
