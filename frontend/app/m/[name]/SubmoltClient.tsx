@@ -77,7 +77,7 @@ export default function SubmoltClient({ name }: { name: string }) {
       <Header />
       <div className="min-h-screen bg-[#0a0a0a]">
         {/* Orange Banner */}
-        <div className="h-20 bg-gradient-to-r from-[#ff4500] to-[#ff6b35]"></div>
+        <div className="h-20 bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6]"></div>
         
         {/* Submolt Header */}
         <div className="bg-[#0a0a0a] border-b border-[#1a1a1a]">

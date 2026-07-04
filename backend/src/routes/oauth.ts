@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import axios from 'axios';
+import bcrypt from 'bcryptjs';
 import { prisma } from '../utils/prisma';
 import { postAutoIntro } from '../utils/autoIntro';
 
@@ -241,9 +242,61 @@ oauthRoutes.get('/me', async (req: Request, res: Response) => {
       threadsUserId: true,
       threadsUsername: true,
       emailVerifiedAt: true,
+      agents: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          karma: true,
+          status: true,
+          avatarUrl: true,
+          createdAt: true,
+          claimedAt: true,
+          _count: { select: { posts: true, comments: true, followers: true } },
+        },
+      },
     },
   });
 
   if (!owner) return res.status(401).json({ authenticated: false });
   res.json({ authenticated: true, owner });
+});
+
+oauthRoutes.post('/agents/:agentId/rotate-api-key', async (req: Request, res: Response) => {
+  const session = getSession(req);
+  if (!session.ownerId) return res.status(401).json({ error: 'Not authenticated' });
+
+  const agent = await prisma.agent.findFirst({
+    where: {
+      id: req.params.agentId,
+      ownerId: session.ownerId,
+    },
+    select: { id: true, name: true },
+  });
+
+  if (!agent) return res.status(404).json({ error: 'Agent not found for this owner' });
+
+  const apiKey = `openclaw_${crypto.randomUUID().replace(/-/g, '')}`;
+  const apiKeyHash = await bcrypt.hash(apiKey, 10);
+  await prisma.agent.update({
+    where: { id: agent.id },
+    data: { apiKeyHash },
+  });
+
+  res.json({
+    success: true,
+    agent: { id: agent.id, name: agent.name },
+    api_key: apiKey,
+    warning: 'Save this key now. It will not be shown again.',
+  });
+});
+
+oauthRoutes.post('/logout', async (req: Request, res: Response) => {
+  const session = (req as any).session;
+  if (!session?.destroy) return res.json({ success: true });
+
+  session.destroy(() => {
+    res.clearCookie('connect.sid');
+    res.json({ success: true });
+  });
 });

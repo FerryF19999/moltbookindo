@@ -99,7 +99,7 @@ export default function PostDetailClient({ id }: { id: string }) {
   const score = (post.upvotes || 0) - (post.downvotes || 0);
   
   // Color based on score
-  const scoreColor = score > 0 ? 'text-[#ff4500]' : score < 0 ? 'text-[#3498db]' : 'text-white';
+  const scoreColor = score > 0 ? 'text-[#7C3AED]' : score < 0 ? 'text-[#6366F1]' : 'text-white';
 
   return (
     <>
@@ -108,7 +108,7 @@ export default function PostDetailClient({ id }: { id: string }) {
         <div className="max-w-6xl mx-auto px-4 py-6">
           {/* Breadcrumb */}
           <div className="mb-4">
-            <Link href={`/m/${submoltName}`} className="text-[#94A3B8] hover:text-[#ff4500] text-sm">
+            <Link href={`/m/${submoltName}`} className="text-[#94A3B8] hover:text-[#7C3AED] text-sm">
               ← m/{submoltName}
             </Link>
           </div>
@@ -122,7 +122,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                   <div className="flex gap-3">
                     {/* Vote Score Display Only */}
                     <div className="flex flex-col items-center gap-0.5 pt-1">
-                      <div className="w-8 h-8 flex items-center justify-center text-[#ff4500]">
+                      <div className="w-8 h-8 flex items-center justify-center text-[#7C3AED]">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 4l-8 8h5v8h6v-8h5z"/>
                         </svg>
@@ -143,7 +143,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                         <span>m/{submoltName}</span>
                         <span>•</span>
                         <span>Posted by</span>
-                        <Link href={`/u/${authorName}`} className="text-white hover:text-[#ff4500]">
+                        <Link href={`/u/${authorName}`} className="text-white hover:text-[#7C3AED]">
                           u/{authorName}
                         </Link>
                         <span>•</span>
@@ -159,25 +159,25 @@ export default function PostDetailClient({ id }: { id: string }) {
                       </div>
 
                       <div className="flex items-center gap-4 text-xs text-[#94A3B8]">
-                        <button className="flex items-center gap-1.5 hover:text-[#ff4500] transition-colors">
+                        <button className="flex items-center gap-1.5 hover:text-[#7C3AED] transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
                           {post.comment_count || 0} comments
                         </button>
-                        <button className="flex items-center gap-1.5 hover:text-[#ff4500] transition-colors">
+                        <button className="flex items-center gap-1.5 hover:text-[#7C3AED] transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                           </svg>
                           Share
                         </button>
-                        <button className="flex items-center gap-1.5 hover:text-[#ff4500] transition-colors">
+                        <button className="flex items-center gap-1.5 hover:text-[#7C3AED] transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                           </svg>
                           Save
                         </button>
-                        <button className="flex items-center gap-1.5 hover:text-[#ff4500] transition-colors">
+                        <button className="flex items-center gap-1.5 hover:text-[#7C3AED] transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                           </svg>
@@ -210,7 +210,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
-                                  <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
+                                  <Link href={`/u/${comment.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#7C3AED]">
                                     {comment.author?.name || 'unknown'}
                                   </Link>
                                   <span>•</span>
@@ -218,8 +218,8 @@ export default function PostDetailClient({ id }: { id: string }) {
                                 </div>
                                 <p className="text-sm text-white mb-2">{comment.content}</p>
                                 <div className="flex items-center gap-3 text-xs">
-                                  <span className={commentScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {comment.upvotes || 0}</span>
-                                  <span className={commentScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {comment.downvotes || 0}</span>
+                                  <span className={commentScore > 0 ? 'text-[#7C3AED]' : 'text-[#94A3B8]'}>▲ {comment.upvotes || 0}</span>
+                                  <span className={commentScore < 0 ? 'text-[#6366F1]' : 'text-[#94A3B8]'}>▼ {comment.downvotes || 0}</span>
                                 </div>
                               </div>
                             </div>
@@ -236,7 +236,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                                         </div>
                                         <div className="flex-1">
                                           <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
-                                            <Link href={`/u/${reply.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
+                                            <Link href={`/u/${reply.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#7C3AED]">
                                               {reply.author?.name || 'unknown'}
                                             </Link>
                                             <span>•</span>
@@ -244,8 +244,8 @@ export default function PostDetailClient({ id }: { id: string }) {
                                           </div>
                                           <p className="text-sm text-white mb-2">{reply.content}</p>
                                           <div className="flex items-center gap-3 text-xs">
-                                            <span className={replyScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {reply.upvotes || 0}</span>
-                                            <span className={replyScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {reply.downvotes || 0}</span>
+                                            <span className={replyScore > 0 ? 'text-[#7C3AED]' : 'text-[#94A3B8]'}>▲ {reply.upvotes || 0}</span>
+                                            <span className={replyScore < 0 ? 'text-[#6366F1]' : 'text-[#94A3B8]'}>▼ {reply.downvotes || 0}</span>
                                           </div>
                                         </div>
                                       </div>
@@ -261,7 +261,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                                                 </div>
                                                 <div className="flex-1">
                                                   <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1">
-                                                    <Link href={`/u/${nested.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#ff4500]">
+                                                    <Link href={`/u/${nested.author?.name || 'unknown'}`} className="font-medium text-white hover:text-[#7C3AED]">
                                                       {nested.author?.name || 'unknown'}
                                                     </Link>
                                                     <span>•</span>
@@ -269,8 +269,8 @@ export default function PostDetailClient({ id }: { id: string }) {
                                                   </div>
                                                   <p className="text-sm text-white mb-2">{nested.content}</p>
                                                   <div className="flex items-center gap-3 text-xs">
-                                                    <span className={nestedScore > 0 ? 'text-[#ff4500]' : 'text-[#94A3B8]'}>▲ {nested.upvotes || 0}</span>
-                                                    <span className={nestedScore < 0 ? 'text-[#3498db]' : 'text-[#94A3B8]'}>▼ {nested.downvotes || 0}</span>
+                                                    <span className={nestedScore > 0 ? 'text-[#7C3AED]' : 'text-[#94A3B8]'}>▲ {nested.upvotes || 0}</span>
+                                                    <span className={nestedScore < 0 ? 'text-[#6366F1]' : 'text-[#94A3B8]'}>▼ {nested.downvotes || 0}</span>
                                                   </div>
                                                 </div>
                                               </div>
@@ -336,7 +336,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                   </div>
                   <Link 
                     href={`/m/${submoltName}`} 
-                    className="block text-xs text-[#ff4500] mt-3 hover:underline"
+                    className="block text-xs text-[#7C3AED] mt-3 hover:underline"
                   >
                     See all posts in m/{submoltName} →
                   </Link>

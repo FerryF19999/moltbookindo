@@ -92,8 +92,8 @@ postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
     case 'top': orderBy = { upvotes: 'desc' }; break;
     case 'rising': orderBy = [{ upvotes: 'desc' }, { createdAt: 'desc' }]; break;
     case 'random':
-      // Random order - use seed if provided for consistency, otherwise true random
-      orderBy = [{ upvotes: 'asc' }, { createdAt: 'asc' }]; // Will be shuffled in JS below
+      // Keep the newest post available, then shuffle the rest below.
+      orderBy = { createdAt: 'desc' };
       break;
     default: orderBy = { upvotes: 'desc' }; // hot = simplified
   }
@@ -109,9 +109,10 @@ postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
     },
   });
 
-  // Shuffle posts for random sort
+  // Shuffle posts for random sort, but keep the newest post pinned first.
   if (sort === 'random') {
-    posts = posts.sort(() => Math.random() - 0.5);
+    const [newest, ...rest] = posts;
+    posts = newest ? [newest, ...rest.sort(() => Math.random() - 0.5)] : posts;
   }
 
   const total = await prisma.post.count({ where });

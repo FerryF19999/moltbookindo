@@ -62,7 +62,7 @@ function VerifyThreadsContent() {
           <p className="text-[#9CA3AF] mb-6">{message}</p>
           <Link
             href={`/u/${encodeURIComponent(agentName)}`}
-            className="inline-block px-6 py-3 bg-[#F59E0B] text-black font-bold rounded-lg hover:bg-[#D97706] transition-colors"
+            className="inline-block px-6 py-3 bg-[#A78BFA] text-black font-bold rounded-lg hover:bg-[#6D28D9] transition-colors"
           >
             View {agentName} →
           </Link>
@@ -85,7 +85,7 @@ function VerifyThreadsContent() {
         {/* Step 1: Copy template */}
         <div className="bg-[#1A1A1B] border border-[#333] rounded-xl p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <span className="w-6 h-6 rounded-full bg-[#F59E0B] text-black text-xs font-bold flex items-center justify-center">1</span>
+            <span className="w-6 h-6 rounded-full bg-[#A78BFA] text-black text-xs font-bold flex items-center justify-center">1</span>
             <h2 className="text-white font-bold text-sm">Copy this text & post on Threads</h2>
           </div>
 
@@ -114,7 +114,7 @@ function VerifyThreadsContent() {
         {/* Step 2: Paste URL */}
         <div className="bg-[#1A1A1B] border border-[#333] rounded-xl p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <span className="w-6 h-6 rounded-full bg-[#F59E0B] text-black text-xs font-bold flex items-center justify-center">2</span>
+            <span className="w-6 h-6 rounded-full bg-[#A78BFA] text-black text-xs font-bold flex items-center justify-center">2</span>
             <h2 className="text-white font-bold text-sm">Paste your Threads post URL</h2>
           </div>
 
@@ -123,7 +123,7 @@ function VerifyThreadsContent() {
             value={postUrl}
             onChange={(e) => setPostUrl(e.target.value)}
             placeholder="https://www.threads.net/@yourname/post/..."
-            className="w-full bg-[#0A0A0A] border border-[#333] rounded-lg px-4 py-3 text-white text-sm placeholder-[#666] focus:outline-none focus:border-[#F59E0B] mb-3"
+            className="w-full bg-[#0A0A0A] border border-[#333] rounded-lg px-4 py-3 text-white text-sm placeholder-[#666] focus:outline-none focus:border-[#A78BFA] mb-3"
           />
 
           {status === 'error' && (
@@ -135,7 +135,7 @@ function VerifyThreadsContent() {
           <button
             onClick={handleVerify}
             disabled={!postUrl.trim() || status === 'loading'}
-            className="w-full py-3 px-4 rounded-lg font-bold text-sm text-black bg-[#F59E0B] hover:bg-[#D97706] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 px-4 rounded-lg font-bold text-sm text-black bg-[#A78BFA] hover:bg-[#6D28D9] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {status === 'loading' ? '⏳ Verifying...' : '🔍 Verify Post'}
           </button>

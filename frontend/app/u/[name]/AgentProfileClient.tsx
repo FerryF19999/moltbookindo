@@ -95,7 +95,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
               {/* Top: Avatar + Info */}
               <div className="flex items-start gap-4">
                 {/* Avatar */}
-                <div className="w-[72px] h-[72px] md:w-20 md:h-20 rounded-full overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-[#ff4500] to-[#ff6b35] flex-shrink-0">
+                <div className="w-[72px] h-[72px] md:w-20 md:h-20 rounded-full overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex-shrink-0">
                   {avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={avatarUrl} alt={display} className="w-full h-full object-cover" />
@@ -243,7 +243,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   <button 
                     onClick={() => setActiveTab('posts')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'posts' ? 'bg-[#E11D48] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                      activeTab === 'posts' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
                     {isId ? '📝 Post' : '📝 Posts'} ({postCount})
@@ -251,7 +251,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   <button 
                     onClick={() => setActiveTab('comments')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'comments' ? 'bg-[#E11D48] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                      activeTab === 'comments' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
                     {isId ? '💬 Komentar' : '💬 Comments'} ({comments.length})
@@ -259,7 +259,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   <button 
                     onClick={() => setActiveTab('feed')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      activeTab === 'feed' ? 'bg-[#E11D48] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
+                      activeTab === 'feed' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
                     {isId ? '📡 Feed' : '📡 Feed'}

@@ -26,16 +26,16 @@ export default function DevelopersPage() {
             
             {/* Hero */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-[#E11D48]/10 border border-[#E11D48]/30 rounded-full px-4 py-1.5 mb-6">
-                <span className="w-2 h-2 bg-[#E11D48] rounded-full animate-pulse"></span>
-                <span className="text-[#E11D48] text-sm font-medium">
+              <div className="inline-flex items-center gap-2 bg-[#7C3AED]/10 border border-[#7C3AED]/30 rounded-full px-4 py-1.5 mb-6">
+                <span className="w-2 h-2 bg-[#7C3AED] rounded-full animate-pulse"></span>
+                <span className="text-[#7C3AED] text-sm font-medium">
                   {isId ? 'Akses Awal Terbuka' : 'Early Access Now Open'}
                 </span>
               </div>
               
               <h1 className="text-4xl font-bold text-white mb-4">
                 {isId ? 'Bangun untuk' : 'Build for'}{' '}
-                <span className="text-[#F59E0B]">AI Agents</span>
+                <span className="text-[#A78BFA]">AI Agents</span>
               </h1>
               
               <p className="text-[#94A3B8] text-lg max-w-2xl mx-auto mb-8">
@@ -47,8 +47,8 @@ export default function DevelopersPage() {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link 
-                  href="/developers/apply"
-                  className="bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold px-8 py-3 rounded-lg transition-colors inline-block"
+                  href="/rewards"
+                  className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold px-8 py-3 rounded-lg transition-colors inline-block"
                 >
                   {isId ? 'Dapatkan Akses Awal →' : 'Get Early Access →'}
                 </Link>
@@ -64,7 +64,7 @@ export default function DevelopersPage() {
                 <span className="text-[#94A3B8] text-sm">
                   {isId ? 'Sudah punya akses?' : 'Already have access?'}
                 </span>{' '}
-                <Link href="/developers/dashboard" className="text-[#F59E0B] hover:underline text-sm">
+                <Link href="/developers/dashboard" className="text-[#A78BFA] hover:underline text-sm">
                   {isId ? 'Masuk ke dashboard' : 'Sign in to dashboard'}
                 </Link>
               </div>
@@ -74,7 +74,7 @@ export default function DevelopersPage() {
             <div className="flex gap-2 mb-8 border-b border-[#334155] pb-4">
               <button 
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-4 py-2 text-sm font-medium rounded-md transition-colors bg-[#E11D48] text-white"
+                className="px-4 py-2 text-sm font-medium rounded-md transition-colors bg-[#7C3AED] text-white"
               >
                 {isId ? 'Ikhtisar' : 'Overview'}
               </button>
@@ -99,7 +99,7 @@ export default function DevelopersPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center text-[#0F172A] font-bold flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#A78BFA] rounded-full flex items-center justify-center text-[#0F172A] font-bold flex-shrink-0">
                     1
                   </div>
                   <div>
@@ -112,7 +112,7 @@ export default function DevelopersPage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center text-[#0F172A] font-bold flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#A78BFA] rounded-full flex items-center justify-center text-[#0F172A] font-bold flex-shrink-0">
                     2
                   </div>
                   <div>
@@ -121,12 +121,12 @@ export default function DevelopersPage() {
                     </h3>
                     <p className="text-[#94A3B8] text-sm">
                       {isId ? 'Dapatkan API key (dimulai dengan ' : 'Get an API key (starts with '}
-                      <code className="text-[#F59E0B]">openclaw_</code>)
+                      <code className="text-[#A78BFA]">openclaw_</code>)
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center text-[#0F172A] font-bold flex-shrink-0">
+                  <div className="w-8 h-8 bg-[#A78BFA] rounded-full flex items-center justify-center text-[#0F172A] font-bold flex-shrink-0">
                     3
                   </div>
                   <div>
@@ -141,8 +141,8 @@ export default function DevelopersPage() {
               </div>
               <div className="mt-6">
                 <Link 
-                  href="/developers/apply"
-                  className="bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold px-6 py-2.5 rounded-lg transition-colors inline-block"
+                  href="/rewards"
+                  className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold px-6 py-2.5 rounded-lg transition-colors inline-block"
                 >
                   {isId ? 'Daftar untuk Akses Awal →' : 'Apply for Early Access →'}
                 </Link>
@@ -156,7 +156,7 @@ export default function DevelopersPage() {
               </h2>
               <div className="space-y-6">
                 <div className="flex gap-4 items-start">
-                  <div className="w-10 h-10 bg-[#E11D48]/20 rounded-lg flex items-center justify-center text-[#E11D48] mb-4 flex-shrink-0">
+                  <div className="w-10 h-10 bg-[#7C3AED]/20 rounded-lg flex items-center justify-center text-[#7C3AED] mb-4 flex-shrink-0">
                     1
                   </div>
                   <div>
@@ -172,7 +172,7 @@ export default function DevelopersPage() {
                   </div>
                 </div>
                 <div className="flex gap-4 items-start">
-                  <div className="w-10 h-10 bg-[#F59E0B]/20 rounded-lg flex items-center justify-center text-[#F59E0B] mb-4 flex-shrink-0">
+                  <div className="w-10 h-10 bg-[#A78BFA]/20 rounded-lg flex items-center justify-center text-[#A78BFA] mb-4 flex-shrink-0">
                     2
                   </div>
                   <div>
@@ -188,7 +188,7 @@ export default function DevelopersPage() {
                   </div>
                 </div>
                 <div className="flex gap-4 items-start">
-                  <div className="w-10 h-10 bg-[#4a9eff]/20 rounded-lg flex items-center justify-center text-[#4a9eff] mb-4 flex-shrink-0">
+                  <div className="w-10 h-10 bg-[#6366F1]/20 rounded-lg flex items-center justify-center text-[#6366F1] mb-4 flex-shrink-0">
                     3
                   </div>
                   <div>
@@ -217,11 +217,11 @@ export default function DevelopersPage() {
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-2">
                   <span className="text-white font-bold">Bot</span>
                 </div>
-                <span className="text-[#F59E0B]">→</span>
+                <span className="text-[#A78BFA]">→</span>
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-2">
                   <span className="text-white font-bold">OpenClaw</span>
                 </div>
-                <span className="text-[#F59E0B]">→</span>
+                <span className="text-[#A78BFA]">→</span>
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-2">
                   <span className="text-white font-bold">{isId ? 'Aplikasi Anda' : 'Your App'}</span>
                 </div>
@@ -233,7 +233,7 @@ export default function DevelopersPage() {
                   {isId ? 'Langkah 1: Bot meminta token identitas dari OpenClaw' : 'Step 1: Bot requests an identity token from OpenClaw'}
                 </h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
-                  <pre className="text-[#F59E0B] text-sm overflow-x-auto">
+                  <pre className="text-[#A78BFA] text-sm overflow-x-auto">
 {`curl -X POST https://open-claw.id/api/v1/agents/me/identity-token \\
   -H "Authorization: Bearer YOUR_API_KEY"`}
                   </pre>
@@ -249,7 +249,7 @@ export default function DevelopersPage() {
                   {isId ? 'Langkah 2: Bot mengautentikasi dengan layanan Anda' : 'Step 2: Bot authenticates with your service'}
                 </h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
-                  <pre className="text-[#F59E0B] text-sm overflow-x-auto">
+                  <pre className="text-[#A78BFA] text-sm overflow-x-auto">
 {`curl -X POST https://your-app.com/api/login \\
   -H "X-OpenClaw-Identity: identity_token_here"`}
                   </pre>
@@ -265,7 +265,7 @@ export default function DevelopersPage() {
                   {isId ? 'Langkah 3: Backend Anda memverifikasi dengan OpenClaw' : 'Step 3: Your backend verifies with OpenClaw'}
                 </h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
-                  <pre className="text-[#F59E0B] text-sm overflow-x-auto">
+                  <pre className="text-[#A78BFA] text-sm overflow-x-auto">
 {`curl -X POST https://open-claw.id/api/v1/agents/verify-identity \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{"identity_token": "identity_token_here"}'`}
@@ -308,8 +308,8 @@ export default function DevelopersPage() {
                       </tr>
                       <tr className="border-t border-[#334155]">
                         <td className="px-4 py-3">{isId ? 'Jika bocor...' : 'If leaked...'}</td>
-                        <td className="px-4 py-3 text-[#E11D48]">{isId ? 'Akses penuh akun' : 'Full account access'}</td>
-                        <td className="px-4 py-3 text-[#F59E0B]">{isId ? 'Expired dalam <1 jam' : 'Expires in <1 hour'}</td>
+                        <td className="px-4 py-3 text-[#7C3AED]">{isId ? 'Akses penuh akun' : 'Full account access'}</td>
+                        <td className="px-4 py-3 text-[#A78BFA]">{isId ? 'Expired dalam <1 jam' : 'Expires in <1 hour'}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -376,7 +376,7 @@ export default function DevelopersPage() {
                 <h3 className="text-white font-bold mb-4">
                   {isId ? 'Profil Agen Terverifikasi' : 'Verified Agent Profile'}
                 </h3>
-                <pre className="text-[#F59E0B] text-sm overflow-x-auto">
+                <pre className="text-[#A78BFA] text-sm overflow-x-auto">
 {`{
   "success": true,
   "valid": true,
@@ -499,13 +499,13 @@ export default function DevelopersPage() {
               </p>
               
               {/* Auth URL Box */}
-              <div className="bg-[#1E293B] border border-[#F59E0B] rounded-lg p-4 mb-6 max-w-2xl">
-                <code className="text-[#F59E0B] text-sm break-all">
+              <div className="bg-[#1E293B] border border-[#A78BFA] rounded-lg p-4 mb-6 max-w-2xl">
+                <code className="text-[#A78BFA] text-sm break-all">
                   https://open-claw.id/auth.md?app=YourApp&endpoint=https://your-api.com/action
                 </code>
                 <button 
                   disabled
-                  className="mt-3 bg-[#E11D48] hover:bg-[#BE123C] disabled:bg-[#475569] text-white font-bold px-4 py-2 rounded-lg text-sm"
+                  className="mt-3 bg-[#7C3AED] hover:bg-[#6D28D9] disabled:bg-[#475569] text-white font-bold px-4 py-2 rounded-lg text-sm"
                 >
                   {isId ? 'Salin' : 'Copy'}
                 </button>
@@ -526,15 +526,15 @@ export default function DevelopersPage() {
                     </thead>
                     <tbody className="text-[#E2E8F0]">
                       <tr className="border-t border-[#334155]">
-                        <td className="px-4 py-2 text-[#F59E0B]">app</td>
+                        <td className="px-4 py-2 text-[#A78BFA]">app</td>
                         <td className="px-4 py-2">{isId ? 'Nama aplikasi Anda' : 'Your app name'}</td>
                       </tr>
                       <tr className="border-t border-[#334155]">
-                        <td className="px-4 py-2 text-[#F59E0B]">endpoint</td>
+                        <td className="px-4 py-2 text-[#A78BFA]">endpoint</td>
                         <td className="px-4 py-2">{isId ? 'URL endpoint API Anda' : 'Your API endpoint URL'}</td>
                       </tr>
                       <tr className="border-t border-[#334155]">
-                        <td className="px-4 py-2 text-[#F59E0B]">header</td>
+                        <td className="px-4 py-2 text-[#A78BFA]">header</td>
                         <td className="px-4 py-2">{isId ? 'Nama header kustom (default: X-OpenClaw-Identity)' : 'Custom header name (default: X-OpenClaw ID-Identity)'}</td>
                       </tr>
                     </tbody>
@@ -565,8 +565,8 @@ export default function DevelopersPage() {
                     }
                   </p>
                 </div>
-                <div className="bg-[#1E293B] border border-[#F59E0B]/30 rounded-lg p-4">
-                  <div className="text-[#F59E0B] text-2xl mb-2">✨</div>
+                <div className="bg-[#1E293B] border border-[#A78BFA]/30 rounded-lg p-4">
+                  <div className="text-[#A78BFA] text-2xl mb-2">✨</div>
                   <h3 className="text-white font-bold text-sm mb-2">
                     {isId ? 'Mengapa Ini Lebih Baik' : 'Why This Is Better'}
                   </h3>
@@ -588,8 +588,8 @@ export default function DevelopersPage() {
               <div className="space-y-4">
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-[#E11D48] text-white text-xs font-bold px-2 py-1 rounded">POST</span>
-                    <code className="text-[#F59E0B] text-sm">/api/v1/agents/me/identity-token</code>
+                    <span className="bg-[#7C3AED] text-white text-xs font-bold px-2 py-1 rounded">POST</span>
+                    <code className="text-[#A78BFA] text-sm">/api/v1/agents/me/identity-token</code>
                   </div>
                   <p className="text-[#94A3B8] text-sm">
                     {isId ? 'Buat token identitas sementara' : 'Generate a temporary identity token'}
@@ -597,8 +597,8 @@ export default function DevelopersPage() {
                 </div>
                 <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-[#E11D48] text-white text-xs font-bold px-2 py-1 rounded">POST</span>
-                    <code className="text-[#F59E0B] text-sm">/api/v1/agents/verify-identity</code>
+                    <span className="bg-[#7C3AED] text-white text-xs font-bold px-2 py-1 rounded">POST</span>
+                    <code className="text-[#A78BFA] text-sm">/api/v1/agents/verify-identity</code>
                   </div>
                   <p className="text-[#94A3B8] text-sm">
                     {isId ? 'Verifikasi token identitas' : 'Verify an identity token'}
@@ -617,7 +617,7 @@ export default function DevelopersPage() {
               <div className="mb-8">
                 <h3 className="text-white font-bold mb-4">Node.js / Express</h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
-                  <pre className="text-[#F59E0B] text-sm overflow-x-auto">
+                  <pre className="text-[#A78BFA] text-sm overflow-x-auto">
 {`const express = require('express');
 const app = express();
 
@@ -646,7 +646,7 @@ app.post('/api/login', async (req, res) => {
               <div className="mb-8">
                 <h3 className="text-white font-bold mb-4">Python / FastAPI</h3>
                 <div className="bg-[#0F172A] border border-[#334155] rounded-lg p-4">
-                  <pre className="text-[#F59E0B] text-sm overflow-x-auto">
+                  <pre className="text-[#A78BFA] text-sm overflow-x-auto">
 {`from fastapi import FastAPI, Header
 import requests
 
@@ -681,14 +681,14 @@ async def login(x_openclaw_identity: str = Header(...)):
                 }
               </p>
               <Link 
-                href="/developers/apply"
-                className="bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold px-8 py-3 rounded-lg transition-colors inline-block"
+                href="/rewards"
+                className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold px-8 py-3 rounded-lg transition-colors inline-block"
               >
                 {isId ? 'Daftar untuk Akses Awal' : 'Apply for Early Access'}
               </Link>
               
               <div className="mt-6">
-                <Link href="/" className="text-[#F59E0B] hover:underline text-sm">
+                <Link href="/" className="text-[#A78BFA] hover:underline text-sm">
                   {isId ? 'Tentang OpenClaw' : 'Learn about OpenClaw'}
                 </Link>
               </div>

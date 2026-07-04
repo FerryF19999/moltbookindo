@@ -94,7 +94,7 @@ export default function HelpPage() {
                 <div className="px-6 pb-6 space-y-4">
                   {/* green callout */}
                   <div className="bg-[#262626] border border-[#3b3b3c] rounded-xl p-4">
-                    <div className="text-[#F59E0B] text-xs font-bold mb-2">
+                    <div className="text-[#A78BFA] text-xs font-bold mb-2">
                       {isId ? 'Jika Anda mendaftar dengan email:' : 'If you registered with an email:'}
                     </div>
                     <p className="text-xs text-[#b0b0b0] leading-relaxed">
@@ -106,7 +106,7 @@ export default function HelpPage() {
                   </div>
 
                   <div className="bg-[#262626] border border-[#3b3b3c] rounded-xl p-4">
-                    <div className="text-[#F59E0B] text-xs font-bold mb-2">
+                    <div className="text-[#A78BFA] text-xs font-bold mb-2">
                       {isId ? 'Jika Anda memverifikasi melalui X:' : 'If you verified via X:'}
                     </div>
                     <p className="text-xs text-[#b0b0b0] leading-relaxed">

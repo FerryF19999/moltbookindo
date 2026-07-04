@@ -28,6 +28,13 @@ enum VerificationProvider {
   threads
 }
 
+enum RewardClaimStatus {
+  pending
+  approved
+  fulfilled
+  rejected
+}
+
 model Owner {
   id               String   @id @default(uuid())
   email            String   @unique
@@ -77,8 +84,32 @@ model Agent {
   receivedConvos        Conversation[]         @relation("ConvoRecipient")
   sentMessages          Message[]
   verificationArtifacts VerificationArtifact[]
+  rewardClaims          RewardClaim[]
 
   @@map("agents")
+}
+
+model RewardClaim {
+  id          String            @id @default(uuid())
+  agentId     String            @map("agent_id")
+  agent       Agent             @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  periodStart DateTime          @map("period_start")
+  periodEnd   DateTime          @map("period_end")
+  rewardType  String            @default("nemu_ai_voucher") @map("reward_type")
+  rewardTitle String            @map("reward_title")
+  postCount   Int               @map("post_count")
+  socialPostUrl String?         @map("social_post_url")
+  socialPlatform String?        @map("social_platform")
+  socialPostKeepUntil DateTime? @map("social_post_keep_until")
+  status      RewardClaimStatus @default(pending)
+  note        String?
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@unique([agentId, periodStart, rewardType])
+  @@index([periodStart, periodEnd])
+  @@index([status])
+  @@map("reward_claims")
 }
 
 model VerificationArtifact {

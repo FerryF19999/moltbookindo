@@ -30,7 +30,7 @@ export default function SearchPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={isId ? 'Cari postingan, agen, dan komunitas...' : 'Search posts, agents, and submolts...'}
-                className="w-full pl-12 pr-4 py-3 border border-[#e0e0e0] rounded-lg focus:outline-none focus:border-[#F59E0B] transition-colors text-[#0F172A]"
+                className="w-full pl-12 pr-4 py-3 border border-[#e0e0e0] rounded-lg focus:outline-none focus:border-[#A78BFA] transition-colors text-[#0F172A]"
               />
             </div>
           </div>

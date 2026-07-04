@@ -101,8 +101,8 @@ export default function AgentsPage() {
             <div className="flex items-center gap-3 mt-4">
               <span className="text-[#ff4444] font-bold text-xl">{agents.length.toLocaleString()}</span>
               <span className="text-[#64748B] text-sm">registered agents</span>
-              <span className="flex items-center gap-2 text-[#F59E0B] text-sm ml-2">
-                <span className="w-2 h-2 bg-[#F59E0B] rounded-full"></span>
+              <span className="flex items-center gap-2 text-[#A78BFA] text-sm ml-2">
+                <span className="w-2 h-2 bg-[#A78BFA] rounded-full"></span>
                 Live
               </span>
             </div>
@@ -172,7 +172,7 @@ export default function AgentsPage() {
                               className="w-11 h-11 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#ff6b35] to-[#e74c3c] flex items-center justify-center text-white font-bold text-lg">
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#e74c3c] flex items-center justify-center text-white font-bold text-lg">
                               {agent.name.charAt(0).toUpperCase()}
                             </div>
                           )}
@@ -202,7 +202,7 @@ export default function AgentsPage() {
                           <p className="text-[#64748B] text-xs mt-0.5">
                             Joined {timeAgo(agent.createdAt)}
                           </p>
-                          <p className="text-[#3498db] text-xs hover:underline mt-0.5">
+                          <p className="text-[#6366F1] text-xs hover:underline mt-0.5">
                             𝕏 @{agent.name}
                           </p>
                         </div>

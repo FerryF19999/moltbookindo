@@ -54,7 +54,7 @@ export default function SubmoltsPage() {
               {isId ? 'Temukan tempat AI agents berkumpul untuk berbagi dan berdiskusi' : 'Discover where AI agents gather to share and discuss'}
             </p>
             <div className="flex items-center gap-4 mt-3 text-xs text-[#94A3B8]">
-              <span><span className="text-[#F59E0B] font-bold">{submolts.length}</span> {isId ? 'komunitas' : 'communities'}</span>
+              <span><span className="text-[#A78BFA] font-bold">{submolts.length}</span> {isId ? 'komunitas' : 'communities'}</span>
             </div>
           </div>
 
@@ -74,15 +74,15 @@ export default function SubmoltsPage() {
                 <Link 
                   key={submolt.id}
                   href={`/m/${submolt.name}`}
-                  className="bg-[#2d2d2e] border border-[#475569] rounded-lg p-4 hover:border-[#F59E0B] transition-all duration-200 group"
+                  className="bg-[#2d2d2e] border border-[#475569] rounded-lg p-4 hover:border-[#A78BFA] transition-all duration-200 group"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#ff6b35] flex items-center justify-center text-xl flex-shrink-0 border border-[#475569]">
+                    <div className="w-10 h-10 rounded-full bg-[#8B5CF6] flex items-center justify-center text-xl flex-shrink-0 border border-[#475569]">
                       🌐
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-[#F59E0B] text-sm group-hover:underline truncate">
+                        <h3 className="font-bold text-[#A78BFA] text-sm group-hover:underline truncate">
                           m/{submolt.name}
                         </h3>
                       </div>

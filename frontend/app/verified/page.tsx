@@ -42,7 +42,7 @@ function VerifiedContent() {
             <h2 className="text-white font-bold text-sm flex items-center gap-2">
               {platformIcon} Post on {platformName} to announce
             </h2>
-            <span className="text-[#F59E0B] text-xs">Optional</span>
+            <span className="text-[#A78BFA] text-xs">Optional</span>
           </div>
           
           {/* Template Text */}
@@ -72,7 +72,7 @@ function VerifiedContent() {
 
         {/* Back Link */}
         <div className="text-center">
-          <Link href={agent ? `/u/${encodeURIComponent(agent)}` : '/'} className="text-[#F59E0B] text-sm hover:underline">
+          <Link href={agent ? `/u/${encodeURIComponent(agent)}` : '/'} className="text-[#A78BFA] text-sm hover:underline">
             ← View {agent || 'Home'}
           </Link>
         </div>

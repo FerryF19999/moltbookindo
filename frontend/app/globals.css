@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -19,28 +19,28 @@
 
 :root {
   /* OpenClaw Indonesia Colors */
-  --openclaw-red: #E11D48;
-  --openclaw-gold: #F59E0B;
+  --openclaw-red: #5F56B3;
+  --openclaw-gold: #AAA3D6;
   --openclaw-slate: #0F172A;
   --openclaw-cyan: #06B6D4;
   
   /* Legacy Moltbook colors */
-  --moltbook-orange: #ff6b35;
-  --moltbook-red: #e01b24;
-  --moltbook-cyan: #00d4aa;
-  --moltbook-blue: #4a9eff;
+  --moltbook-orange: #7368C7;
+  --moltbook-red: #5F56B3;
+  --moltbook-cyan: #7368C7;
+  --moltbook-blue: #6970B8;
   
   /* Background & Text */
-  --background: #fafafa;
-  --foreground: #1a1a1b;
+  --background: #f7f7fb;
+  --foreground: #111827;
   --card-bg: #ffffff;
-  --border-color: #e0e0e0;
+  --border-color: #e5e7eb;
   --border-dark: #333333;
   --border-dark-light: #444444;
-  --text-muted: #7c7c7c;
-  --text-gray: #888888;
-  --link-color: #00d4aa;
-  --upvote: #ff4500;
+  --text-muted: #6b7280;
+  --text-gray: #9ca3af;
+  --link-color: #7368C7;
+  --upvote: #5F56B3;
   --downvote: #7193ff;
   --header-bg: #1a1a1b;
   --dark-bg: #1a1a1b;
@@ -68,7 +68,8 @@ body {
   color: var(--foreground);
   margin: 0;
   padding: 0;
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -89,29 +90,34 @@ a:not([class*='text-']):not([class*='bg-']):hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: #ddd;
+  background: #eef0f6;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 0;
+  background: #CAC4E7;
+  border: 3px solid #eef0f6;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #7368C7;
 }
 
 code, pre {
   font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  color: #00d4aa;
-  background: #1a1a1b;
-  border-radius: 2px;
+  color: #7368C7;
+  background: #f5f3ff;
+  border-radius: 8px;
   padding: 2px 6px;
   font-size: 12px;
 }
 
 pre {
-  border: 1px solid #333;
+  border: 1px solid #ddd6fe;
   padding: 12px;
   overflow-x: auto;
 }
@@ -137,9 +143,9 @@ pre {
 }
 
 .btn-primary:hover {
-  background: #ff3b3b;
+  background: #4F479B;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(224, 27, 36, 0.3);
+  box-shadow: 0 4px 12px rgba(95, 86, 179, 0.3);
 }
 
 .btn-secondary {
@@ -149,7 +155,7 @@ pre {
 }
 
 .btn-secondary:hover {
-  background: rgba(0, 212, 170, 0.1);
+  background: rgba(115, 104, 199, 0.1);
   transform: translateY(-1px);
 }
 
@@ -163,7 +169,7 @@ textarea {
   border-radius: 8px;
   outline: none;
   padding: 12px 16px;
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: inherit;
   font-size: 14px;
   transition: all 0.2s ease;
 }
@@ -173,7 +179,7 @@ input[type='text']:focus,
 input[type='password']:focus,
 textarea:focus {
   border-color: var(--moltbook-cyan);
-  box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.15);
+  box-shadow: 0 0 0 3px rgba(115, 104, 199, 0.15);
 }
 
 input::placeholder,
@@ -182,11 +188,11 @@ textarea::placeholder {
 }
 
 .glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
+  box-shadow: 0 0 24px rgba(115, 104, 199, 0.35);
 }
 
 .glow-red {
-  box-shadow: 0 0 20px rgba(224, 27, 36, 0.4);
+  box-shadow: 0 0 24px rgba(95, 86, 179, 0.35);
 }
 
 .scrollbar-hide {
