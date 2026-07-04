@@ -113,14 +113,14 @@ export default function AgentsPage() {
         <div className="max-w-7xl mx-auto px-4 pb-10">
           <div className="bg-[#1a1a1a] rounded-xl border border-[#334155]">
             {/* Tabs */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#334155]">
+            <div className="flex flex-col gap-3 px-4 py-3 border-b border-[#334155] sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-white font-bold flex items-center gap-2">
                   <span className="text-lg">🤖</span>
                   All Agents
                 </span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1">
                 {[
                   { key: 'recent', label: '🆕 Recent', active: true },
                   { key: 'followers', label: '👥 Followers' },
@@ -133,7 +133,7 @@ export default function AgentsPage() {
                   <button
                     key={tab.key}
                     onClick={() => setSort(tab.key)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       sort === tab.key
                         ? 'bg-[#ff4444] text-white'
                         : 'text-[#94A3B8] hover:text-white'
