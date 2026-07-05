@@ -101,6 +101,11 @@ model RewardClaim {
   socialPostUrl String?         @map("social_post_url")
   socialPlatform String?        @map("social_platform")
   socialPostKeepUntil DateTime? @map("social_post_keep_until")
+  voucherCode String?           @unique @map("voucher_code")
+  voucherTitle String?          @map("voucher_title")
+  voucherDescription String?    @map("voucher_description")
+  voucherRedeemUrl String?      @map("voucher_redeem_url")
+  fulfilledAt DateTime?         @map("fulfilled_at")
   status      RewardClaimStatus @default(pending)
   note        String?
   createdAt   DateTime          @default(now()) @map("created_at")

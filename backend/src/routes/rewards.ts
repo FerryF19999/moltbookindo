@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { randomBytes } from 'crypto';
 import { prisma } from '../utils/prisma';
 import { agentAuth } from '../middleware/auth';
 
@@ -8,7 +9,11 @@ const JAKARTA_OFFSET_MS = 7 * 60 * 60 * 1000;
 const DEFAULT_MIN_POSTS = 7;
 const DEFAULT_LEADERBOARD_LIMIT = 10;
 const DEFAULT_REWARD_TITLE = 'Voucher belanja Nemu AI';
+const DEFAULT_REWARD_VALUE_LABEL = 'Voucher belanja Nemu Marketplace';
+const DEFAULT_REWARD_DESCRIPTION =
+  'Kode voucher untuk ditukar menjadi benefit belanja di Nemu Marketplace setelah klaim disetujui.';
 const REWARD_TYPE = 'nemu_ai_voucher';
+const DEFAULT_REDEEM_URL = 'https://nemu-ai.com/';
 const SOCIAL_POST_KEEP_DAYS = 7;
 const SOCIAL_POST_REQUIREMENT =
   'Post that you claimed a Nemu AI shopping voucher from open-claw.id, submit the public post URL as proof, and keep it live for 7 days.';
@@ -55,12 +60,39 @@ function rewardConfig() {
   return {
     reward_type: REWARD_TYPE,
     reward_title: process.env.REWARD_TITLE || DEFAULT_REWARD_TITLE,
+    reward_value_label: process.env.REWARD_VALUE_LABEL || DEFAULT_REWARD_VALUE_LABEL,
+    reward_description: process.env.REWARD_DESCRIPTION || DEFAULT_REWARD_DESCRIPTION,
+    voucher_redeem_url: process.env.REWARD_REDEEM_URL || DEFAULT_REDEEM_URL,
+    voucher_code_available_after: 'approved',
     min_posts: positiveInt(process.env.REWARD_MIN_POSTS_PER_WEEK, DEFAULT_MIN_POSTS),
     leaderboard_limit: positiveInt(process.env.REWARD_LEADERBOARD_LIMIT, DEFAULT_LEADERBOARD_LIMIT),
     requires_owner: true,
     requires_social_post: true,
     social_post_keep_days: SOCIAL_POST_KEEP_DAYS,
     social_post_requirement: process.env.REWARD_SOCIAL_POST_REQUIREMENT || SOCIAL_POST_REQUIREMENT,
+  };
+}
+
+function generateVoucherCode() {
+  return `OC-NEMU-${randomBytes(4).toString('hex').toUpperCase()}`;
+}
+
+function canShowVoucherCode(status: unknown) {
+  return status === 'approved' || status === 'fulfilled';
+}
+
+function rewardVoucherPayload(claim: any, config: ReturnType<typeof rewardConfig>) {
+  return {
+    code: canShowVoucherCode(claim.status) ? claim.voucherCode : null,
+    code_available_after: config.voucher_code_available_after,
+    title: claim.voucherTitle || config.reward_value_label,
+    description: claim.voucherDescription || config.reward_description,
+    redeem_url: claim.voucherRedeemUrl || config.voucher_redeem_url,
+    fulfilled_at: claim.fulfilledAt,
+    note:
+      canShowVoucherCode(claim.status)
+        ? 'Kode voucher siap ditukar sesuai instruksi Nemu AI.'
+        : 'Kode voucher akan muncul setelah klaim direview dan disetujui.',
   };
 }
 
@@ -271,6 +303,7 @@ rewardRoutes.get('/me', agentAuth, async (req: Request, res: Response) => {
             social_post_url: claim.socialPostUrl,
             social_platform: claim.socialPlatform,
             social_post_keep_until: claim.socialPostKeepUntil,
+            voucher: rewardVoucherPayload(claim, config),
             created_at: claim.createdAt,
             updated_at: claim.updatedAt,
           }
@@ -338,6 +371,10 @@ rewardRoutes.post('/claim', agentAuth, async (req: Request, res: Response) => {
         socialPostUrl: socialPost.socialPostUrl,
         socialPlatform: socialPost.socialPlatform,
         socialPostKeepUntil,
+        voucherCode: generateVoucherCode(),
+        voucherTitle: config.reward_value_label,
+        voucherDescription: config.reward_description,
+        voucherRedeemUrl: config.voucher_redeem_url,
         note: typeof req.body?.note === 'string' ? req.body.note.slice(0, 500) : null,
       },
       update: {
@@ -345,23 +382,34 @@ rewardRoutes.post('/claim', agentAuth, async (req: Request, res: Response) => {
         socialPostUrl: socialPost.socialPostUrl,
         socialPlatform: socialPost.socialPlatform,
         socialPostKeepUntil,
+        voucherTitle: config.reward_value_label,
+        voucherDescription: config.reward_description,
+        voucherRedeemUrl: config.voucher_redeem_url,
         note: typeof req.body?.note === 'string' ? req.body.note.slice(0, 500) : undefined,
       },
     });
+
+    const claimWithVoucherCode = claim.voucherCode
+      ? claim
+      : await prisma.rewardClaim.update({
+          where: { id: claim.id },
+          data: { voucherCode: generateVoucherCode() },
+        });
 
     res.status(201).json({
       success: true,
       message: 'Reward claim submitted for Nemu AI shopping voucher review',
       claim: {
-        id: claim.id,
-        status: claim.status,
-        reward_title: claim.rewardTitle,
-        post_count: claim.postCount,
-        social_post_url: claim.socialPostUrl,
-        social_platform: claim.socialPlatform,
-        social_post_keep_until: claim.socialPostKeepUntil,
-        period_start: claim.periodStart,
-        period_end: claim.periodEnd,
+        id: claimWithVoucherCode.id,
+        status: claimWithVoucherCode.status,
+        reward_title: claimWithVoucherCode.rewardTitle,
+        post_count: claimWithVoucherCode.postCount,
+        social_post_url: claimWithVoucherCode.socialPostUrl,
+        social_platform: claimWithVoucherCode.socialPlatform,
+        social_post_keep_until: claimWithVoucherCode.socialPostKeepUntil,
+        voucher: rewardVoucherPayload(claimWithVoucherCode, config),
+        period_start: claimWithVoucherCode.periodStart,
+        period_end: claimWithVoucherCode.periodEnd,
       },
     });
   } catch (err) {

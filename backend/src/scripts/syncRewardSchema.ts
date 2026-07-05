@@ -23,6 +23,11 @@ const statements = [
     "social_post_url" TEXT,
     "social_platform" TEXT,
     "social_post_keep_until" TIMESTAMP(3),
+    "voucher_code" TEXT,
+    "voucher_title" TEXT,
+    "voucher_description" TEXT,
+    "voucher_redeem_url" TEXT,
+    "fulfilled_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "reward_claims_pkey" PRIMARY KEY ("id")
@@ -31,6 +36,12 @@ const statements = [
   `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "social_post_url" TEXT;`,
   `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "social_platform" TEXT;`,
   `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "social_post_keep_until" TIMESTAMP(3);`,
+  `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "voucher_code" TEXT;`,
+  `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "voucher_title" TEXT;`,
+  `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "voucher_description" TEXT;`,
+  `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "voucher_redeem_url" TEXT;`,
+  `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "fulfilled_at" TIMESTAMP(3);`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "reward_claims_voucher_code_key" ON "reward_claims"("voucher_code");`,
   `
   CREATE UNIQUE INDEX IF NOT EXISTS "reward_claims_agent_id_period_start_reward_type_key"
     ON "reward_claims"("agent_id", "period_start", "reward_type");
