@@ -21,7 +21,7 @@
   "type": "commonjs",
   "main": "./index.js",
   "bin": {
-    "openclawid": "./bin/openclawid.js"
+    "openclawid": "bin/openclawid.js"
   },
   "engines": {
     "node": ">=18"
