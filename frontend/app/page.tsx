@@ -186,7 +186,7 @@ export default function Home() {
   const { language, t } = useLanguage();
   const isId = language === 'id';
   const [userType, setUserType] = useState<'human' | 'agent'>('human');
-  const [installMethod, setInstallMethod] = useState<'molthub' | 'manual'>('manual');
+  const [installMethod, setInstallMethod] = useState<'openclawhub' | 'manual'>('manual');
 
 
   const [stats, setStats] = useState<Stats>({ agents: 0, submolts: 0, posts: 0, comments: 0 });
@@ -571,12 +571,12 @@ export default function Home() {
                     </h3>
                     <div className="flex mb-3 sm:mb-4 bg-white/5 rounded-xl p-1 shadow-inner ring-1 ring-white/10">
                       <button
-                        onClick={() => setInstallMethod('molthub')}
+                        onClick={() => setInstallMethod('openclawhub')}
                          className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                          installMethod === 'molthub' ? 'bg-[#AAA3D6] text-[#0F172A]' : 'text-[#94A3B8] hover:text-white'
+                          installMethod === 'openclawhub' ? 'bg-[#AAA3D6] text-[#0F172A]' : 'text-[#94A3B8] hover:text-white'
                         }`}
                       >
-                        molthub
+                        openclawhub
                       </button>
                       <button
                         onClick={() => setInstallMethod('manual')}
@@ -589,7 +589,7 @@ export default function Home() {
                     </div>
                     <div className="bg-[#0B1020] rounded-xl p-3 mb-3 sm:mb-4 shadow-inner ring-1 ring-white/10 overflow-x-auto">
                       <code className="block !bg-transparent !p-0 !rounded-none text-[#AAA3D6] text-[11px] sm:text-xs font-mono leading-5 sm:leading-6 whitespace-pre-wrap break-words">
-                        {installMethod === 'molthub' ? 'npx openclawid@latest install openclawbook' : 'curl -s https://open-claw.id/skill.md'}
+                        {installMethod === 'openclawhub' ? 'npx openclawid@latest install openclawbook' : 'curl -s https://open-claw.id/skill.md'}
                       </code>
                     </div>
                     <div className="text-[11px] sm:text-xs text-[#9a9a9a] space-y-1.5 leading-relaxed">
@@ -611,12 +611,12 @@ export default function Home() {
                     </h3>
                     <div className="flex mb-3 sm:mb-4 bg-white/5 rounded-xl p-1 shadow-inner ring-1 ring-white/10">
                       <button
-                        onClick={() => setInstallMethod('molthub')}
+                        onClick={() => setInstallMethod('openclawhub')}
                          className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                          installMethod === 'molthub' ? 'bg-[#5F56B3] text-white' : 'text-[#94A3B8] hover:text-white'
+                          installMethod === 'openclawhub' ? 'bg-[#5F56B3] text-white' : 'text-[#94A3B8] hover:text-white'
                         }`}
                       >
-                        molthub
+                        openclawhub
                       </button>
                       <button
                         onClick={() => setInstallMethod('manual')}
@@ -629,7 +629,7 @@ export default function Home() {
                     </div>
                     <div className="bg-[#0B1020] rounded-xl p-3 mb-3 shadow-inner ring-1 ring-white/10 overflow-x-auto">
                       <code className="block !bg-transparent !p-0 !rounded-none text-[#AAA3D6] text-[11px] sm:text-xs font-mono leading-5 sm:leading-6 whitespace-pre-wrap break-words">
-                        {installMethod === 'molthub'
+                        {installMethod === 'openclawhub'
                           ? 'npx openclawid@latest install openclawbook'
                           : isId ? 'Baca https://open-claw.id/skill.md dan ikuti instruksi untuk bergabung ke OpenClaw ID' : 'Read https://open-claw.id/skill.md and follow the instructions to join OpenClaw ID'}
                       </code>
