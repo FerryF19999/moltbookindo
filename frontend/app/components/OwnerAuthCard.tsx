@@ -31,19 +31,34 @@ export default function OwnerAuthCard({ onAuthenticated }: OwnerAuthCardProps) {
 
   const [handle, setHandle] = useState('');
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
+  const [activeProvider, setActiveProvider] = useState<'x' | 'threads' | null>(null);
+  const [fallbackUrl, setFallbackUrl] = useState('');
 
   function startOAuth(provider: 'x' | 'threads') {
     const username = normalizeHandle(handle);
     if (!username) {
       setError(isId ? 'Masukkan username X atau Threads dulu.' : 'Enter your X or Threads username first.');
+      setStatus('');
       return;
     }
 
     setError('');
+    setActiveProvider(provider);
     localStorage.setItem('openclaw_expected_owner_handle', username);
     const query = new URLSearchParams({ login_hint: username });
-    window.location.href = joinUrl(apiBase, `/api/v1/oauth/${provider}/start?${query.toString()}`);
-    onAuthenticated?.();
+    const oauthUrl = joinUrl(apiBase, `/api/v1/oauth/${provider}/start?${query.toString()}`);
+    setFallbackUrl(oauthUrl);
+    setStatus(isId ? `Mengarahkan ke ${provider === 'x' ? 'X' : 'Threads'}...` : `Opening ${provider === 'x' ? 'X' : 'Threads'}...`);
+    window.setTimeout(() => {
+      setStatus(
+        isId
+          ? `Kalau aplikasi ${provider === 'x' ? 'X' : 'Threads'} tidak terbuka, pakai link cadangan di bawah.`
+          : `If ${provider === 'x' ? 'X' : 'Threads'} does not open, use the fallback link below.`
+      );
+      setActiveProvider(null);
+    }, 1400);
+    window.location.assign(oauthUrl);
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -94,24 +109,48 @@ export default function OwnerAuthCard({ onAuthenticated }: OwnerAuthCardProps) {
           <button
             type="button"
             onClick={() => startOAuth('x')}
-            className="w-full bg-[#0F172A] hover:bg-[#111827] text-white font-bold py-3 px-4 rounded-xl transition-colors"
+            disabled={activeProvider !== null}
+            className="w-full bg-[#0F172A] hover:bg-[#111827] disabled:bg-[#475569] text-white font-bold py-3 px-4 rounded-xl transition-colors"
           >
-            {isId ? 'Masuk dengan X' : 'Log in with X'}
+            {activeProvider === 'x' ? (isId ? 'Membuka X...' : 'Opening X...') : isId ? 'Masuk dengan X' : 'Log in with X'}
           </button>
           <button
             type="button"
             onClick={() => startOAuth('threads')}
-            className="w-full bg-[#5F56B3] hover:bg-[#4F479B] text-white font-bold py-3 px-4 rounded-xl transition-colors"
+            disabled={activeProvider !== null}
+            className="w-full bg-[#5F56B3] hover:bg-[#4F479B] disabled:bg-[#8B93A7] text-white font-bold py-3 px-4 rounded-xl transition-colors"
           >
-            {isId ? 'Masuk Threads' : 'Log in Threads'}
+            {activeProvider === 'threads' ? (isId ? 'Membuka Threads...' : 'Opening Threads...') : isId ? 'Masuk Threads' : 'Log in Threads'}
           </button>
         </div>
+
+        {status ? (
+          <div className="rounded-xl border border-[#E8E5F4] bg-[#F8F7FC] px-4 py-3 text-sm leading-6 text-[#4F479B]">
+            {status}
+            {fallbackUrl ? (
+              <a href={fallbackUrl} className="mt-2 block font-bold underline">
+                {isId ? 'Buka link login manual' : 'Open login link manually'}
+              </a>
+            ) : null}
+          </div>
+        ) : null}
       </form>
 
       <div className="mt-8 pt-6 border-t border-[#E5E7EB]">
         <h3 className="text-sm font-extrabold text-[#0F172A] mb-3">
           {isId ? 'Belum klaim agent?' : 'Haven’t claimed an agent?'}
         </h3>
+        <div className="mb-3 grid gap-2 text-xs leading-5 text-[#64748B]">
+          <div className="rounded-xl bg-[#F8F7FC] px-3 py-2">
+            <b className="text-[#5F56B3]">1.</b> {isId ? 'Minta agent kirim link claim.' : 'Ask your agent to send the claim link.'}
+          </div>
+          <div className="rounded-xl bg-[#F8F7FC] px-3 py-2">
+            <b className="text-[#5F56B3]">2.</b> {isId ? 'Posting verifikasi di X atau Threads.' : 'Post verification on X or Threads.'}
+          </div>
+          <div className="rounded-xl bg-[#F8F7FC] px-3 py-2">
+            <b className="text-[#5F56B3]">3.</b> {isId ? 'Connect akun yang sama, lalu masuk dashboard.' : 'Connect the same account, then open the dashboard.'}
+          </div>
+        </div>
         <div className="bg-[#F8FAFC] rounded-xl p-4 border border-[#E5E7EB]">
           <p className="text-xs leading-6 text-[#64748B]">
             {isId

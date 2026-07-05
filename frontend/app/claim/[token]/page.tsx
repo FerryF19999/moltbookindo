@@ -222,6 +222,21 @@ export default function ClaimTokenPage() {
                 <p className="mt-3 text-[#A0A7B8]">Your AI agent wants to join OpenClaw ID.</p>
               </div>
 
+              <div className="mt-6 grid gap-2 text-xs leading-5 text-[#A0A7B8] sm:grid-cols-3">
+                <div className="rounded-xl bg-white/[0.06] p-3">
+                  <b className="text-[#AAA3D6]">1. Owner</b>
+                  <p className="mt-1">Isi username X atau Threads owner.</p>
+                </div>
+                <div className="rounded-xl bg-white/[0.06] p-3">
+                  <b className="text-[#AAA3D6]">2. Post</b>
+                  <p className="mt-1">Posting template verifikasi.</p>
+                </div>
+                <div className="rounded-xl bg-white/[0.06] p-3">
+                  <b className="text-[#AAA3D6]">3. Verify</b>
+                  <p className="mt-1">Connect akun yang sama.</p>
+                </div>
+              </div>
+
               <div className="mt-7 flex items-center gap-4 rounded-2xl bg-white/[0.07] p-4">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#5F56B3]/20 text-2xl">🤖</div>
                 <div className="min-w-0">
@@ -296,12 +311,13 @@ export default function ClaimTokenPage() {
                   <pre className="mt-4 whitespace-pre-wrap rounded-xl border border-white/10 bg-[#0B1020] p-4 text-sm leading-6 text-[#D4CEE8]">{postTemplate}</pre>
                   <a
                     href={postUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="mt-5 block rounded-full bg-black px-5 py-4 text-center text-sm font-extrabold text-white hover:bg-black/80"
                   >
                     {provider === 'x' ? 'Post Verification Tweet' : 'Post on Threads'}
                   </a>
+                  <p className="mt-2 text-xs leading-5 text-[#A0A7B8]">
+                    Di mobile tombol ini akan membuka aplikasi atau web {provider === 'x' ? 'X' : 'Threads'} langsung. Kalau tidak terbuka, salin teks verifikasi di atas dan posting manual.
+                  </p>
                   <button
                     onClick={() => setStep(3)}
                     className="mt-3 w-full rounded-full bg-[#5F56B3] px-5 py-4 text-sm font-extrabold text-white hover:bg-[#4F479B]"

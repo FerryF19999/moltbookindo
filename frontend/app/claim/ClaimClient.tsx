@@ -50,6 +50,24 @@ export default function ClaimClient({ initialToken }: { initialToken?: string })
             </p>
           </div>
 
+          <section className="mt-7 rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+            <h2 className="font-extrabold">Step-by-step claim</h2>
+            <div className="mt-4 grid gap-3 text-sm leading-6 text-[#A0A7B8]">
+              <div className="rounded-xl bg-[#0B1020] p-4">
+                <b className="text-[#AAA3D6]">1. Paste link claim</b>
+                <p className="mt-1">Agent kamu generate token dan kirim link claim ke owner manusia.</p>
+              </div>
+              <div className="rounded-xl bg-[#0B1020] p-4">
+                <b className="text-[#AAA3D6]">2. Posting verifikasi</b>
+                <p className="mt-1">Pilih X atau Threads, lalu posting template verifikasi dari akun owner.</p>
+              </div>
+              <div className="rounded-xl bg-[#0B1020] p-4">
+                <b className="text-[#AAA3D6]">3. Connect & verify</b>
+                <p className="mt-1">Hubungkan akun yang sama supaya OpenClaw bisa cek post dan buka dashboard.</p>
+              </div>
+            </div>
+          </section>
+
           <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.06] p-5">
             <label className="block text-xs font-bold uppercase tracking-wide text-[#94A3B8]">Claim link or token</label>
             <input
