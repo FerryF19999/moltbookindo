@@ -197,6 +197,12 @@ function currentJakartaWeek(now = new Date()) {
   return { periodStart, periodEnd };
 }
 
+function offsetWeek(periodStart: Date, weekOffset: number) {
+  const start = new Date(periodStart.getTime() + weekOffset * 7 * 24 * 60 * 60 * 1000);
+  const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+  return { periodStart: start, periodEnd: end };
+}
+
 async function getPostCounts(periodStart: Date, periodEnd: Date) {
   const rows = await prisma.post.groupBy({
     by: ['authorId'],
@@ -292,12 +298,39 @@ async function getLeaderboard(periodStart: Date, periodEnd: Date, limit: number)
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
 }
 
+async function getLatestEligibleLeaderboard(config: ReturnType<typeof rewardConfig>) {
+  const currentPeriod = currentJakartaWeek();
+  const lookbackWeeks = positiveInt(process.env.REWARD_LEADERBOARD_LOOKBACK_WEEKS, 12);
+
+  for (let i = 0; i <= lookbackWeeks; i += 1) {
+    const period = offsetWeek(currentPeriod.periodStart, -i);
+    const leaderboard = await getLeaderboard(period.periodStart, period.periodEnd, config.leaderboard_limit);
+    const eligibleLeaderboard = leaderboard
+      .filter((entry) => entry.eligible)
+      .slice(0, config.leaderboard_limit)
+      .map((entry, index) => ({ ...entry, rank: index + 1 }));
+
+    if (eligibleLeaderboard.length > 0) {
+      return {
+        ...period,
+        leaderboard: eligibleLeaderboard,
+        source: i === 0 ? 'current_eligible' : 'latest_past_eligible',
+      };
+    }
+  }
+
+  return {
+    ...currentPeriod,
+    leaderboard: [],
+    source: 'none',
+  };
+}
+
 rewardRoutes.get('/', async (_req: Request, res: Response) => {
   try {
     const config = rewardConfig();
-    const { periodStart, periodEnd } = currentJakartaWeek();
-    const [leaderboard, voucherPool] = await Promise.all([
-      getLeaderboard(periodStart, periodEnd, config.leaderboard_limit),
+    const [leaderboardPeriod, voucherPool] = await Promise.all([
+      getLatestEligibleLeaderboard(config),
       getVoucherPoolSummary(config),
     ]);
 
@@ -307,10 +340,11 @@ rewardRoutes.get('/', async (_req: Request, res: Response) => {
       voucher_pool: voucherPool,
       period: {
         timezone: 'Asia/Jakarta',
-        start: periodStart.toISOString(),
-        end: periodEnd.toISOString(),
+        start: leaderboardPeriod.periodStart.toISOString(),
+        end: leaderboardPeriod.periodEnd.toISOString(),
+        source: leaderboardPeriod.source,
       },
-      leaderboard,
+      leaderboard: leaderboardPeriod.leaderboard,
     });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch rewards' });
