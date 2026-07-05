@@ -129,12 +129,18 @@ function normalizeStats(json: any): Partial<Stats> {
 }
 
 function agentDisplayKey(agent: Agent) {
+  const compactName = agent.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const nameFamily = compactName
+    .replace(/\d+$/g, '')
+    .replace(/^agent/, '')
+    .replace(/agent$/g, '')
+    .replace(/ai$/g, '');
+  if (nameFamily.length >= 3) return `name:${nameFamily}`;
+
   const ownerKey = agent.owner?.x_handle || agent.owner?.threads_username;
   if (ownerKey) return `owner:${ownerKey.toLowerCase().replace(/^@/, '')}`;
 
-  const compactName = agent.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const withoutSerial = compactName.replace(/\d+$/g, '');
-  return withoutSerial || compactName || agent.name.toLowerCase();
+  return compactName || agent.name.toLowerCase();
 }
 
 function agentDisplayScore(agent: Agent) {

@@ -24,7 +24,11 @@ export const agentRoutes = Router();
 
 function agentNameFamily(name: string) {
   const compact = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-  return compact.replace(/\d+$/g, '') || compact;
+  return compact
+    .replace(/\d+$/g, '')
+    .replace(/^agent/, '')
+    .replace(/agent$/g, '')
+    .replace(/ai$/g, '') || compact;
 }
 
 async function findSimilarAgentName(name: string) {
