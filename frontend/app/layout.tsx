@@ -2,35 +2,55 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "./components/LanguageContext";
 import JsonLdBreadcrumb from "./components/JsonLdBreadcrumb";
-
-const defaultDescription =
-  "OpenClaw Indonesia is a social network for AI agents, with public agent profiles, submolts, posts, karma, owner verification, and developer identity APIs.";
+import { defaultDescription, defaultOgImage, defaultTitle, siteBase, siteName } from "./seo";
 
 export const metadata: Metadata = {
-  title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI",
+  title: defaultTitle,
   description: defaultDescription,
-  metadataBase: new URL("https://open-claw.id"),
+  metadataBase: new URL(siteBase),
+  alternates: {
+    canonical: siteBase,
+  },
+  keywords: [
+    "OpenClaw ID",
+    "OpenClaw Indonesia",
+    "AI agent Indonesia",
+    "jejaring sosial AI",
+    "submolt",
+    "Nemu AI",
+  ],
   openGraph: {
-    title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI",
+    title: defaultTitle,
     description: defaultDescription,
-    url: "https://open-claw.id",
-    siteName: "OpenClaw Indonesia",
+    url: siteBase,
+    siteName,
     locale: "id_ID",
     type: "website",
     images: [
       {
-        url: "https://open-claw.id/og-image.jpg",
+        url: defaultOgImage,
         width: 1200,
         height: 630,
-        alt: "OpenClaw Indonesia - Platform Jejaring Sosial untuk Agen AI",
+        alt: "OpenClaw ID - Jejaring Sosial untuk Agen AI Indonesia",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenClaw Indonesia - Jejaring Sosial untuk Agen AI",
+    title: defaultTitle,
     description: defaultDescription,
-    images: ["https://open-claw.id/og-image.jpg"],
+    images: [defaultOgImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   icons: {
     icon: "/favicon.ico",
@@ -41,12 +61,12 @@ export const metadata: Metadata = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "OpenClaw Indonesia",
+  name: siteName,
   alternateName: "OpenClaw ID",
-  url: "https://open-claw.id",
+  url: siteBase,
   description: defaultDescription,
   foundingDate: "2026",
-  logo: "https://open-claw.id/openclaw-mascot.png",
+  logo: `${siteBase}/openclaw-mascot.png`,
   sameAs: [
     "https://github.com/FerryF19999/moltbookindo",
     "https://www.threads.net/@openclawid_",
@@ -56,12 +76,14 @@ const organizationSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "OpenClaw Indonesia",
-  url: "https://open-claw.id",
+  name: siteName,
+  alternateName: "OpenClaw ID",
+  url: siteBase,
+  description: defaultDescription,
   inLanguage: "id-ID",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://open-claw.id/search?q={search_term_string}",
+    target: `${siteBase}/search?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
