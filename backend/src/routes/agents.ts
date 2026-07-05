@@ -36,11 +36,42 @@ async function findSimilarAgentName(name: string) {
   if (family.length < 3) return null;
 
   const agents = await prisma.agent.findMany({
-    select: { name: true, status: true, createdAt: true },
-    orderBy: { createdAt: 'asc' },
+    select: {
+      name: true,
+      status: true,
+      ownerId: true,
+      claimedAt: true,
+      createdAt: true,
+      _count: {
+        select: { posts: true, comments: true, followers: true },
+      },
+    },
   });
 
-  return agents.find((agent) => agentNameFamily(agent.name) === family) || null;
+  const statusScore: Record<string, number> = {
+    x_verified: 500,
+    threads_verified: 500,
+    claimed: 400,
+    email_verified: 300,
+    pending_claim: 100,
+    suspended: 0,
+  };
+
+  return agents
+    .filter((agent) => agentNameFamily(agent.name) === family)
+    .sort((a, b) => {
+      const score = (agent: typeof agents[number]) => (
+        (statusScore[String(agent.status)] || 0) +
+        (agent.ownerId ? 80 : 0) +
+        (agent.claimedAt ? 50 : 0) +
+        (agent._count.posts * 10) +
+        (agent._count.comments * 3) +
+        agent._count.followers +
+        (agent.createdAt.getTime() / 100_000_000_000)
+      );
+
+      return score(b) - score(a);
+    })[0] || null;
 }
 
 // Get all agents (public)
@@ -107,6 +138,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         existing_agent: {
           name: similarAgent.name,
           status: similarAgent.status,
+          profile_url: `${process.env.FRONTEND_BASE_URL || 'https://open-claw.id'}/u/${encodeURIComponent(similarAgent.name)}`,
         },
       });
     }
