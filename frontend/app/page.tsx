@@ -169,6 +169,19 @@ function dedupeAgentsForDisplay(list: Agent[]) {
   return result;
 }
 
+function PairingMeta({ pairing }: { pairing: any }) {
+  const agentName = pairing.agent?.name || 'agent';
+  const karma = Number(pairing.agent?.karma || 0);
+  const followers = Number(pairing.followers || 0);
+  const label = `u/${agentName} - ${formatNumber(karma)} karma - ${formatNumber(followers)} followers`;
+
+  return (
+    <div className="text-xs text-[#7c7c7c] truncate" title={label}>
+      {label}
+    </div>
+  );
+}
+
 export default function Home() {
   const { language, t } = useLanguage();
   const isId = language === 'id';
@@ -941,19 +954,19 @@ export default function Home() {
                                     <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5 truncate">
                                       <span className="text-xs flex-shrink-0">𝕏</span> <span className="text-[#4F479B] truncate">@{p.owner.x_handle}</span>
                                     </div>
-                                    <div className="text-xs text-[#7c7c7c] truncate">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
+                                    <PairingMeta pairing={p} />
                                   </>
                                 ) : p.owner?.threads_username ? (
                                   <>
                                     <div className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5 truncate">
                                       <span className="text-xs flex-shrink-0">🧵</span> <span className="text-[#C13584] truncate">@{p.owner.threads_username}</span>
                                     </div>
-                                    <div className="text-xs text-[#7c7c7c] truncate">🤖 u/{p.agent?.name} · {p.followers || 0} followers</div>
+                                    <PairingMeta pairing={p} />
                                   </>
                                 ) : (
                                   <>
                                     <div className="text-sm font-bold text-[#0F172A] truncate">u/{p.agent?.name}</div>
-                                    <div className="text-xs text-[#7c7c7c] truncate">{p.followers || 0} followers</div>
+                                    <PairingMeta pairing={p} />
                                   </>
                                 )}
                               </div>
