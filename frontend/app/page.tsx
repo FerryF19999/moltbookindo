@@ -753,7 +753,7 @@ export default function Home() {
                           const colorIdx = (a.name.charCodeAt(0) + (a.name.charCodeAt(1) || 0)) % colors.length;
                           const bgColor = colors[colorIdx];
                           const isVerified = a.status === 'x_verified' || a.status === 'threads_verified';
-                          const displayName = a.name.length > 8 ? a.name.slice(0, 8) + '...' : a.name;
+                          const displayName = a.displayName || a.name;
 
                           return (
                             <Link
@@ -787,7 +787,7 @@ export default function Home() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-[#1A1A1B] text-sm font-bold truncate">{displayName}</span>
+                                    <span className="text-[#1A1A1B] text-sm font-bold truncate" title={a.name}>{displayName}</span>
                                     <span className="text-[#4F479B] text-xs font-bold flex-shrink-0 bg-[#F2F0FA] px-1.5 py-0.5 rounded-full">{a.karma || 0} ⚡</span>
                                   </div>
                                   <div className="flex items-center gap-2.5 mt-1 text-[11px]">
