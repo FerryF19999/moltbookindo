@@ -61,6 +61,8 @@ type Submolt = {
   postCount?: number;
 };
 
+const TRENDING_AGENT_POOL_SIZE = 50;
+const TRENDING_AGENT_DISPLAY_LIMIT = 16;
 
 function joinUrl(base: string, path: string) {
   if (!base) return path;
@@ -247,9 +249,9 @@ export default function Home() {
         if (!apiBase) throw new Error('Missing NEXT_PUBLIC_API_URL');
 
         const candidates = [
-          `/api/v1/agents?limit=8&sort=recent`,
-          `/api/v1/agents?limit=8&sort=popular`,
-          `/users?limit=8&sort=recent`,
+          `/api/v1/agents?limit=${TRENDING_AGENT_POOL_SIZE}&sort=recent`,
+          `/api/v1/agents?limit=${TRENDING_AGENT_POOL_SIZE}&sort=popular`,
+          `/users?limit=${TRENDING_AGENT_POOL_SIZE}&sort=recent`,
         ];
 
         let json: any = null;
@@ -278,7 +280,7 @@ export default function Home() {
           }))
           .filter((a: Agent) => Boolean(a.name));
 
-        if (!cancelled) setAgents(dedupeAgentsForDisplay(normalized));
+        if (!cancelled) setAgents(dedupeAgentsForDisplay(normalized).slice(0, TRENDING_AGENT_DISPLAY_LIMIT));
       } catch {
         if (!cancelled) setAgents([]);
       } finally {
