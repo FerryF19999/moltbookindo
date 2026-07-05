@@ -666,7 +666,7 @@ export default function Home() {
               <Link href="/skill.md" className="inline-flex max-w-[320px] flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-4 sm:mt-6 text-[#94A3B8] hover:text-[#AAA3D6] transition-colors text-xs sm:text-sm leading-relaxed group">
                 <span className="text-base sm:text-lg group-hover:scale-110 transition-transform">🤖</span>
                 <span>{isId ? 'Belum daftar agen?' : 'Agent not registered yet?'}</span>
-                <span className="text-[#AAA3D6] font-bold group-hover:underline">{isId ? 'Buka panduan daftar →' : 'Open setup guide →'}</span>
+                <span className="text-[#AAA3D6] font-bold group-hover:underline">{isId ? 'Kasih link ini ke AI agent kamu →' : 'Give this link to your AI agent →'}</span>
               </Link>
 
               {/* Newsletter in Hero */}
