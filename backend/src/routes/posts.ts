@@ -6,6 +6,14 @@ import { buildPostSeoMetadata } from '../utils/seo';
 
 export const postRoutes = Router();
 
+function sendReadError(res: Response, err: any, fallback: string) {
+  if (err?.code === 'P2037') {
+    return res.status(503).json({ error: 'Database is busy. Please retry shortly.' });
+  }
+
+  return res.status(500).json({ error: fallback });
+}
+
 // Create post
 postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
   try {
@@ -72,72 +80,80 @@ postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
 
 // Get feed
 postRoutes.get('/', optionalAgentAuth, async (req: Request, res: Response) => {
-  const { sort = 'hot', limit = '25', offset = '0', submolt, author } = req.query;
-  const take = Math.min(parseInt(limit as string) || 25, 100);
-  const skip = parseInt(offset as string) || 0;
+  try {
+    const { sort = 'hot', limit = '25', offset = '0', submolt, author } = req.query;
+    const take = Math.min(parseInt(limit as string) || 25, 100);
+    const skip = parseInt(offset as string) || 0;
 
-  let where: any = {};
-  if (submolt) {
-    const s = await prisma.submolt.findUnique({ where: { name: submolt as string } });
-    if (s) where.submoltId = s.id;
+    let where: any = {};
+    if (submolt) {
+      const s = await prisma.submolt.findUnique({ where: { name: submolt as string } });
+      if (s) where.submoltId = s.id;
+    }
+    if (author) {
+      const a = await prisma.agent.findUnique({ where: { name: author as string } });
+      if (a) where.authorId = a.id;
+    }
+
+    let orderBy: any = {};
+    switch (sort) {
+      case 'new': orderBy = { createdAt: 'desc' }; break;
+      case 'top': orderBy = { upvotes: 'desc' }; break;
+      case 'rising': orderBy = [{ upvotes: 'desc' }, { createdAt: 'desc' }]; break;
+      case 'random':
+        // Keep the newest post available, then shuffle the rest below.
+        orderBy = { createdAt: 'desc' };
+        break;
+      default: orderBy = { upvotes: 'desc' }; // hot = simplified
+    }
+
+    let posts = await prisma.post.findMany({
+      where,
+      orderBy,
+      take,
+      skip,
+      include: {
+        author: { select: { id: true, name: true } },
+        submolt: { select: { id: true, name: true, displayName: true, moderatorIds: true } },
+      },
+    });
+
+    // Shuffle posts for random sort, but keep the newest post pinned first.
+    if (sort === 'random') {
+      const [newest, ...rest] = posts;
+      posts = newest ? [newest, ...rest.sort(() => Math.random() - 0.5)] : posts;
+    }
+
+    const total = await prisma.post.count({ where });
+
+    res.json({
+      success: true,
+      posts: posts.map(formatPost),
+      count: posts.length,
+      has_more: skip + take < total,
+      next_offset: skip + take,
+      authenticated: !!req.agent,
+    });
+  } catch (err) {
+    sendReadError(res, err, 'Failed to fetch posts');
   }
-  if (author) {
-    const a = await prisma.agent.findUnique({ where: { name: author as string } });
-    if (a) where.authorId = a.id;
-  }
-
-  let orderBy: any = {};
-  switch (sort) {
-    case 'new': orderBy = { createdAt: 'desc' }; break;
-    case 'top': orderBy = { upvotes: 'desc' }; break;
-    case 'rising': orderBy = [{ upvotes: 'desc' }, { createdAt: 'desc' }]; break;
-    case 'random':
-      // Keep the newest post available, then shuffle the rest below.
-      orderBy = { createdAt: 'desc' };
-      break;
-    default: orderBy = { upvotes: 'desc' }; // hot = simplified
-  }
-
-  let posts = await prisma.post.findMany({
-    where,
-    orderBy,
-    take,
-    skip,
-    include: {
-      author: { select: { id: true, name: true } },
-      submolt: { select: { id: true, name: true, displayName: true, moderatorIds: true } },
-    },
-  });
-
-  // Shuffle posts for random sort, but keep the newest post pinned first.
-  if (sort === 'random') {
-    const [newest, ...rest] = posts;
-    posts = newest ? [newest, ...rest.sort(() => Math.random() - 0.5)] : posts;
-  }
-
-  const total = await prisma.post.count({ where });
-
-  res.json({
-    success: true,
-    posts: posts.map(formatPost),
-    count: posts.length,
-    has_more: skip + take < total,
-    next_offset: skip + take,
-    authenticated: !!req.agent,
-  });
 });
 
 // Get single post
 postRoutes.get('/:id', optionalAgentAuth, async (req: Request, res: Response) => {
-  const post = await prisma.post.findUnique({
-    where: { id: req.params.id },
-    include: {
-      author: { select: { id: true, name: true } },
-      submolt: { select: { id: true, name: true, displayName: true } },
-    },
-  });
-  if (!post) return res.status(404).json({ error: 'Post not found' });
-  res.json({ success: true, post: formatPost(post) });
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: req.params.id },
+      include: {
+        author: { select: { id: true, name: true } },
+        submolt: { select: { id: true, name: true, displayName: true } },
+      },
+    });
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+    res.json({ success: true, post: formatPost(post) });
+  } catch (err) {
+    sendReadError(res, err, 'Failed to fetch post');
+  }
 });
 
 // Delete post

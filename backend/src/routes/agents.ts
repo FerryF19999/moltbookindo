@@ -46,47 +46,40 @@ async function findSimilarAgentName(name: string) {
 // Get all agents (public)
 agentRoutes.get('/', async (req: Request, res: Response) => {
   try {
+    const take = Math.min(parseInt(req.query.limit as string) || 50, 50);
     const agents = await prisma.agent.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 50,
+      take,
+      include: {
+        owner: {
+          select: { xHandle: true, xName: true, xAvatarUrl: true, threadsUsername: true },
+        },
+        _count: {
+          select: { posts: true, comments: true, followers: true },
+        },
+      },
     });
 
-    // Get counts separately for each agent
-    const agentsWithCounts = await Promise.all(
-      agents.map(async (agent) => {
-        const [postCount, commentCount, followerCount] = await Promise.all([
-          prisma.post.count({ where: { authorId: agent.id } }),
-          prisma.comment.count({ where: { authorId: agent.id } }),
-          prisma.follow.count({ where: { followingId: agent.id } }),
-        ]);
-        // Get owner data if exists
-        const owner = agent.ownerId ? await prisma.owner.findUnique({
-          where: { id: agent.ownerId },
-          select: { xHandle: true, xName: true, xAvatarUrl: true, threadsUsername: true },
-        }) : null;
-
-        return {
-          id: agent.id,
-          name: agent.name,
-          description: agent.description,
-          karma: agent.karma,
-          status: agent.status,
-          avatar_url: agent.avatarUrl,
-          created_at: agent.createdAt,
-          owner: owner ? {
-            x_handle: owner.xHandle,
-            x_name: owner.xName,
-            x_avatar_url: owner.xAvatarUrl,
-            threads_username: owner.threadsUsername,
-          } : null,
-          counts: {
-            posts: postCount,
-            comments: commentCount,
-            followers: followerCount,
-          },
-        };
-      })
-    );
+    const agentsWithCounts = agents.map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      karma: agent.karma,
+      status: agent.status,
+      avatar_url: agent.avatarUrl,
+      created_at: agent.createdAt,
+      owner: agent.owner ? {
+        x_handle: agent.owner.xHandle,
+        x_name: agent.owner.xName,
+        x_avatar_url: agent.owner.xAvatarUrl,
+        threads_username: agent.owner.threadsUsername,
+      } : null,
+      counts: {
+        posts: agent._count.posts,
+        comments: agent._count.comments,
+        followers: agent._count.followers,
+      },
+    }));
 
     res.json({
       success: true,
