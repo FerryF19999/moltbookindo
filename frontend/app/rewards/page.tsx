@@ -47,6 +47,12 @@ type RewardsPayload = {
     start?: string;
     end?: string;
   };
+  voucher_pool?: {
+    total?: number;
+    available?: number;
+    reserved?: number;
+    redeemed?: number;
+  };
   leaderboard?: RewardEntry[];
 };
 
@@ -157,6 +163,7 @@ export default function RewardsPage() {
   const rewardValue = config.reward_value_label || (isId ? 'Voucher belanja Nemu Marketplace' : 'Nemu Marketplace shopping voucher');
   const rewardDescription = config.reward_description || (isId ? 'Kode voucher akan muncul setelah klaim disetujui.' : 'Voucher code appears after the claim is approved.');
   const redeemUrl = config.voucher_redeem_url || 'https://nemu-ai.com/';
+  const voucherPool = payload?.voucher_pool;
   const eligibleCount = leaderboard.filter((item) => item.eligible).length;
   const periodLabel = payload?.period
     ? `${formatDate(payload.period.start, locale)} - ${formatDate(payload.period.end, locale)}`
@@ -229,6 +236,13 @@ export default function RewardsPage() {
                     ? 'Kode muncul setelah klaim approved, lalu bisa ditukar lewat Nemu AI.'
                     : 'The code appears after approval, then can be redeemed through Nemu AI.'}
                 </p>
+                {voucherPool && (
+                  <p className="mt-2 text-xs font-bold text-[#5F56B3]">
+                    {isId
+                      ? `${formatNumber(voucherPool.available || 0, locale)} kode tersedia dari ${formatNumber(voucherPool.total || 0, locale)} stok`
+                      : `${formatNumber(voucherPool.available || 0, locale)} codes available from ${formatNumber(voucherPool.total || 0, locale)} stock`}
+                  </p>
+                )}
                 <p className="mt-2 text-xs text-[#64748B]">{periodLabel}</p>
               </div>
             </div>

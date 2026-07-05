@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import { randomBytes } from 'crypto';
 import { prisma } from '../utils/prisma';
 import { agentAuth } from '../middleware/auth';
 
@@ -73,10 +72,6 @@ function rewardConfig() {
   };
 }
 
-function generateVoucherCode() {
-  return `OC-NEMU-${randomBytes(4).toString('hex').toUpperCase()}`;
-}
-
 function canShowVoucherCode(status: unknown) {
   return status === 'approved' || status === 'fulfilled';
 }
@@ -94,6 +89,70 @@ function rewardVoucherPayload(claim: any, config: ReturnType<typeof rewardConfig
         ? 'Kode voucher siap ditukar sesuai instruksi Nemu AI.'
         : 'Kode voucher akan muncul setelah klaim direview dan disetujui.',
   };
+}
+
+async function getVoucherPoolSummary(config: ReturnType<typeof rewardConfig>) {
+  const rows = await prisma.rewardVoucher.groupBy({
+    by: ['status'],
+    where: { rewardType: config.reward_type },
+    _count: { _all: true },
+  });
+
+  const counts = rows.reduce<Record<string, number>>((acc, row) => {
+    acc[row.status] = row._count._all;
+    return acc;
+  }, {});
+
+  return {
+    total: Object.values(counts).reduce((sum, value) => sum + value, 0),
+    available: counts.available || 0,
+    reserved: counts.reserved || 0,
+    redeemed: counts.redeemed || 0,
+  };
+}
+
+async function reserveVoucherForClaim(tx: any, claim: any, config: ReturnType<typeof rewardConfig>) {
+  if (claim.voucherCode) return claim;
+
+  const vouchers = await tx.$queryRaw<Array<{
+    code: string;
+    title: string | null;
+    description: string | null;
+    redeem_url: string | null;
+  }>>`
+    UPDATE reward_vouchers
+    SET
+      status = 'reserved',
+      assigned_claim_id = ${claim.id},
+      assigned_at = NOW(),
+      updated_at = NOW(),
+      title = COALESCE(title, ${config.reward_value_label}),
+      description = COALESCE(description, ${config.reward_description}),
+      redeem_url = COALESCE(redeem_url, ${config.voucher_redeem_url})
+    WHERE code = (
+      SELECT code
+      FROM reward_vouchers
+      WHERE reward_type = ${config.reward_type}
+        AND status = 'available'
+      ORDER BY created_at ASC
+      FOR UPDATE SKIP LOCKED
+      LIMIT 1
+    )
+    RETURNING code, title, description, redeem_url
+  `;
+
+  const voucher = vouchers[0];
+  if (!voucher) return claim;
+
+  return tx.rewardClaim.update({
+    where: { id: claim.id },
+    data: {
+      voucherCode: voucher.code,
+      voucherTitle: voucher.title || config.reward_value_label,
+      voucherDescription: voucher.description || config.reward_description,
+      voucherRedeemUrl: voucher.redeem_url || config.voucher_redeem_url,
+    },
+  });
 }
 
 function parseSocialPostUrl(value: unknown) {
@@ -237,11 +296,15 @@ rewardRoutes.get('/', async (_req: Request, res: Response) => {
   try {
     const config = rewardConfig();
     const { periodStart, periodEnd } = currentJakartaWeek();
-    const leaderboard = await getLeaderboard(periodStart, periodEnd, config.leaderboard_limit);
+    const [leaderboard, voucherPool] = await Promise.all([
+      getLeaderboard(periodStart, periodEnd, config.leaderboard_limit),
+      getVoucherPoolSummary(config),
+    ]);
 
     res.json({
       success: true,
       config,
+      voucher_pool: voucherPool,
       period: {
         timezone: 'Asia/Jakarta',
         start: periodStart.toISOString(),
@@ -353,48 +416,44 @@ rewardRoutes.post('/claim', agentAuth, async (req: Request, res: Response) => {
       });
     }
 
-    const claim = await prisma.rewardClaim.upsert({
-      where: {
-        agentId_periodStart_rewardType: {
+    const claimWithVoucherCode = await prisma.$transaction(async (tx) => {
+      const claim = await tx.rewardClaim.upsert({
+        where: {
+          agentId_periodStart_rewardType: {
+            agentId: req.agent.id,
+            periodStart,
+            rewardType: config.reward_type,
+          },
+        },
+        create: {
           agentId: req.agent.id,
           periodStart,
+          periodEnd,
           rewardType: config.reward_type,
+          rewardTitle: config.reward_title,
+          postCount,
+          socialPostUrl: socialPost.socialPostUrl,
+          socialPlatform: socialPost.socialPlatform,
+          socialPostKeepUntil,
+          voucherTitle: config.reward_value_label,
+          voucherDescription: config.reward_description,
+          voucherRedeemUrl: config.voucher_redeem_url,
+          note: typeof req.body?.note === 'string' ? req.body.note.slice(0, 500) : null,
         },
-      },
-      create: {
-        agentId: req.agent.id,
-        periodStart,
-        periodEnd,
-        rewardType: config.reward_type,
-        rewardTitle: config.reward_title,
-        postCount,
-        socialPostUrl: socialPost.socialPostUrl,
-        socialPlatform: socialPost.socialPlatform,
-        socialPostKeepUntil,
-        voucherCode: generateVoucherCode(),
-        voucherTitle: config.reward_value_label,
-        voucherDescription: config.reward_description,
-        voucherRedeemUrl: config.voucher_redeem_url,
-        note: typeof req.body?.note === 'string' ? req.body.note.slice(0, 500) : null,
-      },
-      update: {
-        postCount,
-        socialPostUrl: socialPost.socialPostUrl,
-        socialPlatform: socialPost.socialPlatform,
-        socialPostKeepUntil,
-        voucherTitle: config.reward_value_label,
-        voucherDescription: config.reward_description,
-        voucherRedeemUrl: config.voucher_redeem_url,
-        note: typeof req.body?.note === 'string' ? req.body.note.slice(0, 500) : undefined,
-      },
-    });
+        update: {
+          postCount,
+          socialPostUrl: socialPost.socialPostUrl,
+          socialPlatform: socialPost.socialPlatform,
+          socialPostKeepUntil,
+          voucherTitle: config.reward_value_label,
+          voucherDescription: config.reward_description,
+          voucherRedeemUrl: config.voucher_redeem_url,
+          note: typeof req.body?.note === 'string' ? req.body.note.slice(0, 500) : undefined,
+        },
+      });
 
-    const claimWithVoucherCode = claim.voucherCode
-      ? claim
-      : await prisma.rewardClaim.update({
-          where: { id: claim.id },
-          data: { voucherCode: generateVoucherCode() },
-        });
+      return reserveVoucherForClaim(tx, claim, config);
+    });
 
     res.status(201).json({
       success: true,

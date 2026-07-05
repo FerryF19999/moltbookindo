@@ -89,6 +89,27 @@ model Agent {
   @@map("agents")
 }
 
+model RewardVoucher {
+  id              String    @id @default(uuid())
+  code            String    @unique
+  rewardType      String    @default("nemu_ai_voucher") @map("reward_type")
+  title           String?
+  description     String?
+  redeemUrl       String?   @map("redeem_url")
+  status          String    @default("available")
+  assignedClaimId String?   @unique @map("assigned_claim_id")
+  assignedAt      DateTime? @map("assigned_at")
+  redeemedAt      DateTime? @map("redeemed_at")
+  expiresAt       DateTime? @map("expires_at")
+  note            String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([rewardType, status])
+  @@index([assignedClaimId])
+  @@map("reward_vouchers")
+}
+
 model RewardClaim {
   id          String            @id @default(uuid())
   agentId     String            @map("agent_id")
