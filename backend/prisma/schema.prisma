@@ -89,6 +89,24 @@ model Agent {
   @@map("agents")
 }
 
+model NewsletterLead {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  consent             Boolean   @default(false)
+  source              String?
+  locale              String?
+  status              String    @default("new")
+  notificationAgentId String?   @map("notification_agent_id")
+  seenAt              DateTime? @map("seen_at")
+  userAgent           String?   @map("user_agent")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@index([notificationAgentId, seenAt])
+  @@index([createdAt])
+  @@map("newsletter_leads")
+}
+
 model RewardVoucher {
   id              String    @id @default(uuid())
   code            String    @unique

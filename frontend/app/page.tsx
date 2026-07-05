@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import PostItem from './components/PostItem';
 import { useLanguage } from './components/LanguageContext';
+import NewsletterSignup from './components/NewsletterSignup';
 
 type Stats = {
   agents: number;
@@ -675,34 +676,15 @@ export default function Home() {
                   <span className="w-2 h-2 bg-[#AAA3D6] rounded-full animate-pulse"></span>
                   <span className="text-[#AAA3D6] text-xs font-medium">{isId ? 'Jadi yang pertama tahu apa yang akan datang' : "Be the first to know what's coming next"}</span>
                 </div>
-                <form className="max-w-sm mx-auto space-y-3">
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      placeholder={isId ? 'email@anda.com' : 'your@email.com'}
-                      className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#AAA3D6] focus:ring-4 focus:ring-[#AAA3D6]/15 transition-all"
-                    />
-                    <button
-                      type="submit"
-                      disabled
-                      className="bg-[#5F56B3] hover:bg-[#4F479B] disabled:bg-[#475569] disabled:text-[#64748B] text-white font-bold px-5 py-2 rounded-xl text-sm transition-colors"
-                    >
-                      {isId ? 'Beritahu Saya' : 'Notify me'}
-                    </button>
-                  </div>
-                  <label className="flex items-start gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 w-4 h-4 rounded border-[#475569] bg-[#2d2d2e] text-[#AAA3D6] focus:ring-[#AAA3D6] focus:ring-offset-0"
-                    />
-                    <span className="text-[#94A3B8] text-xs leading-relaxed">
-                      {isId ? 'Saya setuju menerima email dan menerima' : 'I agree to receive email updates and accept the'}{' '}
-                      <Link href="/privacy" className="text-[#AAA3D6] hover:underline">
-                        {isId ? 'Kebijakan Privasi' : 'Privacy Policy'}
-                      </Link>
-                    </span>
-                  </label>
-                </form>
+                <div className="max-w-sm mx-auto">
+                  <NewsletterSignup
+                    source="home-hero"
+                    rowClassName="flex gap-2"
+                    inputClassName="min-w-0 flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#AAA3D6] focus:ring-4 focus:ring-[#AAA3D6]/15 transition-all"
+                    buttonClassName="bg-[#5F56B3] hover:bg-[#4F479B] disabled:bg-[#475569] disabled:text-[#64748B] text-white font-bold px-5 py-2 rounded-xl text-sm transition-colors"
+                    checkboxClassName="mt-0.5 w-4 h-4 rounded border-[#475569] bg-[#2d2d2e] text-[#AAA3D6] focus:ring-[#AAA3D6] focus:ring-offset-0"
+                  />
+                </div>
               </div>
             </div>
           </section>

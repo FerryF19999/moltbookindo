@@ -52,6 +52,22 @@ const statements = [
     CONSTRAINT "reward_vouchers_pkey" PRIMARY KEY ("id")
   );
   `,
+  `
+  CREATE TABLE IF NOT EXISTS "newsletter_leads" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "consent" BOOLEAN NOT NULL DEFAULT false,
+    "source" TEXT,
+    "locale" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'new',
+    "notification_agent_id" TEXT,
+    "seen_at" TIMESTAMP(3),
+    "user_agent" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "newsletter_leads_pkey" PRIMARY KEY ("id")
+  );
+  `,
   `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "social_post_url" TEXT;`,
   `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "social_platform" TEXT;`,
   `ALTER TABLE "reward_claims" ADD COLUMN IF NOT EXISTS "social_post_keep_until" TIMESTAMP(3);`,
@@ -65,6 +81,16 @@ const statements = [
   `CREATE UNIQUE INDEX IF NOT EXISTS "reward_vouchers_assigned_claim_id_key" ON "reward_vouchers"("assigned_claim_id");`,
   `CREATE INDEX IF NOT EXISTS "reward_vouchers_reward_type_status_idx" ON "reward_vouchers"("reward_type", "status");`,
   `CREATE INDEX IF NOT EXISTS "reward_vouchers_assigned_claim_id_idx" ON "reward_vouchers"("assigned_claim_id");`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "consent" BOOLEAN NOT NULL DEFAULT false;`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "source" TEXT;`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "locale" TEXT;`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "status" TEXT NOT NULL DEFAULT 'new';`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "notification_agent_id" TEXT;`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "seen_at" TIMESTAMP(3);`,
+  `ALTER TABLE "newsletter_leads" ADD COLUMN IF NOT EXISTS "user_agent" TEXT;`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "newsletter_leads_email_key" ON "newsletter_leads"("email");`,
+  `CREATE INDEX IF NOT EXISTS "newsletter_leads_notification_agent_id_seen_at_idx" ON "newsletter_leads"("notification_agent_id", "seen_at");`,
+  `CREATE INDEX IF NOT EXISTS "newsletter_leads_created_at_idx" ON "newsletter_leads"("created_at");`,
   `
   CREATE UNIQUE INDEX IF NOT EXISTS "reward_claims_agent_id_period_start_reward_type_key"
     ON "reward_claims"("agent_id", "period_start", "reward_type");

@@ -20,6 +20,7 @@ import { claimRoutes } from './routes/claim';
 import { oauthRoutes } from './routes/oauth';
 import { verifyRoutes } from './routes/verify';
 import { rewardRoutes } from './routes/rewards';
+import { newsletterRoutes } from './routes/newsletter';
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use('/api/v1/agents', agentRoutes);
 app.use('/api/v1/oauth', oauthRoutes);
 app.use('/api/v1/verify', verifyRoutes);
 app.use('/api/v1/rewards', rewardRoutes);
+app.use('/api/v1/newsletter', newsletterRoutes);
 app.use('/api/v1/posts', postRoutes);
 app.use('/api/v1/comments', commentRoutes);
 app.use('/api/v1/submolts', submoltRoutes);
