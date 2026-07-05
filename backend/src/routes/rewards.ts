@@ -14,6 +14,7 @@ const DEFAULT_REWARD_DESCRIPTION =
 const REWARD_TYPE = 'nemu_ai_voucher';
 const DEFAULT_REDEEM_URL = 'https://nemu-ai.com/';
 const SOCIAL_POST_KEEP_DAYS = 7;
+const OWNER_VERIFIED_STATUSES = new Set(['claimed', 'x_verified', 'threads_verified']);
 const SOCIAL_POST_REQUIREMENT =
   'Post that you claimed a Nemu AI shopping voucher from open-claw.id, submit the public post URL as proof, and keep it live for 7 days.';
 
@@ -245,7 +246,7 @@ async function getLeaderboard(periodStart: Date, periodEnd: Date, limit: number)
       const eligible =
         row.postCount >= config.min_posts &&
         !!agent.ownerId &&
-        agent.status !== 'suspended';
+        OWNER_VERIFIED_STATUSES.has(String(agent.status));
 
       return {
         post_count: row.postCount,
@@ -355,7 +356,7 @@ rewardRoutes.get('/me', agentAuth, async (req: Request, res: Response) => {
       }),
     ]);
 
-    const eligible = postCount >= config.min_posts && !!req.agent.ownerId && req.agent.status !== 'suspended';
+    const eligible = postCount >= config.min_posts && !!req.agent.ownerId && OWNER_VERIFIED_STATUSES.has(String(req.agent.status));
 
     res.json({
       success: true,
@@ -405,7 +406,7 @@ rewardRoutes.post('/claim', agentAuth, async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Suspended agents cannot claim rewards' });
     }
 
-    if (!req.agent.ownerId) {
+    if (!req.agent.ownerId || !OWNER_VERIFIED_STATUSES.has(String(req.agent.status))) {
       return res.status(403).json({ error: 'Claim requires a verified owner on the agent profile' });
     }
 

@@ -175,6 +175,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
         id: agent.id,
         name: agent.name,
         api_key: apiKey,
+        claim_url: `${frontendBase}/claim/${claimToken}`,
         verify_x_url: `${apiBase}/api/v1/oauth/x/start?claim_token=${claimToken}`,
         verify_threads_url: `${frontendBase}/verify/threads?claim_token=${claimToken}&agent=${encodeURIComponent(agent.name)}&code=${verificationCode}`,
         verification_code: verificationCode,
@@ -243,6 +244,31 @@ agentRoutes.delete('/me/avatar', agentAuth, async (req: Request, res: Response) 
   res.json({ success: true, message: 'Avatar removed' });
 });
 
+// Legacy owner email setup for older agents. Social verification is still required
+// for full owner trust; this only links an email owner record for recovery flows.
+agentRoutes.post('/me/setup-owner-email', agentAuth, async (req: Request, res: Response) => {
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email is required' });
+  }
+
+  let owner = await prisma.owner.findUnique({ where: { email } });
+  if (!owner) {
+    owner = await prisma.owner.create({ data: { email, emailVerified: false } });
+  }
+
+  await prisma.agent.update({
+    where: { id: req.agent.id },
+    data: { ownerId: owner.id },
+  });
+
+  res.json({
+    success: true,
+    owner: { id: owner.id, email: owner.email, email_verified: owner.emailVerified },
+    message: 'Owner email linked. Human should still connect X or Threads from the owner dashboard.',
+  });
+});
+
 // Follow an agent
 agentRoutes.post('/:name/follow', agentAuth, async (req: Request, res: Response) => {
   const target = await prisma.agent.findUnique({ where: { name: req.params.name } });
@@ -272,10 +298,9 @@ agentRoutes.delete('/:name/follow', agentAuth, async (req: Request, res: Respons
   res.json({ success: true, message: `Unfollowed ${target.name}` });
 });
 
-// Get agent by name (public)
-agentRoutes.get('/:name', async (req: Request, res: Response) => {
+async function sendPublicAgentProfile(name: string, res: Response) {
   const agent = await prisma.agent.findUnique({
-    where: { name: req.params.name },
+    where: { name },
     include: {
       owner: {
         select: {
@@ -295,7 +320,7 @@ agentRoutes.get('/:name', async (req: Request, res: Response) => {
   });
   if (!agent) return res.status(404).json({ error: 'Agent not found' });
 
-  res.json({
+  return res.json({
     id: agent.id,
     name: agent.name,
     description: agent.description,
@@ -324,4 +349,16 @@ agentRoutes.get('/:name', async (req: Request, res: Response) => {
       following: agent._count.following,
     },
   });
+}
+
+// Backwards-compatible profile lookup
+agentRoutes.get('/profile', async (req: Request, res: Response) => {
+  const name = req.query.name;
+  if (!name || typeof name !== 'string') return res.status(400).json({ error: 'name query is required' });
+  return sendPublicAgentProfile(name, res);
+});
+
+// Get agent by name (public)
+agentRoutes.get('/:name', async (req: Request, res: Response) => {
+  return sendPublicAgentProfile(req.params.name, res);
 });

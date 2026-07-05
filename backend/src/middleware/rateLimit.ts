@@ -17,8 +17,8 @@ setInterval(() => {
 
 // Rate limit middleware factory
 export function createRateLimit(options: {
-  windowMs: number;
-  maxRequests: number;
+  windowMs: number | ((req: Request) => number);
+  maxRequests: number | ((req: Request) => number);
   keyPrefix: string;
   getKey?: (req: Request) => string | null;
 }) {
@@ -26,15 +26,17 @@ export function createRateLimit(options: {
     const scopedKey = options.getKey?.(req) || (req as any).agent?.id;
     if (!scopedKey) return next(); // Skip if no key can be resolved
 
+    const windowMs = typeof options.windowMs === 'function' ? options.windowMs(req) : options.windowMs;
+    const maxRequests = typeof options.maxRequests === 'function' ? options.maxRequests(req) : options.maxRequests;
     const key = `${options.keyPrefix}:${scopedKey}`;
     const now = Date.now();
 
     let data = rateStore.get(key);
     if (!data || data.resetTime < now) {
-      data = { count: 0, resetTime: now + options.windowMs };
+      data = { count: 0, resetTime: now + windowMs };
     }
 
-    if (data.count >= options.maxRequests) {
+    if (data.count >= maxRequests) {
       const retryAfter = Math.ceil((data.resetTime - now) / 1000);
       return res.status(429).json({
         success: false,
@@ -69,11 +71,28 @@ export const apiRateLimit = createRateLimit({
   getKey: getRequestIdentity,
 });
 
+function agentAgeMs(req: Request) {
+  const createdAt = (req as any).agent?.createdAt;
+  if (!createdAt) return Number.MAX_SAFE_INTEGER;
+  return Date.now() - new Date(createdAt).getTime();
+}
+
+function isNewAgent(req: Request) {
+  return agentAgeMs(req) < 24 * 60 * 60 * 1000;
+}
+
 // Post rate limit: 1 post per 30 minutes
 export const postRateLimit = createRateLimit({
-  windowMs: 30 * 60 * 1000,
+  windowMs: (req) => (isNewAgent(req) ? 2 * 60 * 60 * 1000 : 30 * 60 * 1000),
   maxRequests: 1,
   keyPrefix: 'post',
+});
+
+// Submolt creation: 1 per hour for established agents
+export const submoltCreateRateLimit = createRateLimit({
+  windowMs: 60 * 60 * 1000,
+  maxRequests: 1,
+  keyPrefix: 'submolt',
 });
 
 // Comment rate limit: 1 comment per 20 seconds, 50 per day
@@ -83,6 +102,8 @@ export const commentRateLimit = async (req: Request, res: Response, next: NextFu
 
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dailyLimit = isNewAgent(req) ? 20 : 50;
+  const cooldown = isNewAgent(req) ? 60 * 1000 : 20 * 1000;
 
   // Check daily limit
   const dailyCount = await prisma.comment.count({
@@ -92,7 +113,7 @@ export const commentRateLimit = async (req: Request, res: Response, next: NextFu
     },
   });
 
-  if (dailyCount >= 50) {
+  if (dailyCount >= dailyLimit) {
     return res.status(429).json({
       success: false,
       error: 'Daily comment limit exceeded',
@@ -109,7 +130,6 @@ export const commentRateLimit = async (req: Request, res: Response, next: NextFu
   if (recentComment) {
     const lastCommentTime = new Date(recentComment.createdAt).getTime();
     const elapsed = Date.now() - lastCommentTime;
-    const cooldown = 20 * 1000; // 20 seconds
 
     if (elapsed < cooldown) {
       const retryAfter = Math.ceil((cooldown - elapsed) / 1000);
@@ -117,7 +137,7 @@ export const commentRateLimit = async (req: Request, res: Response, next: NextFu
         success: false,
         error: 'Comment cooldown active',
         retry_after_seconds: retryAfter,
-        daily_remaining: 50 - dailyCount,
+        daily_remaining: dailyLimit - dailyCount,
       });
     }
   }

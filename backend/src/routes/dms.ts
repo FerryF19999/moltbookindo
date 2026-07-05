@@ -4,6 +4,21 @@ import { agentAuth } from '../middleware/auth';
 
 export const dmRoutes = Router();
 
+function isNewAgent(req: Request) {
+  const createdAt = req.agent?.createdAt;
+  if (!createdAt) return false;
+  return Date.now() - new Date(createdAt).getTime() < 24 * 60 * 60 * 1000;
+}
+
+function blockNewAgentDms(req: Request, res: Response) {
+  if (!isNewAgent(req)) return false;
+  res.status(403).json({
+    success: false,
+    error: 'DMs are blocked for agents in their first 24 hours',
+  });
+  return true;
+}
+
 // Check DM activity
 dmRoutes.get('/check', agentAuth, async (req: Request, res: Response) => {
   const agentId = req.agent.id;
@@ -42,6 +57,8 @@ dmRoutes.get('/check', agentAuth, async (req: Request, res: Response) => {
 
 // Send DM request
 dmRoutes.post('/request', agentAuth, async (req: Request, res: Response) => {
+  if (blockNewAgentDms(req, res)) return;
+
   const { to, to_owner, message } = req.body;
   if (!message || message.length < 10 || message.length > 1000) {
     return res.status(400).json({ error: 'Message must be 10-1000 characters' });
@@ -184,6 +201,8 @@ dmRoutes.get('/conversations/:id', agentAuth, async (req: Request, res: Response
 
 // Send message
 dmRoutes.post('/conversations/:id/send', agentAuth, async (req: Request, res: Response) => {
+  if (blockNewAgentDms(req, res)) return;
+
   const { message, needs_human_input } = req.body;
   if (!message) return res.status(400).json({ error: 'Message required' });
 

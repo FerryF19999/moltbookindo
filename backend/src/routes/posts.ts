@@ -7,6 +7,18 @@ import { buildPostSeoMetadata } from '../utils/seo';
 
 export const postRoutes = Router();
 
+let submoltSettingsReady = false;
+
+async function ensureSubmoltSettingsColumns() {
+  if (submoltSettingsReady) return;
+  await prisma.$executeRawUnsafe(`ALTER TABLE submolts ADD COLUMN IF NOT EXISTS allow_crypto BOOLEAN DEFAULT false`);
+  submoltSettingsReady = true;
+}
+
+function containsCryptoTopic(input: string) {
+  return /\b(crypto|cryptocurrency|bitcoin|btc|ethereum|eth|blockchain|nft|defi|web3|memecoin|airdrop)\b/i.test(input);
+}
+
 function sendReadError(res: Response, err: any, fallback: string) {
   if (err?.code === 'P2037') {
     return res.status(503).json({ error: 'Database is busy. Please retry shortly.' });
@@ -26,6 +38,19 @@ postRoutes.post('/', agentAuth, postRateLimit, async (req: Request, res: Respons
 
     const submoltRecord = await prisma.submolt.findUnique({ where: { name: submolt } });
     if (!submoltRecord) return res.status(404).json({ error: 'Submolt not found' });
+
+    await ensureSubmoltSettingsColumns();
+    const settings = await prisma.$queryRaw<Array<{ allow_crypto: boolean | null }>>`
+      SELECT allow_crypto FROM submolts WHERE id = ${submoltRecord.id} LIMIT 1
+    `;
+    const allowCrypto = Boolean(settings[0]?.allow_crypto);
+    const combinedText = `${title || ''} ${content || ''} ${url || ''}`;
+    if (!allowCrypto && containsCryptoTopic(combinedText)) {
+      return res.status(400).json({
+        error: 'Crypto-related posts are not allowed in this submolt',
+        hint: 'Post in a submolt with allow_crypto enabled, or remove crypto-related content.',
+      });
+    }
 
     const createdPost = await prisma.post.create({
       data: {
@@ -188,11 +213,21 @@ postRoutes.post('/:id/pin', agentAuth, async (req: Request, res: Response) => {
     });
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
-    // Check if agent is moderator of the submolt or is the post author
+    // Check if agent is moderator/owner of the submolt or is the post author
     const isMod = post.submolt.moderatorIds?.includes(req.agent.id);
-    const isOwner = post.authorId === req.agent.id;
-    if (!isMod && !isOwner) {
+    const isSubmoltOwner = post.submolt.createdById === req.agent.id;
+    const isPostAuthor = post.authorId === req.agent.id;
+    if (!isMod && !isSubmoltOwner && !isPostAuthor) {
       return res.status(403).json({ error: 'Not authorized to pin this post' });
+    }
+
+    if (!post.pinnedAt) {
+      const pinnedCount = await prisma.post.count({
+        where: { submoltId: post.submoltId, pinnedAt: { not: null } },
+      });
+      if (pinnedCount >= 3) {
+        return res.status(400).json({ error: 'A submolt can have at most 3 pinned posts' });
+      }
     }
 
     await prisma.post.update({
@@ -216,8 +251,9 @@ postRoutes.delete('/:id/pin', agentAuth, async (req: Request, res: Response) => 
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
     const isMod = post.submolt.moderatorIds?.includes(req.agent.id);
-    const isOwner = post.authorId === req.agent.id;
-    if (!isMod && !isOwner) {
+    const isSubmoltOwner = post.submolt.createdById === req.agent.id;
+    const isPostAuthor = post.authorId === req.agent.id;
+    if (!isMod && !isSubmoltOwner && !isPostAuthor) {
       return res.status(403).json({ error: 'Not authorized to unpin this post' });
     }
 
