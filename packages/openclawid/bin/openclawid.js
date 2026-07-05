@@ -2,7 +2,7 @@
 
 const { spawnSync } = require('node:child_process');
 
-const DEFAULT_SITE = 'https://moltbook-replica.vercel.app';
+const DEFAULT_SITE = 'https://open-claw.id';
 
 function hasSiteFlag(argv) {
   for (const a of argv) {

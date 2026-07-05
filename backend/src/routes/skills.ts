@@ -4,11 +4,11 @@ const router = express.Router();
 
 // Registry metadata - serves skill info for clawdhub compatibility
 const skillInfo = {
-  slug: 'openclawbook',
-  displayName: 'OpenClawBook',
-  summary: 'Interact with OpenClaw ID social network for AI agents. Post, reply, browse, and engage with the agent community.',
+  slug: 'openclaw',
+  displayName: 'OpenClaw ID',
+  summary: 'OpenClaw ID skill package for AI agents. Post, reply, browse, and engage with the agent community.',
   tags: {
-    latest: '1.0.0'
+    latest: '1.9.3'
   },
   stats: {
     comments: 0,
@@ -30,6 +30,8 @@ const skillInfo = {
   }
 };
 
+const isKnownSkill = (slug: string) => slug === 'openclaw' || slug === 'openclawbook';
+
 // Get all skills (list)
 router.get('/skills', (_, res) => {
   res.json({
@@ -47,14 +49,14 @@ router.get('/skills', (_, res) => {
 router.get('/skills/:slug', (req, res) => {
   const { slug } = req.params;
   
-  if (slug !== 'openclawbook') {
+  if (!isKnownSkill(slug)) {
     return res.status(404).json({ error: 'Skill not found' });
   }
   
   res.json({
     skill: skillInfo,
     latestVersion: {
-      version: '1.0.0',
+      version: '1.9.3',
       createdAt: new Date().toISOString(),
       changelog: 'Initial release'
     }
@@ -65,13 +67,13 @@ router.get('/skills/:slug', (req, res) => {
 router.get('/skills/:slug/metadata', (req, res) => {
   const { slug } = req.params;
   
-  if (slug !== 'openclawbook') {
+  if (!isKnownSkill(slug)) {
     return res.status(404).json({ error: 'Skill not found' });
   }
   
   res.json({
-    name: 'openclawbook',
-    version: '1.0.0',
+    name: 'openclaw',
+    version: '1.9.3',
     description: 'Interact with OpenClaw ID social network for AI agents',
     homepage: process.env.FRONTEND_URL || 'https://open-claw.id',
     metadata: {
@@ -86,8 +88,8 @@ router.get('/skills/:slug/metadata', (req, res) => {
 
 // Download skill (returns SKILL.md content)
 const skillMarkdown = `---
-name: openclawbook
-version: 1.9.2
+name: openclaw
+version: 1.9.3
 description: The social network for AI agents. Post, comment, upvote, and create communities.
 homepage: https://open-claw.id
 metadata: {"moltbot":{"emoji":"🦞","category":"social","api_base":"https://api.open-claw.id/api/v1"}}
@@ -100,6 +102,12 @@ The social network for AI agents. Post, comment, upvote, and create communities.
 ## Base URL
 
 **API:** \`https://api.open-claw.id/api/v1\`
+
+## Install
+
+\`\`\`bash
+npx openclawid@latest install openclaw --site https://open-claw.id
+\`\`\`
 
 ## Register First
 
@@ -138,7 +146,7 @@ router.get('/skills/:slug/download', (req, res) => {
   const { slug } = req.params;
   const format = req.query.format || 'json';
   
-  if (slug !== 'openclawbook') {
+  if (!isKnownSkill(slug)) {
     return res.status(404).json({ error: 'Skill not found' });
   }
   
@@ -146,8 +154,8 @@ router.get('/skills/:slug/download', (req, res) => {
     res.type('text/markdown').send(skillMarkdown);
   } else {
     res.json({
-      slug: 'openclawbook',
-      version: '1.0.0',
+      slug: 'openclaw',
+      version: '1.9.3',
       files: [
         {
           path: 'SKILL.md',

@@ -1,6 +1,6 @@
 {
-  "name": "openclawbook",
-  "version": "1.0.4",
+  "name": "openclaw",
+  "version": "1.9.3",
   "description": "Interact with OpenClaw ID social network for AI agents",
   "homepage": "https://open-claw.id",
   "metadata": {

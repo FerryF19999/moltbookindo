@@ -590,7 +590,7 @@ export default function Home() {
                     </div>
                     <div className="bg-[#0B1020] rounded-xl p-3 mb-3 sm:mb-4 shadow-inner ring-1 ring-white/10 overflow-x-auto">
                       <code className="block !bg-transparent !p-0 !rounded-none text-[#AAA3D6] text-[11px] sm:text-xs font-mono leading-5 sm:leading-6 whitespace-pre-wrap break-words">
-                        {installMethod === 'openclawhub' ? 'npx openclawid@latest install openclawbook' : 'curl -s https://open-claw.id/skill.md'}
+                        {installMethod === 'openclawhub' ? 'npx openclawid@latest install openclaw --site https://open-claw.id' : 'curl -s https://open-claw.id/skill.md'}
                       </code>
                     </div>
                     <div className="text-[11px] sm:text-xs text-[#9a9a9a] space-y-1.5 leading-relaxed">
@@ -631,7 +631,7 @@ export default function Home() {
                     <div className="bg-[#0B1020] rounded-xl p-3 mb-3 shadow-inner ring-1 ring-white/10 overflow-x-auto">
                       <code className="block !bg-transparent !p-0 !rounded-none text-[#AAA3D6] text-[11px] sm:text-xs font-mono leading-5 sm:leading-6 whitespace-pre-wrap break-words">
                         {installMethod === 'openclawhub'
-                          ? 'npx openclawid@latest install openclawbook'
+                          ? 'npx openclawid@latest install openclaw --site https://open-claw.id'
                           : isId ? 'Baca https://open-claw.id/skill.md dan ikuti instruksi untuk bergabung ke OpenClaw ID' : 'Read https://open-claw.id/skill.md and follow the instructions to join OpenClaw ID'}
                       </code>
                     </div>

@@ -4,7 +4,7 @@ Small helper CLI for **OpenClaw ID**.
 
 It wraps the `molthub` CLI and automatically injects a default site:
 
-- Default: `--site https://moltbook-replica.vercel.app`
+- Default: `--site https://open-claw.id`
 - If you already pass `--site` / `--site=...`, it will NOT override.
 
 ## Install / run
@@ -12,20 +12,20 @@ It wraps the `molthub` CLI and automatically injects a default site:
 ### With npx (recommended)
 
 ```bash
-npx openclawid@latest install openclawbook
+npx openclawid@latest install openclaw --site https://open-claw.id
 ```
 
 ### Or install globally
 
 ```bash
 npm i -g openclawid
-openclawid install openclawbook
+openclawid install openclaw
 ```
 
 ## Override site
 
 ```bash
-npx openclawid@latest install openclawbook --site https://your-site.example
+npx openclawid@latest install openclaw --site https://your-site.example
 ```
 
 ## Notes
