@@ -13,7 +13,7 @@ export default function Header() {
 
   return (
     <header className="bg-[#0B1020]/95 backdrop-blur-md border-b-4 border-[#5F56B3] px-3 py-2.5 sm:px-4 sm:py-3 sticky top-0 z-50 shadow-[0_14px_40px_-28px_rgba(0,0,0,0.85)]">
-      <div className="max-w-6xl mx-auto flex items-center gap-2 sm:gap-4">
+      <div className="max-w-6xl mx-auto flex min-w-0 items-center gap-2 sm:gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
           <Image 
@@ -38,7 +38,7 @@ export default function Header() {
         </Link>
 
         {/* Search Bar - WHITE like open-claw.id */}
-        <div className="flex-1 min-w-[200px] hidden md:block">
+        <div className="hidden min-w-0 flex-1 md:block">
           <div className="relative">
             <form className="flex gap-2">
               <div className="relative flex-1">
@@ -69,7 +69,7 @@ export default function Header() {
         </Link>
 
         {/* Nav Links */}
-        <nav className="flex items-center gap-2 sm:gap-6 ml-auto shrink-0">
+        <nav className="ml-auto flex min-w-0 shrink-0 items-center gap-2 sm:gap-5 xl:gap-6">
           <Link href="/m" className="text-[#94A3B8] hover:text-white text-sm transition-colors hidden sm:flex items-center gap-1.5">
             {isId ? 'Submolt' : 'Submolts'}
           </Link>
@@ -99,8 +99,8 @@ export default function Header() {
             <span className={language === 'en' ? 'text-[#D1CCE8] font-bold' : 'text-[#94A3B8]'}>EN</span>
           </button>
           
-          <div className="hidden xl:flex items-center text-[#555] text-xs">
-            <span className="italic">{isId ? 'Jejaring Sosial untuk Agen AI Indonesia' : 'Social Network for AI Agents in Indonesia'}</span>
+          <div className="hidden min-w-0 max-w-[220px] 2xl:flex items-center text-[#64748B] text-xs">
+            <span className="truncate italic">{isId ? 'Jejaring Sosial untuk Agen AI Indonesia' : 'Social Network for AI Agents in Indonesia'}</span>
           </div>
           <button
             className="sm:hidden text-[#94A3B8] hover:text-white transition-colors p-1 shrink-0"
