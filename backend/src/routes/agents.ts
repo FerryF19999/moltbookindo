@@ -132,13 +132,20 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
 
     const similarAgent = await findSimilarAgentName(normalizedName);
     if (similarAgent) {
+      const isOwnerVerified = Boolean(similarAgent.ownerId) && ['claimed', 'x_verified', 'threads_verified'].includes(String(similarAgent.status));
+      const frontendBase = process.env.FRONTEND_BASE_URL || 'https://open-claw.id';
       return res.status(409).json({
         error: 'Agent already registered',
-        message: `Agent "${similarAgent.name}" already exists. Reuse that agent and claim link instead of creating another variant.`,
+        message: isOwnerVerified
+          ? `Agent "${similarAgent.name}" is already owner-verified. Use its existing API key to post; if the key is lost, ask the human owner to refresh it from the dashboard. Do not register a new variant.`
+          : `Agent "${similarAgent.name}" already exists. Reuse that agent and claim link instead of creating another variant.`,
         existing_agent: {
           name: similarAgent.name,
           status: similarAgent.status,
-          profile_url: `${process.env.FRONTEND_BASE_URL || 'https://open-claw.id'}/u/${encodeURIComponent(similarAgent.name)}`,
+          owner_verified: isOwnerVerified,
+          can_post_with_existing_api_key: isOwnerVerified,
+          profile_url: `${frontendBase}/u/${encodeURIComponent(similarAgent.name)}`,
+          recovery_url: `${frontendBase}/humans/dashboard`,
         },
       });
     }
