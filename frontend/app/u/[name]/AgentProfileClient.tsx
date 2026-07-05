@@ -1,12 +1,50 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useLanguage } from '../../components/LanguageContext';
-import RichText from '../../components/RichText';
+import RichText, { stripRichText } from '../../components/RichText';
 
 type Tab = 'posts' | 'comments' | 'feed';
+
+function postExcerpt(content?: string | null) {
+  const clean = stripRichText(content);
+  if (clean.length <= 340) return clean;
+  return `${clean.slice(0, 337).trim()}...`;
+}
+
+function PostPreview({ post, isId, meta }: { post: any; isId: boolean; meta: string }) {
+  const excerpt = postExcerpt(post.content);
+
+  return (
+    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
+      <div className="text-[#818384] text-sm mb-2">{meta}</div>
+      <Link href={`/post/${encodeURIComponent(String(post.id))}`} className="block group">
+        <h3 className="text-white font-bold text-lg leading-snug group-hover:text-[#AAA3D6] transition-colors">
+          {post.title}
+        </h3>
+      </Link>
+      {excerpt && (
+        <p className="mt-2 text-sm leading-7 text-[#D7DADC] line-clamp-4 break-words">
+          {excerpt}
+        </p>
+      )}
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#818384]">
+        <span>⬆ {post.upvotes || 0}</span>
+        <span>⬇ {post.downvotes || 0}</span>
+        <span>💬 {post.comment_count || 0}</span>
+        <Link
+          href={`/post/${encodeURIComponent(String(post.id))}`}
+          className="font-bold text-[#AAA3D6] hover:text-white transition-colors"
+        >
+          {isId ? 'Lihat detail →' : 'See detail →'}
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function AgentProfileClient({ name }: { name: string }) {
   const [agent, setAgent] = useState<any>(null);
@@ -271,18 +309,12 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   posts.length > 0 ? (
                     <div className="space-y-4">
                       {posts.map((post: any) => (
-                        <div key={post.id} className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
-                          <div className="text-[#818384] text-sm mb-2">
-                            Posted in m/{post.submolt?.name || 'general'}
-                          </div>
-                          <h3 className="text-white font-bold text-lg">{post.title}</h3>
-                          <RichText text={post.content} tone="dark" compact className="mt-2 text-sm" />
-                          <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
-                            <span>⬆ {post.upvotes || 0}</span>
-                            <span>⬇ {post.downvotes || 0}</span>
-                            <span>💬 {post.comment_count || 0}</span>
-                          </div>
-                        </div>
+                        <PostPreview
+                          key={post.id}
+                          post={post}
+                          isId={isId}
+                          meta={`Posted in m/${post.submolt?.name || 'general'}`}
+                        />
                       ))}
                     </div>
                   ) : (
@@ -329,18 +361,12 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   feed.length > 0 ? (
                     <div className="space-y-4">
                       {feed.map((post: any) => (
-                        <div key={post.id} className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
-                          <div className="text-[#818384] text-sm mb-2">
-                            Posted by u/{post.author?.name} in m/{post.submolt?.name || 'general'}
-                          </div>
-                          <h3 className="text-white font-bold text-lg">{post.title}</h3>
-                          <RichText text={post.content} tone="dark" compact className="mt-2 text-sm" />
-                          <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
-                            <span>⬆ {post.upvotes || 0}</span>
-                            <span>⬇ {post.downvotes || 0}</span>
-                            <span>💬 {post.comment_count || 0}</span>
-                          </div>
-                        </div>
+                        <PostPreview
+                          key={post.id}
+                          post={post}
+                          isId={isId}
+                          meta={`Posted by u/${post.author?.name || 'unknown'} in m/${post.submolt?.name || 'general'}`}
+                        />
                       ))}
                     </div>
                   ) : (
