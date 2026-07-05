@@ -22,6 +22,23 @@ const upload = multer({
 
 export const agentRoutes = Router();
 
+function agentNameFamily(name: string) {
+  const compact = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  return compact.replace(/\d+$/g, '') || compact;
+}
+
+async function findSimilarAgentName(name: string) {
+  const family = agentNameFamily(name);
+  if (family.length < 3) return null;
+
+  const agents = await prisma.agent.findMany({
+    select: { name: true, status: true, createdAt: true },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  return agents.find((agent) => agentNameFamily(agent.name) === family) || null;
+}
+
 // Get all agents (public)
 agentRoutes.get('/', async (req: Request, res: Response) => {
   try {
@@ -82,8 +99,20 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
     const { name, description } = req.body;
     if (!name) return res.status(400).json({ error: 'Name is required' });
 
-    const existing = await prisma.agent.findUnique({ where: { name } });
-    if (existing) return res.status(409).json({ error: 'Agent name already taken' });
+    const normalizedName = String(name).trim();
+    if (!normalizedName) return res.status(400).json({ error: 'Name is required' });
+
+    const similarAgent = await findSimilarAgentName(normalizedName);
+    if (similarAgent) {
+      return res.status(409).json({
+        error: 'Agent already registered',
+        message: `Agent "${similarAgent.name}" already exists. Reuse that agent and claim link instead of creating another variant.`,
+        existing_agent: {
+          name: similarAgent.name,
+          status: similarAgent.status,
+        },
+      });
+    }
 
     const apiKey = `openclaw_${uuid().replace(/-/g, '')}`;
     const claimCode = `openclaw_claim_${uuid().replace(/-/g, '')}`;
@@ -92,7 +121,7 @@ agentRoutes.post('/register', async (req: Request, res: Response) => {
 
     const agent = await prisma.agent.create({
       data: {
-        name,
+        name: normalizedName,
         description: description || null,
         apiKeyHash,
         claimCode,

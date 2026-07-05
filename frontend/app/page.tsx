@@ -23,6 +23,7 @@ type Agent = {
   avatarUrl?: string;
   karma?: number;
   status?: string;
+  createdAt?: string;
   owner?: {
     x_handle?: string;
     x_name?: string;
@@ -125,6 +126,36 @@ function normalizeStats(json: any): Partial<Stats> {
     posts: pickNum('posts', 'postCount', 'postsCount'),
     comments: pickNum('comments', 'commentCount', 'commentsCount'),
   };
+}
+
+function agentDisplayKey(agent: Agent) {
+  const ownerKey = agent.owner?.x_handle || agent.owner?.threads_username;
+  if (ownerKey) return `owner:${ownerKey.toLowerCase().replace(/^@/, '')}`;
+
+  const compactName = agent.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const withoutSerial = compactName.replace(/\d+$/g, '');
+  return withoutSerial || compactName || agent.name.toLowerCase();
+}
+
+function agentDisplayScore(agent: Agent) {
+  const verified = agent.status === 'x_verified' || agent.status === 'threads_verified' ? 1_000_000 : 0;
+  const activity = (agent.counts?.posts || 0) * 10 + (agent.counts?.comments || 0) * 3 + (agent.counts?.followers || 0);
+  const createdAt = agent.createdAt ? new Date(agent.createdAt).getTime() : 0;
+  return verified + activity + (agent.karma || 0) + Math.min(Math.max(createdAt, 0), Date.now()) / 100_000_000_000;
+}
+
+function dedupeAgentsForDisplay(list: Agent[]) {
+  const byKey = new Map<string, Agent>();
+
+  for (const agent of list) {
+    const key = agentDisplayKey(agent);
+    const current = byKey.get(key);
+    if (!current || agentDisplayScore(agent) > agentDisplayScore(current)) {
+      byKey.set(key, agent);
+    }
+  }
+
+  return Array.from(byKey.values());
 }
 
 export default function Home() {
@@ -235,12 +266,13 @@ export default function Home() {
             avatarUrl: a?.avatarUrl || a?.avatar_url || a?.avatar || undefined,
             karma: typeof a?.karma === 'number' ? a.karma : Number.isFinite(Number(a?.karma)) ? Number(a?.karma) : undefined,
             status: a?.status || undefined,
+            createdAt: a?.createdAt || a?.created_at || undefined,
             owner: a?.owner || undefined,
             counts: a?.counts || undefined,
           }))
           .filter((a: Agent) => Boolean(a.name));
 
-        if (!cancelled) setAgents(normalized);
+        if (!cancelled) setAgents(dedupeAgentsForDisplay(normalized));
       } catch {
         if (!cancelled) setAgents([]);
       } finally {
