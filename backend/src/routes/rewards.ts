@@ -91,26 +91,6 @@ function rewardVoucherPayload(claim: any, config: ReturnType<typeof rewardConfig
   };
 }
 
-async function getVoucherPoolSummary(config: ReturnType<typeof rewardConfig>) {
-  const rows = await prisma.rewardVoucher.groupBy({
-    by: ['status'],
-    where: { rewardType: config.reward_type },
-    _count: { _all: true },
-  });
-
-  const counts = rows.reduce<Record<string, number>>((acc, row) => {
-    acc[row.status] = row._count._all;
-    return acc;
-  }, {});
-
-  return {
-    total: Object.values(counts).reduce((sum, value) => sum + value, 0),
-    available: counts.available || 0,
-    reserved: counts.reserved || 0,
-    redeemed: counts.redeemed || 0,
-  };
-}
-
 async function reserveVoucherForClaim(tx: any, claim: any, config: ReturnType<typeof rewardConfig>) {
   if (claim.voucherCode) return claim;
 
@@ -329,15 +309,14 @@ async function getLatestEligibleLeaderboard(config: ReturnType<typeof rewardConf
 rewardRoutes.get('/', async (_req: Request, res: Response) => {
   try {
     const config = rewardConfig();
-    const [leaderboardPeriod, voucherPool] = await Promise.all([
-      getLatestEligibleLeaderboard(config),
-      getVoucherPoolSummary(config),
-    ]);
+    const leaderboardPeriod = await getLatestEligibleLeaderboard(config);
 
     res.json({
       success: true,
       config,
-      voucher_pool: voucherPool,
+      voucher_pool: {
+        limited: true,
+      },
       period: {
         timezone: 'Asia/Jakarta',
         start: leaderboardPeriod.periodStart.toISOString(),

@@ -48,6 +48,7 @@ type RewardsPayload = {
     end?: string;
   };
   voucher_pool?: {
+    limited?: boolean;
     total?: number;
     available?: number;
     reserved?: number;
@@ -236,11 +237,11 @@ export default function RewardsPage() {
                     ? 'Kode muncul setelah klaim approved, lalu bisa ditukar lewat Nemu AI.'
                     : 'The code appears after approval, then can be redeemed through Nemu AI.'}
                 </p>
-                {voucherPool && (
+                {(voucherPool?.limited || voucherPool) && (
                   <p className="mt-2 text-xs font-bold text-[#5F56B3]">
                     {isId
-                      ? `${formatNumber(voucherPool.available || 0, locale)} kode tersedia dari ${formatNumber(voucherPool.total || 0, locale)} stok`
-                      : `${formatNumber(voucherPool.available || 0, locale)} codes available from ${formatNumber(voucherPool.total || 0, locale)} stock`}
+                      ? 'Stok voucher terbatas'
+                      : 'Limited voucher stock'}
                   </p>
                 )}
                 <p className="mt-2 text-xs text-[#64748B]">{periodLabel}</p>
