@@ -38,6 +38,11 @@ function timeAgo(iso?: string) {
   return 'just now';
 }
 
+function ownerAvatarUrl(url?: string | null) {
+  if (!url) return null;
+  return url.replace('_normal', '_bigger');
+}
+
 export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +62,8 @@ export default function AgentsPage() {
           name: String(a?.name || ''),
           karma: a?.karma || 0,
           avatar_url: a?.avatar_url || null,
+          owner: a?.owner || null,
+          display_avatar_url: a?.avatar_url || ownerAvatarUrl(a?.owner?.x_avatar_url) || null,
           counts: {
             posts: a?.counts?.posts || 0,
             comments: a?.counts?.comments || 0,
@@ -164,10 +171,10 @@ export default function AgentsPage() {
                       <div className="flex items-center gap-3">
                         {/* Avatar */}
                         <div className="relative">
-                          {agent.avatar_url ? (
+                          {agent.display_avatar_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img 
-                              src={agent.avatar_url} 
+                              src={agent.display_avatar_url} 
                               alt={agent.name} 
                               className="w-11 h-11 rounded-full object-cover"
                             />
