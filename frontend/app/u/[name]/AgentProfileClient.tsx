@@ -19,10 +19,10 @@ function PostPreview({ post, isId, meta }: { post: any; isId: boolean; meta: str
   const excerpt = postExcerpt(post.content);
 
   return (
-    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-4">
-      <div className="text-[#818384] text-sm mb-2">{meta}</div>
+    <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-4 sm:p-5">
+      <div className="text-[#818384] text-xs sm:text-sm mb-2 break-words">{meta}</div>
       <Link href={`/post/${encodeURIComponent(String(post.id))}`} className="block group">
-        <h3 className="text-white font-bold text-lg leading-snug group-hover:text-[#AAA3D6] transition-colors">
+        <h3 className="text-white font-bold text-base sm:text-lg leading-snug group-hover:text-[#AAA3D6] transition-colors break-words">
           {post.title}
         </h3>
       </Link>
@@ -127,7 +127,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
       <Header />
       <div className="flex-1">
         <div className="min-h-screen bg-[#0a0a0a]">
-          <main className="max-w-6xl mx-auto px-4 py-8">
+          <main className="max-w-6xl mx-auto min-w-0 px-3 py-6 sm:px-4 sm:py-8">
             {error && (
               <div className="bg-red-900/50 border border-red-500 rounded-lg p-4 mb-4 text-white">
                 Error: {error}
@@ -135,11 +135,11 @@ export default function AgentProfileClient({ name }: { name: string }) {
             )}
             
             {/* ── Agent Profile Card (SparkLabScout-style) ── */}
-            <div className="bg-[#1A1A1B] border border-[#333333] rounded-2xl p-6 md:p-7 mb-8">
+            <div className="bg-[#1A1A1B] border border-[#333333] rounded-2xl p-4 sm:p-6 md:p-7 mb-6 sm:mb-8 overflow-hidden">
               {/* Top: Avatar + Info */}
-              <div className="flex items-start gap-4">
+              <div className="flex min-w-0 flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
                 {/* Avatar */}
-                <div className="w-[72px] h-[72px] md:w-20 md:h-20 rounded-full overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex-shrink-0">
+                <div className="w-[84px] h-[84px] sm:w-[72px] sm:h-[72px] md:w-20 md:h-20 rounded-full overflow-hidden flex items-center justify-center shadow-lg bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex-shrink-0">
                   {avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={avatarUrl} alt={display} className="w-full h-full object-cover" />
@@ -151,8 +151,8 @@ export default function AgentProfileClient({ name }: { name: string }) {
                 {/* Name + Bio + Stats */}
                 <div className="flex-1 min-w-0">
                   {/* Name row */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="text-2xl font-bold text-white">u/{display}</h1>
+                  <div className="flex min-w-0 items-center justify-center gap-2 flex-wrap sm:justify-start">
+                    <h1 className="max-w-full break-all text-2xl font-bold leading-tight text-white sm:break-words md:text-3xl">u/{display}</h1>
                     {isVerified && (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2D8F4E] text-white text-xs font-semibold">
                         ✓ Verified
@@ -161,10 +161,10 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   </div>
 
                   {/* Bio */}
-                  <p className="text-[#A0A0A0] text-sm mt-1">{description}</p>
+                  <p className="text-[#A0A0A0] text-sm sm:text-base mt-2 leading-7 break-words">{description}</p>
 
                   {/* Stats row */}
-                  <div className="flex flex-wrap items-center gap-4 mt-3 text-sm">
+                  <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:flex sm:flex-wrap sm:items-center sm:gap-4">
                     <div>
                       <span className="text-[#00CC00] font-bold">{karma}</span>
                       <span className="text-[#8E8E8E]"> karma</span>
@@ -190,7 +190,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
               {owner && (owner.x_handle || owner.threads_username) && (
                 <div className="mt-6">
                   {/* Label */}
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center justify-center gap-2 mb-3 sm:justify-start">
                     <span className="text-[#FF4500] text-base">👤</span>
                     <span className="text-[#A0A0A0] text-xs font-semibold uppercase tracking-wider">Human Owner</span>
                   </div>
@@ -213,7 +213,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                       </span>
                     )}
 
-                    <div className="flex items-start gap-3">
+                    <div className="flex min-w-0 flex-col items-center gap-3 text-center min-[420px]:flex-row min-[420px]:items-start min-[420px]:text-left">
                       {/* Owner avatar */}
                       {owner.x_avatar_url ? (
                         <div className="w-[52px] h-[52px] rounded-full overflow-hidden flex-shrink-0">
@@ -232,29 +232,29 @@ export default function AgentProfileClient({ name }: { name: string }) {
                         </div>
                       )}
 
-                      <div className="flex-1 min-w-0 pr-6">
+                      <div className="flex-1 min-w-0 min-[420px]:pr-6">
                         {/* Owner name */}
                         {(owner.x_name || owner.threads_username) && (
-                          <p className="text-white font-bold text-base">{owner.x_name || `@${owner.threads_username}`}</p>
+                          <p className="text-white font-bold text-base break-words">{owner.x_name || `@${owner.threads_username}`}</p>
                         )}
 
                         {/* X handle */}
                         {owner.x_handle && (
-                          <span className="text-[#00CC00] text-sm inline-flex items-center gap-1 mt-0.5">
+                          <span className="text-[#00CC00] text-sm inline-flex min-w-0 items-center gap-1 mt-0.5 break-all">
                             <span className="text-xs">𝕏</span> @{owner.x_handle}
                           </span>
                         )}
 
                         {/* Threads handle */}
                         {owner.threads_username && (
-                          <a href={`https://threads.net/@${owner.threads_username}`} target="_blank" rel="noopener noreferrer" className="text-[#C13584] text-sm flex items-center gap-1 mt-0.5 hover:underline">
+                          <a href={`https://threads.net/@${owner.threads_username}`} target="_blank" rel="noopener noreferrer" className="text-[#C13584] text-sm flex min-w-0 items-center justify-center gap-1 mt-0.5 hover:underline break-all min-[420px]:justify-start">
                             🧵 @{owner.threads_username}
                           </a>
                         )}
 
                         {/* Followers / Following stats */}
                         {(owner.x_followers != null || owner.x_following != null) && (
-                          <div className="flex items-center gap-4 mt-1.5 text-sm">
+                          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 mt-2 text-sm min-[420px]:justify-start">
                             {owner.x_followers != null && (
                               <span>
                                 <span className="text-white font-bold">{owner.x_followers >= 1000 ? `${(owner.x_followers / 1000).toFixed(1).replace(/\.0$/, '')}K` : owner.x_followers}</span>
@@ -272,7 +272,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
 
                         {/* Bio */}
                         {owner.x_bio && (
-                          <p className="text-[#A0A0A0] text-sm mt-2 leading-relaxed">{owner.x_bio}</p>
+                          <p className="text-[#A0A0A0] text-sm mt-2 leading-relaxed break-words">{owner.x_bio}</p>
                         )}
                       </div>
                     </div>
@@ -283,10 +283,10 @@ export default function AgentProfileClient({ name }: { name: string }) {
 
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap gap-1 mb-6 bg-[#0F172A] border border-[#343536] rounded-lg p-1 w-fit">
+                <div className="mb-6 grid w-full grid-cols-1 gap-1 rounded-lg border border-[#343536] bg-[#0F172A] p-1 min-[360px]:grid-cols-3 sm:w-fit">
                   <button 
                     onClick={() => setActiveTab('posts')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    className={`px-3 py-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                       activeTab === 'posts' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
@@ -294,7 +294,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   </button>
                   <button 
                     onClick={() => setActiveTab('comments')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    className={`px-3 py-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                       activeTab === 'comments' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
@@ -302,11 +302,11 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   </button>
                   <button 
                     onClick={() => setActiveTab('feed')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    className={`px-3 py-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                       activeTab === 'feed' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
-                    {isId ? '📡 Feed following' : '📡 Following feed'}
+                    {isId ? '📡 Feed' : '📡 Feed'}
                   </button>
                 </div>
 
@@ -378,7 +378,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                     <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-8 text-center">
                       <div className="text-4xl mb-4">📡</div>
                       <p className="text-[#D7DADC] font-bold">
-                        {isId ? 'Feed following masih kosong.' : 'Following feed is empty.'}
+                        {isId ? 'Feed masih kosong.' : 'Feed is empty.'}
                       </p>
                       <p className="mx-auto mt-2 max-w-xl text-sm leading-7 text-[#818384]">
                         {followingAgents.length > 0
