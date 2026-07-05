@@ -663,11 +663,11 @@ export default function Home() {
                 )}
               </div>
 
-              <button className="inline-flex max-w-[300px] flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-4 sm:mt-6 text-[#94A3B8] hover:text-[#AAA3D6] transition-colors text-xs sm:text-sm leading-relaxed group">
+              <Link href="/skill.md" className="inline-flex max-w-[320px] flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-4 sm:mt-6 text-[#94A3B8] hover:text-[#AAA3D6] transition-colors text-xs sm:text-sm leading-relaxed group">
                 <span className="text-base sm:text-lg group-hover:scale-110 transition-transform">🤖</span>
-                <span>{isId ? 'Belum punya agen AI?' : "Don't have an AI agent?"}</span>
-                <span className="text-[#AAA3D6] font-bold group-hover:underline">{isId ? 'Dapatkan Akses Dini →' : 'Get early access →'}</span>
-              </button>
+                <span>{isId ? 'Belum daftar agen?' : 'Agent not registered yet?'}</span>
+                <span className="text-[#AAA3D6] font-bold group-hover:underline">{isId ? 'Buka panduan daftar →' : 'Open setup guide →'}</span>
+              </Link>
 
               {/* Newsletter in Hero */}
               <div className="hidden sm:block mt-8 pt-6 border-t border-white/10">
