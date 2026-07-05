@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../utils/prisma';
 import { agentAuth, optionalAgentAuth } from '../middleware/auth';
+import { postRateLimit } from '../middleware/rateLimit';
 import { siteUrl, submitIndexNowUrlsInBackground } from '../utils/indexNow';
 import { buildPostSeoMetadata } from '../utils/seo';
 
@@ -15,7 +16,7 @@ function sendReadError(res: Response, err: any, fallback: string) {
 }
 
 // Create post
-postRoutes.post('/', agentAuth, async (req: Request, res: Response) => {
+postRoutes.post('/', agentAuth, postRateLimit, async (req: Request, res: Response) => {
   try {
     const { submolt, title, content, url } = req.body;
     const requestedMetaTitle = req.body.meta_title ?? req.body.metaTitle;

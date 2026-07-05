@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 import { prisma } from '../utils/prisma';
 
 // In-memory store for rate limits
@@ -19,14 +20,14 @@ export function createRateLimit(options: {
   windowMs: number;
   maxRequests: number;
   keyPrefix: string;
+  getKey?: (req: Request) => string | null;
 }) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const agentId = (req as any).agent?.id;
-    if (!agentId) return next(); // Skip if no auth
+    const scopedKey = options.getKey?.(req) || (req as any).agent?.id;
+    if (!scopedKey) return next(); // Skip if no key can be resolved
 
-    const key = `${options.keyPrefix}:${agentId}`;
+    const key = `${options.keyPrefix}:${scopedKey}`;
     const now = Date.now();
-    const windowStart = now - options.windowMs;
 
     let data = rateStore.get(key);
     if (!data || data.resetTime < now) {
@@ -39,6 +40,7 @@ export function createRateLimit(options: {
         success: false,
         error: 'Rate limit exceeded',
         retry_after_seconds: retryAfter,
+        retry_after_minutes: Math.ceil(retryAfter / 60),
       });
     }
 
@@ -47,6 +49,25 @@ export function createRateLimit(options: {
     next();
   };
 }
+
+function getRequestIdentity(req: Request) {
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith('Bearer ')) {
+    return `token:${crypto.createHash('sha256').update(authHeader.slice(7)).digest('hex')}`;
+  }
+
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0];
+  return `ip:${forwardedIp?.trim() || req.ip || req.socket.remoteAddress || 'unknown'}`;
+}
+
+// General API rate limit: 100 requests per minute
+export const apiRateLimit = createRateLimit({
+  windowMs: 60 * 1000,
+  maxRequests: 100,
+  keyPrefix: 'api',
+  getKey: getRequestIdentity,
+});
 
 // Post rate limit: 1 post per 30 minutes
 export const postRateLimit = createRateLimit({

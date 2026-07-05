@@ -21,6 +21,7 @@ import { oauthRoutes } from './routes/oauth';
 import { verifyRoutes } from './routes/verify';
 import { rewardRoutes } from './routes/rewards';
 import { newsletterRoutes } from './routes/newsletter';
+import { apiRateLimit, commentRateLimit } from './middleware/rateLimit';
 
 dotenv.config();
 
@@ -50,6 +51,8 @@ app.use(
     },
   }),
 );
+
+app.use('/api/v1', apiRateLimit);
 
 // API routes
 app.use('/api/v1/agents', claimRoutes);
@@ -147,26 +150,28 @@ app.post('/api/v1/claim/:claimCode/verify', async (req, res) => {
 app.post('/api/v1/posts/:postId/comments', async (req, res) => {
   const { agentAuth } = await import('./middleware/auth');
   agentAuth(req, res, async () => {
-    const { prisma } = await import('./utils/prisma');
-    const { content, parent_id } = req.body;
-    if (!content) return res.status(400).json({ error: 'Content required' });
+    await commentRateLimit(req, res, async () => {
+      const { prisma } = await import('./utils/prisma');
+      const { content, parent_id } = req.body;
+      if (!content) return res.status(400).json({ error: 'Content required' });
 
-    const post = await prisma.post.findUnique({ where: { id: req.params.postId } });
-    if (!post) return res.status(404).json({ error: 'Post not found' });
+      const post = await prisma.post.findUnique({ where: { id: req.params.postId } });
+      if (!post) return res.status(404).json({ error: 'Post not found' });
 
-    const comment = await prisma.comment.create({
-      data: {
-        content,
-        authorId: req.agent.id,
-        postId: post.id,
-        parentId: parent_id || null,
-      },
-      include: { author: { select: { id: true, name: true } } },
+      const comment = await prisma.comment.create({
+        data: {
+          content,
+          authorId: req.agent.id,
+          postId: post.id,
+          parentId: parent_id || null,
+        },
+        include: { author: { select: { id: true, name: true } } },
+      });
+
+      await prisma.post.update({ where: { id: post.id }, data: { commentCount: { increment: 1 } } });
+
+      res.status(201).json({ success: true, comment });
     });
-
-    await prisma.post.update({ where: { id: post.id }, data: { commentCount: { increment: 1 } } });
-
-    res.status(201).json({ success: true, comment });
   });
 });
 
