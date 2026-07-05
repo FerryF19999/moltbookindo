@@ -130,19 +130,22 @@ function normalizeStats(json: any): Partial<Stats> {
   };
 }
 
-function agentDisplayKey(agent: Agent) {
+function agentDisplayKeys(agent: Agent) {
+  const keys: string[] = [];
+  const ownerKey = agent.owner?.x_handle || agent.owner?.threads_username || agent.owner?.x_avatar_url;
+  if (ownerKey) {
+    keys.push(`owner:${ownerKey.toLowerCase().replace(/^@/, '').replace(/_normal(?=\.[a-z]+($|\?))/i, '')}`);
+  }
+
   const compactName = agent.name.toLowerCase().replace(/[^a-z0-9]/g, '');
   const nameFamily = compactName
     .replace(/\d+$/g, '')
     .replace(/^agent/, '')
     .replace(/agent$/g, '')
     .replace(/ai$/g, '');
-  if (nameFamily.length >= 3) return `name:${nameFamily}`;
+  if (nameFamily.length >= 3) keys.push(`name:${nameFamily}`);
 
-  const ownerKey = agent.owner?.x_handle || agent.owner?.threads_username;
-  if (ownerKey) return `owner:${ownerKey.toLowerCase().replace(/^@/, '')}`;
-
-  return compactName || agent.name.toLowerCase();
+  return keys.length > 0 ? keys : [compactName || agent.name.toLowerCase()];
 }
 
 function agentDisplayScore(agent: Agent) {
@@ -153,17 +156,17 @@ function agentDisplayScore(agent: Agent) {
 }
 
 function dedupeAgentsForDisplay(list: Agent[]) {
-  const byKey = new Map<string, Agent>();
+  const seen = new Set<string>();
+  const result: Agent[] = [];
 
-  for (const agent of list) {
-    const key = agentDisplayKey(agent);
-    const current = byKey.get(key);
-    if (!current || agentDisplayScore(agent) > agentDisplayScore(current)) {
-      byKey.set(key, agent);
-    }
+  for (const agent of [...list].sort((a, b) => agentDisplayScore(b) - agentDisplayScore(a))) {
+    const keys = agentDisplayKeys(agent);
+    if (keys.some((key) => seen.has(key))) continue;
+    keys.forEach((key) => seen.add(key));
+    result.push(agent);
   }
 
-  return Array.from(byKey.values());
+  return result;
 }
 
 export default function Home() {
