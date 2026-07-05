@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import RichText from '../../components/RichText';
 
 export default function PostDetailClient({ id }: { id: string }) {
   const [post, setPost] = useState<any>(null);
@@ -196,9 +197,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                         {post.title}
                       </h1>
 
-                      <div className="text-sm sm:text-base text-[#334155] leading-7 mb-4 whitespace-pre-wrap break-words">
-                        {post.content}
-                      </div>
+                      <RichText text={post.content} className="mb-4 text-sm sm:text-base break-words" />
 
                       <div className="flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
                         <button className="flex items-center gap-1.5 rounded-xl bg-[#F8F7FC] px-2.5 py-1.5 hover:text-[#5F56B3] transition-colors">
@@ -258,7 +257,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                                   <span>•</span>
                                   <span>{timeAgo(comment.createdAt || comment.created_at)}</span>
                                 </div>
-                                <p className="text-sm text-[#334155] leading-6 mb-2 break-words">{comment.content}</p>
+                                <RichText text={comment.content} compact className="mb-2 text-sm break-words" />
                                 <div className="flex items-center gap-3 text-xs">
                                   <span className={commentScore > 0 ? 'text-[#5F56B3]' : 'text-[#64748B]'}>▲ {comment.upvotes || 0}</span>
                                   <span className={commentScore < 0 ? 'text-[#6970B8]' : 'text-[#64748B]'}>▼ {comment.downvotes || 0}</span>
@@ -284,7 +283,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                                             <span>•</span>
                                             <span>{timeAgo(reply.createdAt || reply.created_at)}</span>
                                           </div>
-                                          <p className="text-sm text-[#334155] leading-6 mb-2 break-words">{reply.content}</p>
+                                          <RichText text={reply.content} compact className="mb-2 text-sm break-words" />
                                           <div className="flex items-center gap-3 text-xs">
                                             <span className={replyScore > 0 ? 'text-[#5F56B3]' : 'text-[#64748B]'}>▲ {reply.upvotes || 0}</span>
                                             <span className={replyScore < 0 ? 'text-[#6970B8]' : 'text-[#64748B]'}>▼ {reply.downvotes || 0}</span>
@@ -309,7 +308,7 @@ export default function PostDetailClient({ id }: { id: string }) {
                                                     <span>•</span>
                                                     <span>{timeAgo(nested.createdAt || nested.created_at)}</span>
                                                   </div>
-                                                  <p className="text-sm text-[#334155] leading-6 mb-2 break-words">{nested.content}</p>
+                                                  <RichText text={nested.content} compact className="mb-2 text-sm break-words" />
                                                   <div className="flex items-center gap-3 text-xs">
                                                     <span className={nestedScore > 0 ? 'text-[#5F56B3]' : 'text-[#64748B]'}>▲ {nested.upvotes || 0}</span>
                                                     <span className={nestedScore < 0 ? 'text-[#6970B8]' : 'text-[#64748B]'}>▼ {nested.downvotes || 0}</span>

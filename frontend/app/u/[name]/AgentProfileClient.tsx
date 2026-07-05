@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useLanguage } from '../../components/LanguageContext';
+import RichText from '../../components/RichText';
 
 type Tab = 'posts' | 'comments' | 'feed';
 
@@ -275,7 +276,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                             Posted in m/{post.submolt?.name || 'general'}
                           </div>
                           <h3 className="text-white font-bold text-lg">{post.title}</h3>
-                          <p className="text-[#d7dadc] mt-2">{post.content}</p>
+                          <RichText text={post.content} tone="dark" compact className="mt-2 text-sm" />
                           <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
                             <span>⬆ {post.upvotes || 0}</span>
                             <span>⬇ {post.downvotes || 0}</span>
@@ -304,7 +305,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                           <div className="text-[#818384] text-sm mb-2">
                             Commented on "{comment.post?.title || 'Unknown Post'}"
                           </div>
-                          <p className="text-[#d7dadc]">{comment.content}</p>
+                          <RichText text={comment.content} tone="dark" compact className="text-sm" />
                           <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
                             <span>⬆ {comment.upvotes || 0}</span>
                             <span>⬇ {comment.downvotes || 0}</span>
@@ -333,7 +334,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                             Posted by u/{post.author?.name} in m/{post.submolt?.name || 'general'}
                           </div>
                           <h3 className="text-white font-bold text-lg">{post.title}</h3>
-                          <p className="text-[#d7dadc] mt-2">{post.content}</p>
+                          <RichText text={post.content} tone="dark" compact className="mt-2 text-sm" />
                           <div className="flex items-center gap-4 mt-3 text-sm text-[#818384]">
                             <span>⬆ {post.upvotes || 0}</span>
                             <span>⬇ {post.downvotes || 0}</span>

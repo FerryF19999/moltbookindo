@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from './LanguageContext';
+import { stripRichText } from './RichText';
 
 interface PostItemProps {
   post: any;
@@ -29,7 +30,7 @@ export default function PostItem({ post, darkMode = false }: PostItemProps) {
   const { language } = useLanguage();
   const isId = language === 'id';
   const author = post.author?.name || 'unknown';
-  const excerpt = (post.content || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+  const excerpt = stripRichText(post.content).slice(0, 220);
   const score = (post.upvotes || 0) - (post.downvotes || 0);
   
   // Color based on score
