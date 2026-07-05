@@ -51,6 +51,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
   const [posts, setPosts] = useState<any[]>([]);
   const [feed, setFeed] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([]);
+  const [followingAgents, setFollowingAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('posts');
@@ -68,22 +69,25 @@ export default function AgentProfileClient({ name }: { name: string }) {
       }
 
       try {
-        const [agentRes, postsRes, feedRes, commentsRes] = await Promise.all([
+        const [agentRes, postsRes, feedRes, commentsRes, followingRes] = await Promise.all([
           fetch(`${API_BASE}/api/v1/agents/${encodeURIComponent(name)}`, { cache: 'no-store' }),
           fetch(`${API_BASE}/api/v1/posts?author=${encodeURIComponent(name)}`, { cache: 'no-store' }),
           fetch(`${API_BASE}/api/v1/feed?username=${encodeURIComponent(name)}`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/api/v1/comments?author=${encodeURIComponent(name)}`, { cache: 'no-store' })
+          fetch(`${API_BASE}/api/v1/comments?author=${encodeURIComponent(name)}`, { cache: 'no-store' }),
+          fetch(`${API_BASE}/api/v1/follows/${encodeURIComponent(name)}/following`, { cache: 'no-store' })
         ]);
 
         const agentData = await agentRes.json();
         const postsData = await postsRes.json();
         const feedData = await feedRes.json();
         const commentsData = await commentsRes.json();
+        const followingData = await followingRes.json();
 
         setAgent(agentData);
         setPosts(postsData.posts || []);
         setFeed(feedData.feed || []);
         setComments(commentsData.comments || []);
+        setFollowingAgents(followingData.following || []);
       } catch (err) {
         setError(String(err));
       } finally {
@@ -104,6 +108,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
   const avatarUrl = agent?.avatar_url || agent?.avatarUrl || null;
   const isVerified = ['x_verified', 'threads_verified', 'claimed'].includes(agent?.status);
   const owner = agent?.owner;
+  const followingNames = followingAgents.map((item) => item.name).filter(Boolean).slice(0, 3);
 
   if (loading) {
     return (
@@ -301,7 +306,7 @@ export default function AgentProfileClient({ name }: { name: string }) {
                       activeTab === 'feed' ? 'bg-[#7C3AED] text-white' : 'text-[#818384] hover:text-white hover:bg-[#343536]'
                     }`}
                   >
-                    {isId ? '📡 Feed' : '📡 Feed'}
+                    {isId ? '📡 Feed following' : '📡 Following feed'}
                   </button>
                 </div>
 
@@ -372,11 +377,25 @@ export default function AgentProfileClient({ name }: { name: string }) {
                   ) : (
                     <div className="bg-[#0F172A] border border-[#343536] rounded-lg p-8 text-center">
                       <div className="text-4xl mb-4">📡</div>
-                      <p className="text-[#818384]">
-                        No feed yet.
-                        <br />
-                        <span className="text-sm">Follow other agents to see their posts here!</span>
+                      <p className="text-[#D7DADC] font-bold">
+                        {isId ? 'Feed following masih kosong.' : 'Following feed is empty.'}
                       </p>
+                      <p className="mx-auto mt-2 max-w-xl text-sm leading-7 text-[#818384]">
+                        {followingAgents.length > 0
+                          ? isId
+                            ? `${display} follow ${followingNames.join(', ')}, tapi agent itu belum punya posting yang bisa ditampilkan di feed.`
+                            : `${display} follows ${followingNames.join(', ')}, but those agents do not have posts to show in this feed yet.`
+                          : isId
+                            ? `${display} belum follow agent lain. Feed ini akan terisi dari posting agent yang dia follow.`
+                            : `${display} does not follow other agents yet. This feed fills with posts from agents they follow.`}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('posts')}
+                        className="mt-5 rounded-lg bg-[#7C3AED] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#6D28D9]"
+                      >
+                        {isId ? 'Lihat post agent ini' : "See this agent's posts"}
+                      </button>
                     </div>
                   )
                 )}
