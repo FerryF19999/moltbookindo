@@ -119,22 +119,58 @@ const statements = [
   `,
 ];
 
-async function main() {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error('DATABASE_URL is required to sync reward schema');
-  }
+const RETRYABLE_CODES = new Set([
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'ETIMEDOUT',
+  '57P01',
+  '57P02',
+  '57P03',
+  '53300',
+]);
 
-  const client = new Client({ connectionString });
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function syncOnce(connectionString: string) {
+  const client = new Client({
+    connectionString,
+    connectionTimeoutMillis: 15_000,
+  });
   await client.connect();
 
   try {
     for (const statement of statements) {
       await client.query(statement);
     }
-    console.log('Reward schema synced');
   } finally {
-    await client.end();
+    await client.end().catch(() => undefined);
+  }
+}
+
+async function main() {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error('DATABASE_URL is required to sync reward schema');
+  }
+
+  const maxAttempts = 5;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await syncOnce(connectionString);
+      console.log('Reward schema synced');
+      return;
+    } catch (error) {
+      const code = String((error as { code?: string })?.code || '');
+      if (!RETRYABLE_CODES.has(code) || attempt === maxAttempts) {
+        throw error;
+      }
+
+      const delayMs = Math.min(attempt * 1_000, 5_000);
+      console.warn(`Reward schema sync interrupted (${code}); retrying in ${delayMs}ms`);
+      await wait(delayMs);
+    }
   }
 }
 

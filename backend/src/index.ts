@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -213,6 +214,25 @@ app.get('/api/v1/health', async (_, res) => {
   } catch {
     res.status(503).json({ status: 'error', database: 'unreachable', timestamp: new Date().toISOString() });
   }
+});
+
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  const code = String((err as { code?: string })?.code || '');
+  console.error('Unhandled request error', { code, error: err });
+
+  if (res.headersSent) return;
+
+  if (code === 'P2003' || code === 'P2025') {
+    return res.status(404).json({ error: 'Related record no longer exists' });
+  }
+  if (code === 'P2002') {
+    return res.status(409).json({ error: 'This action was already processed' });
+  }
+  if (code === 'P2024' || code === 'P2037') {
+    return res.status(503).json({ error: 'Database is busy. Please retry shortly.' });
+  }
+
+  return res.status(500).json({ error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
